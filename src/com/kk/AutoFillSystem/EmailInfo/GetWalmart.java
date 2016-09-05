@@ -5,22 +5,14 @@
  */
 package com.kk.AutoFillSystem.EmailInfo;
 
-import com.kk.AutoFillSystem.Database.Entities.Products;
-import com.kk.AutoFillSystem.Database.Operations.OrderOp;
+import com.kk.AutoFillSystem.Database.Entities.Orders;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
-import com.kk.AutoFillSystem.Database.Operations.ProductOp;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
-import static com.kk.AutoFillSystem.utility.Tools.readMapFile;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.MessagingException;
@@ -55,17 +47,28 @@ public class GetWalmart extends getStore {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");
         EntityManager em = emf.createEntityManager();
         
+        //query returned info of orders and shipments
+        //using the orderInfo and shipmentInfo, to create new orders and trackings to db
         
         GetWalmart query = new GetWalmart("gobetterkx@gmail.com","Bnmrc123");
         query.connectGmail();
         query.searchInfoSince("07/22/16");
-        ArrayList<Order> newOrders = query.getOrders();
         
-       
+        ArrayList<Order> newOrders = query.getOrders();
         for(Order orderInfo : newOrders) {
             createNewOrder(em, orderInfo);
         }
         
+        
+        ArrayList<Shipment> newShips = query.getShipments();
+        
+        for(Shipment shipInfo : newShips) {
+            createUsTrk(em, shipInfo);
+        }
+       
+
+        em.close();
+        emf.close();
     
                 
    }

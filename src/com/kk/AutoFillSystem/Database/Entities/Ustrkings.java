@@ -20,7 +20,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,7 +38,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Ustrkings.findById", query = "SELECT u FROM Ustrkings u WHERE u.id = :id"),
     @NamedQuery(name = "Ustrkings.findByTrkingNum", query = "SELECT u FROM Ustrkings u WHERE u.trkingNum = :trkingNum"),
     @NamedQuery(name = "Ustrkings.findByShipDate", query = "SELECT u FROM Ustrkings u WHERE u.shipDate = :shipDate"),
-    @NamedQuery(name = "Ustrkings.findByAddressId", query = "SELECT u FROM Ustrkings u WHERE u.addressId = :addressId"),
     @NamedQuery(name = "Ustrkings.findByDelivered", query = "SELECT u FROM Ustrkings u WHERE u.delivered = :delivered")})
 public class Ustrkings implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -56,19 +54,18 @@ public class Ustrkings implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date shipDate;
     @Basic(optional = false)
-    @Column(name = "address_id")
-    private int addressId;
-    @Basic(optional = false)
     @Column(name = "delivered")
     private boolean delivered;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ustrkingId")
     private Collection<Trklines> trklinesCollection;
-    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private Addresses addresses;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ustrkingId")
+    private Collection<Usanduscntrkings> usanduscntrkingsCollection;
     @JoinColumn(name = "carrier_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Carriers carrierId;
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Addresses addressId;
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Orders orderId;
@@ -80,11 +77,10 @@ public class Ustrkings implements Serializable {
         this.id = id;
     }
 
-    public Ustrkings(Integer id, String trkingNum, Date shipDate, int addressId, boolean delivered) {
+    public Ustrkings(Integer id, String trkingNum, Date shipDate, boolean delivered) {
         this.id = id;
         this.trkingNum = trkingNum;
         this.shipDate = shipDate;
-        this.addressId = addressId;
         this.delivered = delivered;
     }
 
@@ -112,14 +108,6 @@ public class Ustrkings implements Serializable {
         this.shipDate = shipDate;
     }
 
-    public int getAddressId() {
-        return addressId;
-    }
-
-    public void setAddressId(int addressId) {
-        this.addressId = addressId;
-    }
-
     public boolean getDelivered() {
         return delivered;
     }
@@ -137,12 +125,13 @@ public class Ustrkings implements Serializable {
         this.trklinesCollection = trklinesCollection;
     }
 
-    public Addresses getAddresses() {
-        return addresses;
+    @XmlTransient
+    public Collection<Usanduscntrkings> getUsanduscntrkingsCollection() {
+        return usanduscntrkingsCollection;
     }
 
-    public void setAddresses(Addresses addresses) {
-        this.addresses = addresses;
+    public void setUsanduscntrkingsCollection(Collection<Usanduscntrkings> usanduscntrkingsCollection) {
+        this.usanduscntrkingsCollection = usanduscntrkingsCollection;
     }
 
     public Carriers getCarrierId() {
@@ -151,6 +140,14 @@ public class Ustrkings implements Serializable {
 
     public void setCarrierId(Carriers carrierId) {
         this.carrierId = carrierId;
+    }
+
+    public Addresses getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(Addresses addressId) {
+        this.addressId = addressId;
     }
 
     public Orders getOrderId() {

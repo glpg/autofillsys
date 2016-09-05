@@ -17,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -50,22 +49,16 @@ public class Addresses implements Serializable {
     @Basic(optional = false)
     @Column(name = "name")
     private String name;
-    @Basic(optional = false)
     @Column(name = "addressline1")
     private String addressline1;
-    @Basic(optional = false)
     @Column(name = "addressline2")
     private String addressline2;
-    @Basic(optional = false)
     @Column(name = "city")
     private String city;
-    @Basic(optional = false)
     @Column(name = "state")
     private String state;
-    @Basic(optional = false)
     @Column(name = "zip")
     private String zip;
-    @Basic(optional = false)
     @Column(name = "country")
     private String country;
     @Column(name = "phonenumber")
@@ -74,8 +67,8 @@ public class Addresses implements Serializable {
     private Collection<Cntrkings> cntrkingsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "addressId")
     private Collection<Ustocntrkings> ustocntrkingsCollection;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "addresses")
-    private Ustrkings ustrkings;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "addressId")
+    private Collection<Ustrkings> ustrkingsCollection;
 
     public Addresses() {
     }
@@ -84,15 +77,9 @@ public class Addresses implements Serializable {
         this.id = id;
     }
 
-    public Addresses(Integer id, String name, String addressline1, String addressline2, String city, String state, String zip, String country) {
+    public Addresses(Integer id, String name) {
         this.id = id;
         this.name = name;
-        this.addressline1 = addressline1;
-        this.addressline2 = addressline2;
-        this.city = city;
-        this.state = state;
-        this.zip = zip;
-        this.country = country;
     }
 
     public Integer getId() {
@@ -185,12 +172,13 @@ public class Addresses implements Serializable {
         this.ustocntrkingsCollection = ustocntrkingsCollection;
     }
 
-    public Ustrkings getUstrkings() {
-        return ustrkings;
+    @XmlTransient
+    public Collection<Ustrkings> getUstrkingsCollection() {
+        return ustrkingsCollection;
     }
 
-    public void setUstrkings(Ustrkings ustrkings) {
-        this.ustrkings = ustrkings;
+    public void setUstrkingsCollection(Collection<Ustrkings> ustrkingsCollection) {
+        this.ustrkingsCollection = ustrkingsCollection;
     }
 
     @Override

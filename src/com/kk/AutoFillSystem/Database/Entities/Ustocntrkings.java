@@ -71,6 +71,8 @@ public class Ustocntrkings implements Serializable {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Addresses addressId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ustocntrkingId")
+    private Collection<Usanduscntrkings> usanduscntrkingsCollection;
 
     public Ustocntrkings() {
     }
@@ -151,6 +153,15 @@ public class Ustocntrkings implements Serializable {
 
     public void setAddressId(Addresses addressId) {
         this.addressId = addressId;
+    }
+
+    @XmlTransient
+    public Collection<Usanduscntrkings> getUsanduscntrkingsCollection() {
+        return usanduscntrkingsCollection;
+    }
+
+    public void setUsanduscntrkingsCollection(Collection<Usanduscntrkings> usanduscntrkingsCollection) {
+        this.usanduscntrkingsCollection = usanduscntrkingsCollection;
     }
 
     @Override

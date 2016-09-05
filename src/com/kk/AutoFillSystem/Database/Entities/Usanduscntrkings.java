@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -26,9 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Usanduscntrkings.findAll", query = "SELECT u FROM Usanduscntrkings u"),
-    @NamedQuery(name = "Usanduscntrkings.findById", query = "SELECT u FROM Usanduscntrkings u WHERE u.id = :id"),
-    @NamedQuery(name = "Usanduscntrkings.findByUstrkingId", query = "SELECT u FROM Usanduscntrkings u WHERE u.ustrkingId = :ustrkingId"),
-    @NamedQuery(name = "Usanduscntrkings.findByUstocntrkingId", query = "SELECT u FROM Usanduscntrkings u WHERE u.ustocntrkingId = :ustocntrkingId")})
+    @NamedQuery(name = "Usanduscntrkings.findById", query = "SELECT u FROM Usanduscntrkings u WHERE u.id = :id")})
 public class Usanduscntrkings implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -36,24 +36,18 @@ public class Usanduscntrkings implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @Column(name = "ustrking_id")
-    private int ustrkingId;
-    @Basic(optional = false)
-    @Column(name = "ustocntrking_id")
-    private int ustocntrkingId;
+    @JoinColumn(name = "ustocntrking_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Ustocntrkings ustocntrkingId;
+    @JoinColumn(name = "ustrking_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Ustrkings ustrkingId;
 
     public Usanduscntrkings() {
     }
 
     public Usanduscntrkings(Integer id) {
         this.id = id;
-    }
-
-    public Usanduscntrkings(Integer id, int ustrkingId, int ustocntrkingId) {
-        this.id = id;
-        this.ustrkingId = ustrkingId;
-        this.ustocntrkingId = ustocntrkingId;
     }
 
     public Integer getId() {
@@ -64,20 +58,20 @@ public class Usanduscntrkings implements Serializable {
         this.id = id;
     }
 
-    public int getUstrkingId() {
-        return ustrkingId;
-    }
-
-    public void setUstrkingId(int ustrkingId) {
-        this.ustrkingId = ustrkingId;
-    }
-
-    public int getUstocntrkingId() {
+    public Ustocntrkings getUstocntrkingId() {
         return ustocntrkingId;
     }
 
-    public void setUstocntrkingId(int ustocntrkingId) {
+    public void setUstocntrkingId(Ustocntrkings ustocntrkingId) {
         this.ustocntrkingId = ustocntrkingId;
+    }
+
+    public Ustrkings getUstrkingId() {
+        return ustrkingId;
+    }
+
+    public void setUstrkingId(Ustrkings ustrkingId) {
+        this.ustrkingId = ustrkingId;
     }
 
     @Override

@@ -104,28 +104,28 @@ public abstract class getStore {
             Message[] messages = inbox.search(new AndTerm(senderTerm, dateTerm)); //construct basic search terms and search
             System.out.println(messages.length);
             for(Message msg: messages) {
-                if (msg.getSubject().contains(orderSubject)) {
-                    String[] body = getBody(msg);
-                    Document doc = Jsoup.parse(body[1]);
-                    
-                    Order order = extractOrder(doc.text());
-                    order.orderDate = msg.getReceivedDate();
-                    order.storeName = this.storeName;
-                    orders.add(order);
-                    
-                }
-                
-//                if (msg.getSubject().contains(shipSubject)) {
-//                    
+//                if (msg.getSubject().contains(orderSubject)) {
 //                    String[] body = getBody(msg);
 //                    Document doc = Jsoup.parse(body[1]);
 //                    
+//                    Order order = extractOrder(doc.text());
+//                    order.orderDate = msg.getReceivedDate();
+//                    order.storeName = this.storeName;
+//                    orders.add(order);
 //                    
-//                    Shipment shipment = extractShipment(doc.text());
-//                    
-//                    shipment.shipDate = msg.getReceivedDate(); 
-//                    System.out.println(shipment);
 //                }
+                
+                if (msg.getSubject().contains(shipSubject)) {
+                    
+                    String[] body = getBody(msg);
+                    Document doc = Jsoup.parse(body[1]);
+                    
+                    
+                    Shipment shipment = extractShipment(doc.text());
+                    
+                    shipment.shipDate = msg.getReceivedDate(); 
+                    shipments.add(shipment);
+                }
             }
         
     }
