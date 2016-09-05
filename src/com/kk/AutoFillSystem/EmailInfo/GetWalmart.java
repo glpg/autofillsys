@@ -25,7 +25,7 @@ import javax.persistence.Persistence;
  *
  * @author Yi
  */
-public class GetWalmart extends getStore {
+public class GetWalmart extends GetStore {
     
     
     public GetWalmart(String email, String pwd) { 
@@ -171,7 +171,7 @@ public class GetWalmart extends getStore {
             shipment.orderNum = m1.group(1);
         }
         
-        //ship to
+        //ship to 
         if (text.contains("ivy KangXue")) {
             shipment.warehouse = "ZZ";
         }
@@ -181,8 +181,6 @@ public class GetWalmart extends getStore {
             }
             
         }
-        
-        //get items
         
         //get items
         //put item in products

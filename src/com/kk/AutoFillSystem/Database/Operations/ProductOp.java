@@ -8,6 +8,7 @@ package com.kk.AutoFillSystem.Database.Operations;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
 import com.kk.AutoFillSystem.Database.Services.ProductService;
+import static com.kk.AutoFillSystem.utility.LoggingAspect.addMessageWithDate;
 import com.kk.AutoFillSystem.utility.Order;
 import static com.kk.AutoFillSystem.utility.Tools.readMapFile;
 import java.util.ArrayList;
@@ -65,10 +66,17 @@ public class ProductOp {
         TypedQuery<Products> query = em.createNamedQuery("Products.findByProdNum", Products.class).setParameter("prodNum", prodNum);
         List<Products> results = query.getResultList();
         
-        if (results != null || results.size() > 0) {
+        
+        if (results != null && results.size() > 0) {
+            if (prodNum.equals("00000")) {
+                addMessageWithDate(desc + " does not have product number, info is saved as unknown. please revise db.");
+            }
             return results.get(0);
         }
-        else return null;
+        else {
+            addMessageWithDate("Product number: " + prodNum + " is not in db ,please add it first, orderline is not saved in db, please add it manually.");
+            return null;
+        }
         
     }
     
