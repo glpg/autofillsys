@@ -11,6 +11,7 @@ import java.util.Date;
 /**
  *
  * @author Yi
+ * Info class, storing shipment info from email
  */
 public class Shipment {
     public String orderNum;

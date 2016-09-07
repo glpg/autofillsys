@@ -11,6 +11,7 @@ import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
+import static com.kk.AutoFillSystem.utility.Tools.getWarehouse;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -172,15 +173,8 @@ public class GetWalmart extends GetStore {
         }
         
         //ship to 
-        if (text.contains("ivy KangXue")) {
-            shipment.warehouse = "ZZ";
-        }
-        else {
-            if (text.contains("RSJEP HDB")) {
-                shipment.warehouse = "HDB";
-            }
-            
-        }
+        shipment.warehouse = getWarehouse(text);
+        
         
         //get items
         //put item in products

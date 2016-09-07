@@ -102,5 +102,24 @@ public class Tools {
         return map;
         
     }
+    
+    public static String getWarehouse(String text) {
+        //ship to 
+        String warehouse = "unknown";
+        if (text.contains("ivy KangXue")) {
+            warehouse = "ZZ";
+        }
+       
+        if (text.contains("RSJEP HDB")) {
+            warehouse = "HDB";
+        }
+        
+        if (text.contains("LTFHN TT")) {
+            warehouse = "TT";
+        }
+        
+        return warehouse;
+        
+    }
 
 }

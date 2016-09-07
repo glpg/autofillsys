@@ -38,11 +38,11 @@ public class AutoFillSystem extends Application {
     @Override
     public void start( Stage st1 ){
 	//init database
-        initDB();
+        //initDB();
         
-	
+	primaryStage = st1; 
 	initMainWindow();
-	primaryStage = st1; 	
+		
 	primaryStage.show();
 		
     }
@@ -63,6 +63,8 @@ public class AutoFillSystem extends Application {
             //controller.setMainApp(this);
             mainScene = new Scene(rootLayout);
             primaryStage.setScene(mainScene);
+            primaryStage.setTitle("Tracking System 1.0.0");
+            
 
         } catch (IOException e) {
             e.printStackTrace();
