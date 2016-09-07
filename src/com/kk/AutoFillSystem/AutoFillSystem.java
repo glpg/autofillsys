@@ -24,8 +24,9 @@ public class AutoFillSystem extends Application {
     public Stage primaryStage;
     public Scene mainScene;
     
-    private EntityManagerFactory emf;
-    private EntityManager em;
+    public static EntityManagerFactory emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");
+    public static EntityManager em = emf.createEntityManager();
+    
 
     /**
      * @param args the command line arguments
@@ -37,9 +38,7 @@ public class AutoFillSystem extends Application {
     
     @Override
     public void start( Stage st1 ){
-	//init database
-        //initDB();
-        
+	
 	primaryStage = st1; 
 	initMainWindow();
 		
@@ -47,10 +46,7 @@ public class AutoFillSystem extends Application {
 		
     }
     
-    private void initDB(){
-        emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");
-        em = emf.createEntityManager();
-    }
+    
     
     public void initMainWindow() {
 

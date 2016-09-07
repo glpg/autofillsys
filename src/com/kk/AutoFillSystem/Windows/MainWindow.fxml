@@ -29,32 +29,32 @@
               <columns>
                   <TableColumn fx:id="store" prefWidth="0.0" text="Store" />
                   <TableColumn fx:id="orderNum" prefWidth="0.0" text="Order #" />
-                  <TableColumn prefWidth="0.0" text="Date" />
+                  <TableColumn fx:id="orderDate" prefWidth="0.0" text="Date" />
                   <TableColumn prefWidth="75.0" text="US tracking">
                      <columns>
-                        <TableColumn prefWidth="75.0" text="Carrier" />
-                        <TableColumn prefWidth="75.0" text="Tracking #" />
+                        <TableColumn fx:id="usCarrier" prefWidth="75.0" text="Carrier" />
+                        <TableColumn fx:id="usTrkNum" prefWidth="75.0" text="Tracking #" />
                         <TableColumn prefWidth="75.0" text="Ship list">
                            <columns>
-                              <TableColumn prefWidth="75.0" text="Item" />
-                              <TableColumn prefWidth="75.0" text="Cnt" />
+                              <TableColumn fx:id="item" prefWidth="75.0" text="Item" />
+                              <TableColumn fx:id="quantity" prefWidth="75.0" text="Cnt" />
                            </columns>
                         </TableColumn>
-                        <TableColumn prefWidth="75.0" text="Warehouse" />
+                        <TableColumn fx:id="warehouse" prefWidth="75.0" text="Warehouse" />
                      </columns>
                   </TableColumn>
                   <TableColumn prefWidth="75.0" text="US to CN tracking">
                      <columns>
-                        <TableColumn prefWidth="75.0" text="Tracking #" />
-                        <TableColumn prefWidth="75.0" text="Weight" />
-                        <TableColumn prefWidth="75.0" text="Fee" />
+                        <TableColumn fx:id="intlTrkNum" prefWidth="75.0" text="Tracking #" />
+                        <TableColumn fx:id="weight" prefWidth="75.0" text="Weight" />
+                        <TableColumn fx:id="fee" prefWidth="75.0" text="Fee" />
                      </columns>
                   </TableColumn>
                   <TableColumn prefWidth="75.0" text="CN tracking">
                      <columns>
-                        <TableColumn prefWidth="75.0" text="Carrier" />
-                        <TableColumn prefWidth="75.0" text="Tracking #" />
-                        <TableColumn prefWidth="75.0" text="Address" />
+                        <TableColumn fx:id="cnCarrier" prefWidth="75.0" text="Carrier" />
+                        <TableColumn fx:id="cnTrkNum" prefWidth="75.0" text="Tracking #" />
+                        <TableColumn fx:id="address" prefWidth="75.0" text="Address" />
                      </columns>
                   </TableColumn>
               </columns>

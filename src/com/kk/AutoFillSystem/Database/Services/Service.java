@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.kk.AutoFillSystem.Database.Services;
+import java.util.List;
 import javax.persistence.EntityManager;
 /**
  *
@@ -39,4 +40,9 @@ public abstract class Service<T> {
     public T update (T item) {
         return em.merge(item);
     }
+    
+    public List<T> findAll() {
+       return em.createQuery("Select t from " + classType.getSimpleName() + " t").getResultList();
+    }
+
 }
