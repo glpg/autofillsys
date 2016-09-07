@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -36,7 +38,7 @@ import org.jsoup.nodes.Document;
  *
  * @author Yi
  */
-public abstract class getStore {
+public abstract class GetStore {
     //parameters for email access
     protected String email;
     protected String pwd;
@@ -52,7 +54,7 @@ public abstract class getStore {
     protected ArrayList<Order> orders;
     protected ArrayList<Shipment> shipments;
     
-    public getStore(){
+    public GetStore(){
         orders = new ArrayList();
         shipments = new ArrayList();
     }
@@ -104,13 +106,17 @@ public abstract class getStore {
             Message[] messages = inbox.search(new AndTerm(senderTerm, dateTerm)); //construct basic search terms and search
             System.out.println(messages.length);
             for(Message msg: messages) {
+                
 //                if (msg.getSubject().contains(orderSubject)) {
+//                    
 //                    String[] body = getBody(msg);
+//                    
 //                    Document doc = Jsoup.parse(body[1]);
 //                    
 //                    Order order = extractOrder(doc.text());
 //                    order.orderDate = msg.getReceivedDate();
 //                    order.storeName = this.storeName;
+//                    System.out.println(order.toString());
 //                    orders.add(order);
 //                    
 //                }
@@ -123,8 +129,19 @@ public abstract class getStore {
                     
                     Shipment shipment = extractShipment(doc.text());
                     
+                    //for toysrus , the shipment email order number is in subject. 
+                    if(this.storeName.equals("Toysrus")) {
+                        String subject = msg.getSubject();
+                        Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
+                        Matcher m = orderNum.matcher(subject);
+                        if(m.find()) {
+                            shipment.orderNum = m.group(1);
+                        }
+                    }
+                    
                     shipment.shipDate = msg.getReceivedDate(); 
                     shipments.add(shipment);
+                    
                 }
             }
         

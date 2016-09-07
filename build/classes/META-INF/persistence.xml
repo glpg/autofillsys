@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="AutoFillSystemPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.kk.AutoFillSystem.Database.Entities.Stores</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Orders</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Carriers</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Cntrkings</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Orderlines</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Usanduscntrkings</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Ustrkings</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Products</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Trklines</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Ustocntrkings</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Addresses</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/track?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="1111"/>
+      <property name="eclipselink.allow-zero-id" value="true"/>
+    </properties>
+  </persistence-unit>
+</persistence>
