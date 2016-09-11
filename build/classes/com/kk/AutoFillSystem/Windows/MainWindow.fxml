@@ -1,15 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kk.AutoFillSystem.Windows.MainWindowController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kk.AutoFillSystem.Windows.MainWindowController">
    <children>
+      <HBox layoutY="24.0" prefHeight="44.0" prefWidth="1180.0" spacing="15.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+         <children>
+            <ComboBox fx:id="comboBoxStore" prefHeight="25.0" prefWidth="105.0" promptText="Store" />
+            <ComboBox fx:id="comboBoxWarehouse" prefHeight="25.0" prefWidth="105.0" promptText="Warehouse" />
+            <ComboBox fx:id="comboBoxProduct" prefWidth="105.0" promptText="Product" />
+            <ComboBox fx:id="comboBoxUnshipped" prefWidth="105.0" promptText="Unshipped" />
+            <Button fx:id="btnApplyFilter" mnemonicParsing="false" prefHeight="25.0" prefWidth="78.0" text="Apply" />
+            <Button fx:id="btnClearFilter" mnemonicParsing="false" text="Clear Filters" />
+         </children>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+      </HBox>
       <MenuBar layoutY="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
+            <Menu mnemonicParsing="false" text="File">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Sync">
+              <items>
+                <MenuItem fx:id="menuItemApplyFilter" mnemonicParsing="false" text="Apply Filter" />
+                  <MenuItem fx:id="menuItemClearFilter" mnemonicParsing="false" text="Clear Filter" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Insert">
+              <items>
+                <MenuItem fx:id="menuItemNewOrder" mnemonicParsing="false" text="New Order" />
+              </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem mnemonicParsing="false" text="About" />
@@ -17,7 +48,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <GridPane layoutY="26.0" nodeOrientation="LEFT_TO_RIGHT" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="26.0">
+      <GridPane layoutY="68.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="530.0" prefWidth="1196.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="68.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -25,21 +56,16 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TableView fx:id="orderTable" editable="true" prefHeight="125.0" prefWidth="805.0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <TableView fx:id="orderTable" editable="true" prefHeight="429.0" prefWidth="1196.0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
               <columns>
                   <TableColumn fx:id="store" prefWidth="0.0" text="Store" />
                   <TableColumn fx:id="orderNum" prefWidth="0.0" text="Order #" />
-                  <TableColumn fx:id="orderDate" prefWidth="0.0" text="Date" />
+                  <TableColumn fx:id="orderDate" editable="false" prefWidth="0.0" text="Date" />
                   <TableColumn prefWidth="75.0" text="US tracking">
                      <columns>
                         <TableColumn fx:id="usCarrier" prefWidth="75.0" text="Carrier" />
                         <TableColumn fx:id="usTrkNum" prefWidth="75.0" text="Tracking #" />
-                        <TableColumn prefWidth="75.0" text="Ship list">
-                           <columns>
-                              <TableColumn fx:id="item" prefWidth="75.0" text="Item" />
-                              <TableColumn fx:id="quantity" prefWidth="75.0" text="Cnt" />
-                           </columns>
-                        </TableColumn>
+                        <TableColumn fx:id="shipList" editable="false" prefWidth="75.0" text="Ship list" />
                         <TableColumn fx:id="warehouse" prefWidth="75.0" text="Warehouse" />
                      </columns>
                   </TableColumn>

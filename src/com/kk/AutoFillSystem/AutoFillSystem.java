@@ -21,7 +21,7 @@ import javax.persistence.Persistence;
  * @author Yi
  */
 public class AutoFillSystem extends Application {
-    public Stage primaryStage;
+    public static Stage primaryStage;
     public Scene mainScene;
     
     public static EntityManagerFactory emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");

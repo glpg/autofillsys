@@ -10,15 +10,31 @@ import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
+import java.util.Date;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  *
  * @author Yi
  */
 public class JoinRecord {
+    
+    private SimpleStringProperty orderNum = new SimpleStringProperty();
+    private SimpleStringProperty store = new SimpleStringProperty();
+    private SimpleObjectProperty<Date> orderDate = new SimpleObjectProperty();
+    private SimpleStringProperty usCarrier = new SimpleStringProperty();
+    private SimpleStringProperty usTrkNum = new SimpleStringProperty();
+    private SimpleStringProperty warehouse = new SimpleStringProperty();
+    private SimpleStringProperty shipList = new SimpleStringProperty();
+    
+   
     private Orders order;
     private Ustrkings usTrk;
-    private Trklines trkline;
+    
     private Ustocntrkings intlTrk;
     private Cntrkings cnTrk;
     
@@ -58,15 +74,64 @@ public class JoinRecord {
         this.cnTrk = cnTrk;
     }
 
-    public Trklines getTrkline() {
-        return trkline;
+    
+
+    public String getOrderNum() {
+        return orderNum.get();
     }
 
-    public void setTrkline(Trklines trkline) {
-        this.trkline = trkline;
+    public void setOrderNum(String orderNum) {
+       this.orderNum.set(orderNum);
     }
-    
-    
-    
+
+    public String getStore() {
+        return store.get();
+    }
+
+    public void setStore(String store) {
+        this.store.set(store);
+    }
+
+    public Date getOrderDate() {
+        return orderDate.get();
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate.set(orderDate);
+    }
+
+    public String getUsCarrier() {
+        return usCarrier.get();
+    }
+
+    public void setUsCarrier(String usCarrier) {
+        this.usCarrier.set(usCarrier);
+    }
+
+    public String getUsTrkNum() {
+        return usTrkNum.get();
+    }
+
+    public void setUsTrkNum(String usTrkNum) {
+        this.usTrkNum.set(usTrkNum);
+    }
+
+    public String getWarehouse() {
+        return warehouse.get();
+    }
+
+    public void setWarehouse(String warehouse) {
+        this.warehouse.set(warehouse);
+    }
+
+    public String getShipList() {
+        return shipList.get();
+    }
+
+    public void setShipList(String shipList) {
+        this.shipList.set(shipList);
+    }
+
+  
     
 }

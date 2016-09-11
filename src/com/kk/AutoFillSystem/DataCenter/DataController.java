@@ -5,9 +5,21 @@
  */
 package com.kk.AutoFillSystem.DataCenter;
 
+import com.kk.AutoFillSystem.Database.Entities.Addresses;
+import com.kk.AutoFillSystem.Database.Entities.Carriers;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
+import com.kk.AutoFillSystem.Database.Entities.Products;
+import com.kk.AutoFillSystem.Database.Entities.Stores;
+import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
+import com.kk.AutoFillSystem.Database.Services.AddressService;
+import com.kk.AutoFillSystem.Database.Services.CarrierService;
 import com.kk.AutoFillSystem.Database.Services.OrderService;
+import com.kk.AutoFillSystem.Database.Services.ProductService;
+import com.kk.AutoFillSystem.Database.Services.StoreService;
+import com.kk.AutoFillSystem.utility.Order;
 import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -27,12 +39,14 @@ public class DataController {
     private static EntityManager em ;
     
     
-    
     public DataController() {
         //initialize db connection
         emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");
         em = emf.createEntityManager();
+        
     }
+    
+   
     
     public static DataController getInstance() {
       if(instance == null) {
@@ -51,7 +65,29 @@ public class DataController {
         return os.findAll();
     }
     
+    public List<Stores> getStores() {
+        StoreService ss = new StoreService(em, Stores.class);
+        return ss.findAll();
+    }
     
+    public List<Carriers> getCarriers() {
+        CarrierService cs = new CarrierService(em, Carriers.class);
+        return cs.findAll();
+    }
+    
+    public List<Addresses> getAddresses() {
+        AddressService as = new AddressService(em, Addresses.class);
+        return as.findAll();
+    }
+    
+    public List<Products> getProducts() {
+        ProductService ps = new ProductService(em, Products.class);
+        return ps.findAll();
+    }
+    
+    public Orders createOrder(Order orderInfo) {
+        return createNewOrder(em, orderInfo);
+    }
     
     
     

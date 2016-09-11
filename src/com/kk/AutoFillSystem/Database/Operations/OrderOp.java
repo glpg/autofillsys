@@ -30,9 +30,9 @@ import javax.persistence.TypedQuery;
 public class OrderOp {
     
     //create new order  and orderlines
-    public static void createNewOrder(EntityManager em, Order orderInfo){ 
+    public static Orders createNewOrder(EntityManager em, Order orderInfo){ 
         // Create new todo
-        em.getTransaction().begin();
+        
         
         OrderService orderService = new OrderService(em, Orders.class);
         StoreService storeService = new StoreService(em, Stores.class);
@@ -46,9 +46,11 @@ public class OrderOp {
         if (orderResults != null && orderResults.size() > 0) {
             addMessage("Order " + orderInfo.orderNum + " existed already, pass!");
             
+            return null;
         }
         //else create new order
         else {
+            em.getTransaction().begin();
             //create new orders
             Orders order = new Orders();
             order.setOrderDate(orderInfo.orderDate);
@@ -92,11 +94,12 @@ public class OrderOp {
   
                 
             }
+            em.getTransaction().commit();
+            addMessageWithDate("Order : " + orderInfo.orderNum +" is created.");
+            return order;
 
         }
-        
-        em.getTransaction().commit();
-        addMessageWithDate("Order : " + orderInfo.orderNum +" is created.");
+     
     }
     
     
