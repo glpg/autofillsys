@@ -13,7 +13,11 @@ import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
+import static com.kk.AutoFillSystem.Database.Operations.AddressOp.createNewAddress;
+import static com.kk.AutoFillSystem.Database.Operations.CarrierOp.createNewCarrier;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
+import static com.kk.AutoFillSystem.Database.Operations.ProductOp.createNewProduct;
+import static com.kk.AutoFillSystem.Database.Operations.StoreOp.createNewStore;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createCnTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
@@ -27,6 +31,7 @@ import com.kk.AutoFillSystem.utility.Shipment;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javax.mail.Store;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -108,7 +113,21 @@ public class DataController {
         createCnTrk(em, cnTrk);
     }
     
+    public void createProduct(Products prd) {
+        createNewProduct(em, prd);
+    }
     
+    public void createStore(Stores store) {
+        createNewStore(em, store);
+    }
+    
+    public void createCarrier(Carriers carrier) {
+        createNewCarrier(em, carrier);
+    }
+    
+    public void createAddress(Addresses addr) {
+        createNewAddress(em, addr);
+    }
     /**
      * Getters and Setters
      * @return 

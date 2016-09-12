@@ -35,6 +35,8 @@ public class TableFilter {
         filters.put("store", "");
         filters.put("warehouse", "");
         filters.put("product", "");
+        filters.put("unshipped","");
+        filters.put("destination","");
     }
     
     public void setStoreFilter(String storeName) {
@@ -49,17 +51,59 @@ public class TableFilter {
         filters.put("warehouse", warehouse);
     }
     
+    public void setUnshippedFilter(String unshipped) {
+        filters.put("unshipped", unshipped);
+    }
+    
+    public void setDestinationFilter(String unshipped) {
+        filters.put("destination", unshipped);
+    }
+    
     public void applyFilters() {
         
         filteredItems.clear();
         //always apply all the currently stored filters, so you can change things freely 
         
+        
         for(JoinRecord record : totalItems) {
-            if (record.getWarehouse().contains(filters.get("warehouse"))
+            String warehouse = (record.getWarehouse()==null)?"":record.getWarehouse();
+            String shipList = (record.getShipList() == null)?"":record.getShipList();
+            String destination = (record.getCnTrk() == null)? "":record.getAddress();
+            if (warehouse.contains(filters.get("warehouse"))
                     && record.getStore().contains(filters.get("store"))
-                    && record.getShipList().contains(filters.get("product"))) {
+                    && shipList.contains(filters.get("product"))
+                    && destination.contains(filters.get("destination"))) {
+                  
+                switch(filters.get("unshipped")) {
                     
-                    filteredItems.add(record);
+                    case "US trking" : {
+                        if (record.getUsTrk() == null) filteredItems.add(record);
+                        break;
+                    }
+                    case "Intl trking" : {
+                        if (record.getUsTrk() != null && record.getIntlTrk() == null) 
+                            filteredItems.add(record);
+                        break;
+                       
+                    }
+                    
+                    case "CN trking" :{
+                        if (record.getIntlTrk() != null && record.getCnTrk() == null) 
+                            filteredItems.add(record);
+                        break;
+                        
+                    }
+                    case "None" : {
+                        if (record.getCnTrk() != null) 
+                            filteredItems.add(record);
+                        break;
+                    }
+                    
+                    default : filteredItems.add(record);
+                    
+                }
+                
+
             }
             
         }

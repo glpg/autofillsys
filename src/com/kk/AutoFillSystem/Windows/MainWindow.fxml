@@ -14,8 +14,9 @@
          <children>
             <ComboBox fx:id="comboBoxStore" prefHeight="25.0" prefWidth="105.0" promptText="Store" />
             <ComboBox fx:id="comboBoxWarehouse" prefHeight="25.0" prefWidth="105.0" promptText="Warehouse" />
-            <ComboBox fx:id="comboBoxProduct" prefWidth="105.0" promptText="Product" />
-            <ComboBox fx:id="comboBoxUnshipped" prefWidth="105.0" promptText="Unshipped" />
+            <ComboBox fx:id="comboBoxProduct" prefHeight="25.0" prefWidth="105.0" promptText="Product" />
+            <ComboBox fx:id="comboBoxUnshipped" prefHeight="25.0" prefWidth="105.0" promptText="Unshipped" />
+            <ComboBox fx:id="comboBoxDestination" prefHeight="25.0" prefWidth="105.0" promptText="Destination" />
             <Button fx:id="btnApplyFilter" mnemonicParsing="false" prefHeight="25.0" prefWidth="78.0" text="Apply" />
             <Button fx:id="btnClearFilter" mnemonicParsing="false" text="Clear Filters" />
          </children>
@@ -42,6 +43,11 @@
                   <MenuItem fx:id="menuItemNewUsTrk" mnemonicParsing="false" text="US  Tracking" />
                   <MenuItem fx:id="menuItemNewIntlTrk" mnemonicParsing="false" text="Intl Tracking" />
                   <MenuItem fx:id="menuItemNewCnTrk" mnemonicParsing="false" text="CN Tracking" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="menuItemNewProduct" mnemonicParsing="false" text="New Product" />
+                  <MenuItem fx:id="menuItemNewCarrier" mnemonicParsing="false" text="New Shipping Carrier" />
+                  <MenuItem fx:id="menuItemNewAddr" mnemonicParsing="false" text="New Address" />
+                  <MenuItem fx:id="menuItemNewStore" mnemonicParsing="false" text="New Store" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -64,6 +70,7 @@
                   <TableColumn fx:id="store" prefWidth="0.0" text="Store" />
                   <TableColumn fx:id="orderNum" prefWidth="0.0" text="Order #" />
                   <TableColumn fx:id="orderDate" editable="false" prefWidth="0.0" text="Date" />
+                  <TableColumn fx:id="orderList" prefWidth="75.0" text="Order list" />
                   <TableColumn prefWidth="75.0" text="US tracking">
                      <columns>
                         <TableColumn fx:id="usCarrier" prefWidth="75.0" text="Carrier" />

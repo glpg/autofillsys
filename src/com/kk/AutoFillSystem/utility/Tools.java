@@ -5,6 +5,7 @@
  */
 package com.kk.AutoFillSystem.utility;
 
+import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -156,6 +157,18 @@ public class Tools {
             record.setOrderDate(record.getOrder().getOrderDate());
             record.setOrderNum(record.getOrder().getOrderNum());
             record.setStore(record.getOrder().getStoreId().getName());
+            StringBuilder sb = new StringBuilder();
+            for (Orderlines prd : record.getOrder().getOrderlinesCollection()) {
+
+                sb.append(prd.getProductId().getProdNum()).append(" : ").append(prd.getQuantity()).append(" || ");
+
+            }
+            
+            String items = sb.toString();
+            if (items.length() > 0) {
+                record.setOrderList(items.substring(0, items.length() - 3));
+            }
+            
         }
         
         if (record.getUsTrk() != null) {

@@ -80,4 +80,15 @@ public class ProductOp {
         
     }
     
+    
+    public static void createNewProduct(EntityManager em, Products prod) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.persist(prod);
+        addMessageWithDate("New poroduct : " + prod.getProdNum()+ " is created.");
+        
+        em.getTransaction().commit();    
+    }
+    
+    
 }

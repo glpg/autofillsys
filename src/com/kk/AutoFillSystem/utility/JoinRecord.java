@@ -24,6 +24,7 @@ public class JoinRecord {
     private SimpleStringProperty orderNum = new SimpleStringProperty();
     private SimpleStringProperty store = new SimpleStringProperty();
     private SimpleObjectProperty<Date> orderDate = new SimpleObjectProperty();
+    private SimpleStringProperty orderList = new SimpleStringProperty();
     //us ship part
     private SimpleStringProperty usCarrier = new SimpleStringProperty();
     private SimpleStringProperty usTrkNum = new SimpleStringProperty();
@@ -131,6 +132,14 @@ public class JoinRecord {
         this.warehouse.set(warehouse);
     }
 
+    public String getOrderList() {
+        return orderList.get();
+    }
+    
+    public void setOrderList(String orderList) {
+        this.orderList.set(orderList);
+    }
+    
     public String getShipList() {
         return shipList.get();
     }

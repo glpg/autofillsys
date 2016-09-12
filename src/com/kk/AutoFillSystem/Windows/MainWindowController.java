@@ -10,6 +10,7 @@ import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
 import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
+import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
@@ -20,6 +21,7 @@ import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.LoggingAspect;
 import com.kk.AutoFillSystem.utility.TableFilter;
+import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.io.IOException;
 import java.net.URL;
@@ -28,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -66,6 +70,7 @@ public class MainWindowController implements Initializable {
     private  List<Carriers> carriers;
     private  List<Addresses> addresses;
     
+    
     //records combining orders and trkings
     ArrayList<JoinRecord> records;
     
@@ -79,8 +84,16 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemNewUsTrk;
     @FXML
     private MenuItem menuItemNewIntlTrk;
-     @FXML
+    @FXML
     private MenuItem menuItemNewCnTrk;
+    @FXML
+    private MenuItem menuItemNewProduct;
+     @FXML
+    private MenuItem menuItemNewStore;
+    @FXML
+    private MenuItem menuItemNewAddr;
+    @FXML
+    private MenuItem menuItemNewCarrier;
     @FXML
     private MenuItem menuItemApplyFilter;
     @FXML
@@ -96,6 +109,8 @@ public class MainWindowController implements Initializable {
     @FXML
     private ComboBox comboBoxUnshipped;
     @FXML
+    private ComboBox comboBoxDestination;
+    @FXML
     private Button btnApplyFilter;
     @FXML
     private Button btnClearFilter;
@@ -110,6 +125,8 @@ public class MainWindowController implements Initializable {
     private TableColumn<JoinRecord, String> orderNum;
     @FXML
     private TableColumn<JoinRecord, Date> orderDate;
+    @FXML
+    private TableColumn<?, ?> orderList;
     @FXML
     private TableColumn<?, ?> usCarrier;
     @FXML
@@ -170,6 +187,10 @@ public class MainWindowController implements Initializable {
             records.addAll(createRecordsFromOrder(ord));
           
         }
+        for(JoinRecord record : records) {
+            expandInfo(record);
+        }
+        
         //tableRows data.
         tableRows = FXCollections.observableArrayList(records);
         
@@ -194,7 +215,7 @@ public class MainWindowController implements Initializable {
         }
         
         for(JoinRecord record : records) {
-            addOrderInfo(record, order);
+            record.setOrder(order);
         }
         
         return records;
@@ -220,7 +241,7 @@ public class MainWindowController implements Initializable {
         }
         
         for(JoinRecord record : records) {
-            addUsTrkingInfo(record, ustrk);
+            record.setUsTrk(ustrk);
         }
         
         return records;
@@ -242,14 +263,14 @@ public class MainWindowController implements Initializable {
         else {
             for(Cntrkings cnTrk : intlTrk.getCntrkingsCollection()) {
                 JoinRecord temp = new JoinRecord();
-                addCnTrkingInfo(temp,cnTrk);
+                temp.setCnTrk(cnTrk);
                 records.add(temp);
             }
             
         }
         
         for(JoinRecord record : records) {
-            addIntlTrkingInfo(record, intlTrk);
+            record.setIntlTrk(intlTrk);
         }
         
         return records;
@@ -257,53 +278,7 @@ public class MainWindowController implements Initializable {
     }
     
     
-    
-    
-    //set record info for order
-    private void addOrderInfo(JoinRecord record, Orders order) {
-        record.setOrder(order);
-        record.setStore(order.getStoreId().getName());
-        record.setOrderDate(order.getOrderDate());
-        record.setOrderNum(order.getOrderNum());
-    }
-    
-    
-    //set record info for UStrking
-    private void addUsTrkingInfo(JoinRecord record, Ustrkings ustrk) {
-        record.setUsTrk(ustrk);
-        record.setUsTrkNum(ustrk.getTrkingNum());
-        record.setWarehouse(ustrk.getAddressId().getName());
-        record.setUsCarrier(ustrk.getCarrierId().getName());
-        StringBuilder sb = new StringBuilder();
-        for (Trklines prd : ustrk.getTrklinesCollection()) {
 
-            sb.append(prd.getProductId().getProdNum()).append(" : ").append(prd.getQuantity()).append(" || ");
-
-        }
-
-        String items = sb.toString();
-        //make sure items are not empty
-        if (items.length() > 0) {
-            record.setShipList(items.substring(0, items.length() - 3));
-        }
-
-    }
-    
-    //set record info for Intltrking
-    private void addIntlTrkingInfo(JoinRecord record, Ustocntrkings intlTrk) {
-        record.setIntlTrk(intlTrk);
-        record.setIntlTrkNum(intlTrk.getTrkingNum());
-        record.setWeight(intlTrk.getWeight());
-        record.setFee(intlTrk.getShippingfee().doubleValue());
-    }
-    
-    //set record info for cntrking
-    private void addCnTrkingInfo(JoinRecord record, Cntrkings cntrk) {
-        record.setCnTrk(cntrk);
-        record.setCnTrkNum(cntrk.getTrkingNum());
-        record.setCnCarrier(cntrk.getCarrierId().getName());
-        record.setAddress(cntrk.getAddressId().getName());
-    }
     
     public void addNewOrder(Orders order) {
         JoinRecord record = new JoinRecord();
@@ -355,7 +330,15 @@ public class MainWindowController implements Initializable {
         FXCollections.sort(warehouseList);
         comboBoxWarehouse.setItems(warehouseList);
         
-        comboBoxUnshipped.getItems().addAll("US trking", "Intl trking", "CN trking");
+        comboBoxUnshipped.getItems().addAll("US trking", "Intl trking", "CN trking", "None");
+        
+        ObservableList<String> destinationList = FXCollections.observableArrayList();
+        for(Addresses dest: addresses) {
+            if (dest.getCountry() != null && dest.getCountry().equals("CN"))
+                destinationList.add(dest.getName());
+        }
+        FXCollections.sort(destinationList);
+        comboBoxDestination.setItems(destinationList);
         
         //set up buttons
         btnApplyFilter.setOnAction(e->{applyFilter();});
@@ -369,6 +352,7 @@ public class MainWindowController implements Initializable {
         String selectedWarehouse = (comboBoxWarehouse.getValue() == null)? null : (String)comboBoxWarehouse.getValue();
         String selectedProduct = (comboBoxProduct.getValue() == null)? null : (String)comboBoxProduct.getValue();
         String selectedUnshipped = (comboBoxUnshipped.getValue() == null)? null : (String)comboBoxUnshipped.getValue();
+        String selectedDestination = (comboBoxDestination.getValue() == null)? null : (String)comboBoxDestination.getValue();
         
         if (selectedStore != null)
             filter.setStoreFilter(selectedStore);
@@ -378,6 +362,12 @@ public class MainWindowController implements Initializable {
         
         if (selectedProduct != null)
             filter.setProdutFilter(selectedProduct);
+        
+        if (selectedUnshipped != null) 
+            filter.setUnshippedFilter(selectedUnshipped);
+        
+        if (selectedDestination != null) 
+            filter.setDestinationFilter(selectedUnshipped);
         
         filter.applyFilters();
     }    
@@ -400,9 +390,99 @@ public class MainWindowController implements Initializable {
         menuItemNewUsTrk.setOnAction(e->{showUsTrkWindow(e);});
         menuItemNewIntlTrk.setOnAction(e->{showIntlTrkWindow(e);});
         menuItemNewCnTrk.setOnAction(e->{showCnTrkWindow(e);});
+        menuItemNewProduct.setOnAction(e->{showProdWindow(e);});
+        menuItemNewCarrier.setOnAction(e->{showCarrierWindow(e);});
+        menuItemNewAddr.setOnAction(e->{showAddressWindow(e);});
+        menuItemNewStore.setOnAction(e->{showStoreWindow(e);});
         
        
     }
+    
+    
+    private void showAddressWindow(ActionEvent e) {
+	
+            
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/NewAddressWindow.fxml"));
+            
+            NewAddressWindowController addrController = new NewAddressWindowController();
+            addrController.setMainWindow(instance);
+            
+            loader.setController(addrController);
+            AnchorPane addrWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(addrWindow));
+            stage.setTitle("Create Address");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+       
+    }
+    
+    private void showCarrierWindow(ActionEvent e) {
+	
+            
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/NewCarrierWindow.fxml"));
+            
+            NewCarrierWindowController carrierController = new NewCarrierWindowController();
+            carrierController.setMainWindow(instance);
+            
+            loader.setController(carrierController);
+            AnchorPane carrierWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(carrierWindow));
+            stage.setTitle("Create Carrier");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+       
+    }
+    
+    
+    
+    private void showStoreWindow(ActionEvent e) {
+	
+            
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/NewStoreWindow.fxml"));
+            
+            NewStoreWindowController storeController = new NewStoreWindowController();
+            storeController.setMainWindow(instance);
+            
+            loader.setController(storeController);
+            AnchorPane storeWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(storeWindow));
+            stage.setTitle("Create Store");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+       
+    }
+    
+    
     
     private void showOrderWindow(ActionEvent e){
 	try {
@@ -532,11 +612,36 @@ public class MainWindowController implements Initializable {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        
-        
+   
 
     }
     
+    private void showProdWindow(ActionEvent e) {
+	
+            
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/NewProdWindow.fxml"));
+            
+            NewProdWindowController prdController = new NewProdWindowController();
+            prdController.setMainWindow(instance);
+            
+            loader.setController(prdController);
+            AnchorPane cnTrkWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(cnTrkWindow));
+            stage.setTitle("Create Product");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+       
+    }
     
     private void setupTable()
     {
@@ -546,7 +651,7 @@ public class MainWindowController implements Initializable {
         orderNum.setCellValueFactory(new PropertyValueFactory("orderNum"));
         orderDate.setCellValueFactory(new PropertyValueFactory("orderDate"));
         store.setCellValueFactory(new PropertyValueFactory("store"));
-        
+        orderList.setCellValueFactory(new PropertyValueFactory("orderList"));
         usCarrier.setCellValueFactory(new PropertyValueFactory("usCarrier"));
         usTrkNum.setCellValueFactory(new PropertyValueFactory("usTrkNum"));
         shipList.setCellValueFactory(new PropertyValueFactory("shipList"));
@@ -687,6 +792,22 @@ public class MainWindowController implements Initializable {
 
     public TableView<?> getOrderTable() {
         return orderTable;
+    }
+
+    public ComboBox getComboBoxStore() {
+        return comboBoxStore;
+    }
+
+    public ComboBox getComboBoxWarehouse() {
+        return comboBoxWarehouse;
+    }
+
+    public ComboBox getComboBoxProduct() {
+        return comboBoxProduct;
+    }
+
+    public ComboBox getComboBoxDestination() {
+        return comboBoxDestination;
     }
     
     
