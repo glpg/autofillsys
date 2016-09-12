@@ -36,9 +36,12 @@
                   <MenuItem fx:id="menuItemClearFilter" mnemonicParsing="false" text="Clear Filter" />
               </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Insert">
+            <Menu mnemonicParsing="false" text="Add">
               <items>
                 <MenuItem fx:id="menuItemNewOrder" mnemonicParsing="false" text="New Order" />
+                  <MenuItem fx:id="menuItemNewUsTrk" mnemonicParsing="false" text="US  Tracking" />
+                  <MenuItem fx:id="menuItemNewIntlTrk" mnemonicParsing="false" text="Intl Tracking" />
+                  <MenuItem fx:id="menuItemNewCnTrk" mnemonicParsing="false" text="CN Tracking" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

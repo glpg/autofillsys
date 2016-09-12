@@ -32,9 +32,10 @@ import javax.persistence.TypedQuery;
 public class TrackOp {
     
     //create new order  and orderlines
-    public static void createUsTrk(EntityManager em, Shipment shipmentInfo){ 
+    public static Ustrkings createUsTrk(EntityManager em, Shipment shipmentInfo){ 
         // Create new todo
         
+        Ustrkings ustrking = null;
         
         OrderService orderService = new OrderService(em, Orders.class);
         UStrackingService ustrkService = new UStrackingService(em, Ustrkings.class);
@@ -62,7 +63,7 @@ public class TrackOp {
                 em.getTransaction().begin();
                 
                 /* create new trkings */
-                Ustrkings ustrking = new Ustrkings();
+                ustrking = new Ustrkings();
                 //set order
                 Orders order = orderResults.get(0);
                 ustrking.setOrderId(order);
@@ -139,6 +140,8 @@ public class TrackOp {
             }
 
         }
+        
+        return ustrking;
 
         
     }

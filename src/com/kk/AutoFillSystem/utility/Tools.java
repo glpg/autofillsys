@@ -14,6 +14,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 
 /**
  *
@@ -121,5 +126,30 @@ public class Tools {
         return warehouse;
         
     }
+    
+    
+    //gui related functions
+    public static void showAlert(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait().ifPresent(rs -> {
+            if (rs == ButtonType.OK) {
+            }
+        });
+    }
+    
+    
+    
+    public static void closeWindow(ActionEvent e) {
+        Node source;
+        source = (Node) e.getSource();
+        Stage stage = (Stage) source.getScene().getWindow();
+        stage.close();
+        
+    }
+    
+    
 
 }

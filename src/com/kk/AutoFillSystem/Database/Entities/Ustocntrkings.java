@@ -71,6 +71,9 @@ public class Ustocntrkings implements Serializable {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Addresses addressId;
+    
+    
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ustocntrkingId")
     private Collection<Usanduscntrkings> usanduscntrkingsCollection;
 

@@ -16,6 +16,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -58,8 +60,7 @@ public class Ustrkings implements Serializable {
     private boolean delivered;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ustrkingId")
     private Collection<Trklines> trklinesCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ustrkingId")
-    private Collection<Usanduscntrkings> usanduscntrkingsCollection;
+    
     @JoinColumn(name = "carrier_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Carriers carrierId;
@@ -69,7 +70,18 @@ public class Ustrkings implements Serializable {
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Orders orderId;
-
+    
+    
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    @JoinTable(name = "usanduscntrkings", joinColumns = @JoinColumn(name = "ustrking_id"), inverseJoinColumns = @JoinColumn(name = "ustocntrking_id"))
+//    private Collection<Ustocntrkings> intlTrkCollection;
+ 
+    
+    
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ustrkingId")
+    private Collection<Usanduscntrkings> usanduscntrkingsCollection;
+    
     public Ustrkings() {
     }
 
@@ -124,6 +136,19 @@ public class Ustrkings implements Serializable {
     public void setTrklinesCollection(Collection<Trklines> trklinesCollection) {
         this.trklinesCollection = trklinesCollection;
     }
+    
+    
+//     @XmlTransient
+//    public Collection<Ustocntrkings> getIntlTrkCollection() {
+//        return intlTrkCollection;
+//    }
+//
+//    public void setIntlTrkCollection(Collection<Ustocntrkings> intlTrkCollection) {
+//        this.intlTrkCollection = intlTrkCollection;
+//    }
+    
+    
+    
 
     @XmlTransient
     public Collection<Usanduscntrkings> getUsanduscntrkingsCollection() {

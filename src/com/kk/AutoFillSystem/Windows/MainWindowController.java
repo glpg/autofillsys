@@ -9,14 +9,18 @@ import com.kk.AutoFillSystem.AutoFillSystem;
 import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
+import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
+import com.kk.AutoFillSystem.Database.Entities.Usanduscntrkings;
+import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.LoggingAspect;
 import com.kk.AutoFillSystem.utility.TableFilter;
+import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -71,6 +75,12 @@ public class MainWindowController implements Initializable {
     //menu
     @FXML
     private MenuItem menuItemNewOrder;
+     @FXML
+    private MenuItem menuItemNewUsTrk;
+    @FXML
+    private MenuItem menuItemNewIntlTrk;
+     @FXML
+    private MenuItem menuItemNewCnTrk;
     @FXML
     private MenuItem menuItemApplyFilter;
     @FXML
@@ -112,9 +122,9 @@ public class MainWindowController implements Initializable {
     @FXML
     private TableColumn<?, ?> intlTrkNum;
     @FXML
-    private TableColumn<?, ?> weight;
+    private TableColumn<JoinRecord, Integer> weight;
     @FXML
-    private TableColumn<?, ?> fee;
+    private TableColumn<JoinRecord, Double> fee;
     @FXML
     private TableColumn<?, ?> cnCarrier;
     @FXML
@@ -153,39 +163,146 @@ public class MainWindowController implements Initializable {
         
         //initialize JoinRecord
         records = new ArrayList();
+        
         //populate JoinRecord
         for(Orders ord : orders) {
             
-            for(Ustrkings ustrk : ord.getUstrkingsCollection()) {
-                JoinRecord record = new JoinRecord();
-                    record.setOrder(ord);
-                    record.setUsTrk(ustrk);
-                    
-                    
-                    record.setOrderDate(ord.getOrderDate());
-                    record.setOrderNum(ord.getOrderNum());
-                    record.setStore(ord.getStoreId().getName());
-                    record.setUsCarrier(ustrk.getCarrierId().getName());
-                    record.setUsTrkNum(ustrk.getTrkingNum());
-                    record.setWarehouse(ustrk.getAddressId().getName());
-                    
-                    StringBuilder sb = new StringBuilder();
-                    for(Trklines prd : ustrk.getTrklinesCollection()) {
-                        
-                        sb.append(prd.getProductId().getProdNum()).append(" : ").append(prd.getQuantity()).append(" || ");
-                   
-                    }
-                    
-                    String items = sb.toString();
-                    record.setShipList(items.substring(0,items.length()-3));
-                    records.add(record);
-                
-            }
+            records.addAll(createRecordsFromOrder(ord));
+          
         }
         //tableRows data.
         tableRows = FXCollections.observableArrayList(records);
         
+        System.out.println(records.size());
+    }
+    
+    
+    private List<JoinRecord> createRecordsFromOrder(Orders order) {
+        ArrayList<JoinRecord> records = new ArrayList();
         
+        if (order.getUstrkingsCollection() == null || order.getUstrkingsCollection().size() == 0) {
+            //only one new record
+            JoinRecord record = new JoinRecord();
+            records.add(record);
+        }
+        
+        else {
+            for(Ustrkings ustrk : order.getUstrkingsCollection()) {
+                
+                records.addAll(createRecordsFromUsTrk(ustrk));
+            }
+        }
+        
+        for(JoinRecord record : records) {
+            addOrderInfo(record, order);
+        }
+        
+        return records;
+        
+        
+    }
+    
+    private List<JoinRecord> createRecordsFromUsTrk(Ustrkings ustrk) {
+        ArrayList<JoinRecord> records = new ArrayList();
+        
+        if (ustrk.getUsanduscntrkingsCollection() == null || ustrk.getUsanduscntrkingsCollection().isEmpty()) {
+            JoinRecord record = new JoinRecord();
+            records.add(record);
+            
+        }
+        
+        else {
+            for(Usanduscntrkings relationship : ustrk.getUsanduscntrkingsCollection()) {
+                
+                records.addAll(createRecordsFromIntlTrk(relationship.getUstocntrkingId()));
+            }
+            
+        }
+        
+        for(JoinRecord record : records) {
+            addUsTrkingInfo(record, ustrk);
+        }
+        
+        return records;
+        
+        
+        
+    }
+    
+    
+    private List<JoinRecord> createRecordsFromIntlTrk(Ustocntrkings intlTrk) {
+        ArrayList<JoinRecord> records = new ArrayList();
+        
+        if (intlTrk.getCntrkingsCollection() == null || intlTrk.getCntrkingsCollection().isEmpty()) {
+            JoinRecord record = new JoinRecord();
+            records.add(record);
+            
+        }
+        
+        else {
+            for(Cntrkings cnTrk : intlTrk.getCntrkingsCollection()) {
+                JoinRecord temp = new JoinRecord();
+                addCnTrkingInfo(temp,cnTrk);
+                records.add(temp);
+            }
+            
+        }
+        
+        for(JoinRecord record : records) {
+            addIntlTrkingInfo(record, intlTrk);
+        }
+        
+        return records;
+        
+    }
+    
+    
+    
+    
+    //set record info for order
+    private void addOrderInfo(JoinRecord record, Orders order) {
+        record.setOrder(order);
+        record.setStore(order.getStoreId().getName());
+        record.setOrderDate(order.getOrderDate());
+        record.setOrderNum(order.getOrderNum());
+    }
+    
+    
+    //set record info for UStrking
+    private void addUsTrkingInfo(JoinRecord record, Ustrkings ustrk) {
+        record.setUsTrk(ustrk);
+        record.setUsTrkNum(ustrk.getTrkingNum());
+        record.setWarehouse(ustrk.getAddressId().getName());
+        record.setUsCarrier(ustrk.getCarrierId().getName());
+        StringBuilder sb = new StringBuilder();
+        for (Trklines prd : ustrk.getTrklinesCollection()) {
+
+            sb.append(prd.getProductId().getProdNum()).append(" : ").append(prd.getQuantity()).append(" || ");
+
+        }
+
+        String items = sb.toString();
+        //make sure items are not empty
+        if (items.length() > 0) {
+            record.setShipList(items.substring(0, items.length() - 3));
+        }
+
+    }
+    
+    //set record info for Intltrking
+    private void addIntlTrkingInfo(JoinRecord record, Ustocntrkings intlTrk) {
+        record.setIntlTrk(intlTrk);
+        record.setIntlTrkNum(intlTrk.getTrkingNum());
+        record.setWeight(intlTrk.getWeight());
+        record.setFee(intlTrk.getShippingfee().doubleValue());
+    }
+    
+    //set record info for cntrking
+    private void addCnTrkingInfo(JoinRecord record, Cntrkings cntrk) {
+        record.setCnTrk(cntrk);
+        record.setCnTrkNum(cntrk.getTrkingNum());
+        record.setCnCarrier(cntrk.getCarrierId().getName());
+        record.setAddress(cntrk.getAddressId().getName());
     }
     
     public void addNewOrder(Orders order) {
@@ -276,12 +393,13 @@ public class MainWindowController implements Initializable {
         orderTable.setItems(tableRows);
         
     }
+    
+    //set up all menu items
     private void setupMenu() {
         menuItemNewOrder.setOnAction(e->{showOrderWindow(e);});
-        menuItemApplyFilter.setOnAction(e->{filter.applyFilters();});
-        menuItemClearFilter.setOnAction(e->{
-            filter.clearFilters();
-            orderTable.setItems(tableRows);});
+        menuItemNewUsTrk.setOnAction(e->{showUsTrkWindow(e);});
+        
+       
     }
     
     private void showOrderWindow(ActionEvent e){
@@ -313,6 +431,39 @@ public class MainWindowController implements Initializable {
     }
     
     
+    private void showUsTrkWindow(ActionEvent e){
+	try {
+     
+            JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
+            if (currentRecord == null) {
+                showAlert("Error", "Order Error :" , "You did not select any order in the table !");
+                return;
+            }
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/UsTrkWindow.fxml"));
+            
+            UsTrkWindowController usTrkController = new UsTrkWindowController(currentRecord);
+            usTrkController.setMainWindow(instance);
+            
+            loader.setController(usTrkController);
+            AnchorPane usTrkWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(usTrkWindow));
+            stage.setTitle("Create new US tracking");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        
+        
+
+    }
+    
     
     
     
@@ -331,9 +482,48 @@ public class MainWindowController implements Initializable {
         
         warehouse.setCellValueFactory(new PropertyValueFactory("warehouse"));
         
+        intlTrkNum.setCellValueFactory(new PropertyValueFactory("intlTrkNum"));
+        weight.setCellValueFactory(new PropertyValueFactory("weight"));
+        fee.setCellValueFactory(new PropertyValueFactory("fee"));
+        
+        weight.setCellFactory(column -> {
+            return new TableCell<JoinRecord, Integer>() {
+            @Override
+                protected void updateItem(Integer item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (item == null || item == 0) {
+                        setText(null);
+               
+                    } else {
+                        
+                        setText(item.toString());
+                    }
+                }
+            };
+        });
+        
+        fee.setCellFactory(column -> {
+            return new TableCell<JoinRecord, Double>() {
+            @Override
+                protected void updateItem(Double item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (item == null || item == 0) {
+                        setText(null);
+               
+                    } else {
+                        
+                        setText(item.toString());
+                    }
+                }
+            };
+        });
+        
+        
         //set up date display
         orderDate.setCellFactory(column -> {
-        return new TableCell<JoinRecord, Date>() {
+            return new TableCell<JoinRecord, Date>() {
             @Override
                 protected void updateItem(Date item, boolean empty) {
                     super.updateItem(item, empty);
@@ -407,6 +597,14 @@ public class MainWindowController implements Initializable {
 
     public void setAddresses(List<Addresses> addresses) {
         this.addresses = addresses;
+    }
+
+    public ObservableList getTableRows() {
+        return tableRows;
+    }
+
+    public void setTableRows(ObservableList tableRows) {
+        this.tableRows = tableRows;
     }
     
     

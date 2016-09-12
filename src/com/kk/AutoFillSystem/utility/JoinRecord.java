@@ -12,6 +12,7 @@ import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import java.util.Date;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,15 +23,24 @@ import javafx.beans.property.StringProperty;
  * @author Yi
  */
 public class JoinRecord {
-    
+    //order part
     private SimpleStringProperty orderNum = new SimpleStringProperty();
     private SimpleStringProperty store = new SimpleStringProperty();
     private SimpleObjectProperty<Date> orderDate = new SimpleObjectProperty();
+    //us ship part
     private SimpleStringProperty usCarrier = new SimpleStringProperty();
     private SimpleStringProperty usTrkNum = new SimpleStringProperty();
     private SimpleStringProperty warehouse = new SimpleStringProperty();
     private SimpleStringProperty shipList = new SimpleStringProperty();
+    //intl ship part
+    private SimpleStringProperty intlTrkNum = new SimpleStringProperty();
+    private SimpleIntegerProperty weight = new SimpleIntegerProperty();
+    private SimpleDoubleProperty fee = new SimpleDoubleProperty();
     
+    //cn ship part
+    private SimpleStringProperty cnCarrier = new SimpleStringProperty();
+    private SimpleStringProperty cnTrkNum = new SimpleStringProperty();
+    private SimpleStringProperty address = new SimpleStringProperty();
    
     private Orders order;
     private Ustrkings usTrk;
@@ -132,6 +142,55 @@ public class JoinRecord {
         this.shipList.set(shipList);
     }
 
+    public String getIntlTrkNum() {
+        return intlTrkNum.get();
+    }
+    
+    public void setIntlTrkNum(String intlTrkNum) {
+        this.intlTrkNum.set(intlTrkNum);
+    }
   
+    public int getWeight() {
+        return weight.get();
+    }
+    
+    public void setWeight(int weight){
+        this.weight.set(weight);
+    }
+    
+    public double getFee() {
+        return this.fee.get();
+    }
+    
+    public void setFee(double fee) {
+        this.fee.set(fee);
+    }
+    
+    
+    public String getCnCarrier() {
+        return cnCarrier.get();
+    }
+
+    public void setCnCarrier(String cnCarrier) {
+        this.cnCarrier.set(cnCarrier);
+    }
+
+    public String getCnTrkNum() {
+        return cnTrkNum.get();
+    }
+
+    public void setCnTrkNum(String cnTrkNum) {
+        this.cnTrkNum.set(cnTrkNum);
+    }
+
+    public String getAddress() {
+        return address.get();
+    }
+
+    public void setAddress(String addr) {
+        this.address.set(addr);
+    }
+    
+    
     
 }
