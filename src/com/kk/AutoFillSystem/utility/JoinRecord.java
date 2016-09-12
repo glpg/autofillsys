@@ -7,16 +7,13 @@ package com.kk.AutoFillSystem.utility;
 
 import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
-import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import java.util.Date;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 /**
  *

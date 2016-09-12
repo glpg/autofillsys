@@ -7,9 +7,12 @@ package com.kk.AutoFillSystem.Database.Operations;
 
 import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
+import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
+import com.kk.AutoFillSystem.Database.Entities.Usanduscntrkings;
+import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import static com.kk.AutoFillSystem.Database.Operations.ProductOp.findProduct;
 import com.kk.AutoFillSystem.Database.Services.AddressService;
@@ -146,4 +149,37 @@ public class TrackOp {
         
     }
     
+    
+    public static void createIntlTrk(EntityManager em, Ustocntrkings intlTrk, Ustrkings ustrk){
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.persist(intlTrk);
+        addMessageWithDate("Intl shipment : " + intlTrk.getTrkingNum() + " is created.");
+        //create new relationrecord
+        Usanduscntrkings relation = new Usanduscntrkings();
+        relation.setUstocntrkingId(intlTrk);
+        relation.setUstrkingId(ustrk);
+        em.persist(relation);
+        addMessageWithDate("Intl shipment : " + intlTrk.getTrkingNum() + " is correlated with Us trking : " + ustrk.getTrkingNum() + " .");
+        //add relation to both intlTrk and usTrk
+        ustrk.getUsanduscntrkingsCollection().add(relation);
+        intlTrk.getUsanduscntrkingsCollection().add(relation);
+        
+        em.getTransaction().commit();
+        
+    }
+    
+    public static void createCnTrk(EntityManager em, Cntrkings cnTrk){
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.persist(cnTrk);
+        addMessageWithDate("China shipment : " + cnTrk.getTrkingNum() + " is created.");
+        
+        cnTrk.getUstocntrkingId().getCntrkingsCollection().add(cnTrk);
+        
+        em.getTransaction().commit();
+        
+    }
+    
 }
+

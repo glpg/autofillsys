@@ -7,11 +7,15 @@ package com.kk.AutoFillSystem.DataCenter;
 
 import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
+import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
+import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createCnTrk;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
 import com.kk.AutoFillSystem.Database.Services.AddressService;
 import com.kk.AutoFillSystem.Database.Services.CarrierService;
@@ -96,6 +100,13 @@ public class DataController {
         return createUsTrk(em, shipInfo);
     }
     
+    public void createIntlTrking(Ustocntrkings intlTrk, Ustrkings usTrk) {
+        createIntlTrk(em,intlTrk, usTrk);
+    }
+    
+    public void createCnTrking(Cntrkings cnTrk) {
+        createCnTrk(em, cnTrk);
+    }
     
     
     /**
@@ -110,6 +121,7 @@ public class DataController {
     public static EntityManager getEm() {
         return em;
     }
+
     
     
     

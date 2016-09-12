@@ -214,8 +214,12 @@ public class UsTrkWindowController implements Initializable {
             //if the current record does not have us trking, add info in
             if (record.getUsTrk() == null) {
                 record.setUsTrk(newTrk);
-                setTrkInfo(record,newTrk);
-          
+                setTrkInfo(record, newTrk);
+
+                //forcing refreshing table
+                mainWindow.getOrderTable().getColumns().get(0).setVisible(false);
+                mainWindow.getOrderTable().getColumns().get(0).setVisible(true);
+
             }
             
             else {

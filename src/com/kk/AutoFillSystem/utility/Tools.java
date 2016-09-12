@@ -5,6 +5,7 @@
  */
 package com.kk.AutoFillSystem.utility;
 
+import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -150,6 +151,43 @@ public class Tools {
         
     }
     
-    
+    public static void expandInfo(JoinRecord record) {
+        if (record.getOrder() != null) {
+            record.setOrderDate(record.getOrder().getOrderDate());
+            record.setOrderNum(record.getOrder().getOrderNum());
+            record.setStore(record.getOrder().getStoreId().getName());
+        }
+        
+        if (record.getUsTrk() != null) {
+            record.setUsCarrier(record.getUsTrk().getCarrierId().getName());
+            record.setUsTrkNum(record.getUsTrk().getTrkingNum());
+            record.setWarehouse(record.getUsTrk().getAddressId().getName());
+
+            StringBuilder sb = new StringBuilder();
+            for (Trklines prd : record.getUsTrk().getTrklinesCollection()) {
+
+                sb.append(prd.getProductId().getProdNum()).append(" : ").append(prd.getQuantity()).append(" || ");
+
+            }
+
+            String items = sb.toString();
+            if (items.length() > 0) {
+                record.setShipList(items.substring(0, items.length() - 3));
+            }
+        }
+        
+        if (record.getIntlTrk() != null) {
+            record.setIntlTrkNum(record.getIntlTrk().getTrkingNum());
+            record.setWeight(record.getIntlTrk().getWeight());
+            record.setFee(record.getIntlTrk().getShippingfee().doubleValue());
+        }
+        
+        if (record.getCnTrk() != null) {
+            record.setCnCarrier(record.getCnTrk().getCarrierId().getName());
+            record.setCnTrkNum(record.getCnTrk().getTrkingNum());
+            record.setAddress(record.getCnTrk().getAddressId().getName());
+        }
+        
+    }
 
 }

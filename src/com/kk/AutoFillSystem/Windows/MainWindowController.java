@@ -398,6 +398,8 @@ public class MainWindowController implements Initializable {
     private void setupMenu() {
         menuItemNewOrder.setOnAction(e->{showOrderWindow(e);});
         menuItemNewUsTrk.setOnAction(e->{showUsTrkWindow(e);});
+        menuItemNewIntlTrk.setOnAction(e->{showIntlTrkWindow(e);});
+        menuItemNewCnTrk.setOnAction(e->{showCnTrkWindow(e);});
         
        
     }
@@ -465,6 +467,75 @@ public class MainWindowController implements Initializable {
     }
     
     
+    private void showIntlTrkWindow(ActionEvent e){
+	try {
+     
+            JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
+            if (currentRecord == null || currentRecord.getUsTrk() == null) {
+                showAlert("Error", "Record Error :" , "You did not select any record or the record does not have US trking !");
+                return;
+            }
+            
+            
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/IntlTrkWindow.fxml"));
+            
+            IntlTrkWindowController intlTrkController = new IntlTrkWindowController(currentRecord);
+            intlTrkController.setMainWindow(instance);
+            
+            loader.setController(intlTrkController);
+            AnchorPane intlTrkWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(intlTrkWindow));
+            stage.setTitle("Create International tracking");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        
+        
+
+    }
+    
+    private void showCnTrkWindow(ActionEvent e){
+	try {
+     
+            JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
+            if (currentRecord == null || currentRecord.getIntlTrk() == null) {
+                showAlert("Error", "Record Error :" , "You did not select any record or the record does not have international trking !");
+                return;
+            }
+            
+            
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/CnTrkWindow.fxml"));
+            
+            CnTrkWindowController cnTrkController = new CnTrkWindowController(currentRecord);
+            cnTrkController.setMainWindow(instance);
+            
+            loader.setController(cnTrkController);
+            AnchorPane cnTrkWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(cnTrkWindow));
+            stage.setTitle("Create China tracking");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        
+        
+
+    }
     
     
     private void setupTable()
@@ -485,6 +556,13 @@ public class MainWindowController implements Initializable {
         intlTrkNum.setCellValueFactory(new PropertyValueFactory("intlTrkNum"));
         weight.setCellValueFactory(new PropertyValueFactory("weight"));
         fee.setCellValueFactory(new PropertyValueFactory("fee"));
+        
+        
+        cnCarrier.setCellValueFactory(new PropertyValueFactory("cnCarrier"));
+        cnTrkNum.setCellValueFactory(new PropertyValueFactory("cnTrkNum"));
+        address.setCellValueFactory(new PropertyValueFactory("address"));
+    
+        
         
         weight.setCellFactory(column -> {
             return new TableCell<JoinRecord, Integer>() {
@@ -605,6 +683,10 @@ public class MainWindowController implements Initializable {
 
     public void setTableRows(ObservableList tableRows) {
         this.tableRows = tableRows;
+    }
+
+    public TableView<?> getOrderTable() {
+        return orderTable;
     }
     
     
