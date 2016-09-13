@@ -10,16 +10,13 @@ import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
 import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
-import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
-import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Usanduscntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import com.kk.AutoFillSystem.utility.JoinRecord;
-import com.kk.AutoFillSystem.utility.LoggingAspect;
 import com.kk.AutoFillSystem.utility.TableFilter;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
@@ -32,6 +29,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -95,7 +93,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private MenuItem menuItemNewCarrier;
     @FXML
-    private MenuItem menuItemApplyFilter;
+    private MenuItem menuItemSyncEmails;
     @FXML
     private MenuItem menuItemClearFilter;
     
@@ -119,6 +117,8 @@ public class MainWindowController implements Initializable {
     //tableview
     @FXML
     private TableView<?> orderTable;
+    @FXML
+    private TableColumn<JoinRecord, Number> rowNumber;
     @FXML
     private TableColumn<JoinRecord, String> store;
     @FXML
@@ -154,14 +154,15 @@ public class MainWindowController implements Initializable {
     
     //constructor
     public MainWindowController() {
+        dataCenter = DataController.getInstance();
 
-        initData();
+        loadData();
         instance = this;
     }
     
     
-    private void initData() {
-        dataCenter = DataController.getInstance();
+    private void loadData() {
+        
         orders = dataCenter.getOrders();
         
         //get stores, products , carriers, and addresses
@@ -194,7 +195,12 @@ public class MainWindowController implements Initializable {
         //tableRows data.
         tableRows = FXCollections.observableArrayList(records);
         
-        System.out.println(records.size());
+        
+    }
+    
+    public void reloadTable() {
+        loadData();
+        orderTable.setItems(tableRows);
     }
     
     
@@ -395,6 +401,35 @@ public class MainWindowController implements Initializable {
         menuItemNewAddr.setOnAction(e->{showAddressWindow(e);});
         menuItemNewStore.setOnAction(e->{showStoreWindow(e);});
         
+        menuItemSyncEmails.setOnAction(e->{showSyncWindow(e);});
+        
+       
+    }
+    
+    private void showSyncWindow(ActionEvent e) {
+	
+            
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/SyncWindow.fxml"));
+            
+            SyncWindowController syncController = new SyncWindowController();
+            syncController.setMainWindow(instance);
+            
+            loader.setController(syncController);
+            AnchorPane syncWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(syncWindow));
+            stage.setTitle("Sync Data From Emails");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
        
     }
     
@@ -645,9 +680,10 @@ public class MainWindowController implements Initializable {
     
     private void setupTable()
     {
-     
+        
         
         //set up cellvalue factory
+        rowNumber.setCellValueFactory(column-> new ReadOnlyObjectWrapper<Number>(orderTable.getItems().indexOf(column.getValue()) +1));
         orderNum.setCellValueFactory(new PropertyValueFactory("orderNum"));
         orderDate.setCellValueFactory(new PropertyValueFactory("orderDate"));
         store.setCellValueFactory(new PropertyValueFactory("store"));

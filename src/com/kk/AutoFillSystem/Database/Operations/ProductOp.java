@@ -52,7 +52,9 @@ public class ProductOp {
     public static Products findProduct(EntityManager em, String desc) {
         
         Map<String, String> nameToNum = readMapFile("e:\\itemnames.txt");
-        Pattern prodNumP = Pattern.compile("([0-9]{5})");
+        
+        //lego prod number could be 5 or 7 digits
+        Pattern prodNumP = Pattern.compile("(\\d{7}|\\d{5})");
         Matcher m1 = prodNumP.matcher(desc);
         String prodNum = "00000";
         if (m1.find()) {

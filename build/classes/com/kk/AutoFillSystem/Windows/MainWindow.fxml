@@ -33,7 +33,7 @@
             </Menu>
             <Menu mnemonicParsing="false" text="Sync">
               <items>
-                <MenuItem fx:id="menuItemApplyFilter" mnemonicParsing="false" text="Apply Filter" />
+                <MenuItem fx:id="menuItemSyncEmails" mnemonicParsing="false" text="Sync Emails" />
                   <MenuItem fx:id="menuItemClearFilter" mnemonicParsing="false" text="Clear Filter" />
               </items>
             </Menu>
@@ -67,10 +67,11 @@
          <children>
             <TableView fx:id="orderTable" editable="true" prefHeight="429.0" prefWidth="1196.0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
               <columns>
-                  <TableColumn fx:id="store" prefWidth="0.0" text="Store" />
-                  <TableColumn fx:id="orderNum" prefWidth="0.0" text="Order #" />
-                  <TableColumn fx:id="orderDate" editable="false" prefWidth="0.0" text="Date" />
-                  <TableColumn fx:id="orderList" prefWidth="75.0" text="Order list" />
+                  <TableColumn fx:id="rowNumber" prefWidth="35.0" text="#" />
+                  <TableColumn fx:id="store" prefWidth="75.0" text="Store" />
+                  <TableColumn fx:id="orderNum" prefWidth="75.0" text="Order #" />
+                  <TableColumn fx:id="orderDate" editable="false" prefWidth="70.0" text="Date" />
+                  <TableColumn fx:id="orderList" text="Order list" />
                   <TableColumn prefWidth="75.0" text="US tracking">
                      <columns>
                         <TableColumn fx:id="usCarrier" prefWidth="75.0" text="Carrier" />

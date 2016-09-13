@@ -125,6 +125,10 @@ public class Tools {
             warehouse = "TT";
         }
         
+        if (text.contains("Yi Xue")) {
+            warehouse = "Yi Xue";
+        }
+        
         return warehouse;
         
     }

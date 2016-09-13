@@ -1,6 +1,7 @@
 package com.kk.AutoFillSystem.EmailInfo;
 
 import static com.kk.AutoFillSystem.EmailInfo.GetWalmart.getBody;
+import com.kk.AutoFillSystem.Windows.SyncWindowController;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Shipment;
 import java.text.ParseException;
@@ -72,23 +73,16 @@ public abstract class GetStore {
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "465");
         
-        try {
-            Session session = Session.getDefaultInstance(props, null);
-            store = session.getStore("imaps");
-            store.connect("smtp.gmail.com", email, pwd);
-            System.out.println("Connected successfully");
-            inbox = store.getFolder("inbox");
-            inbox.open(Folder.READ_ONLY);
-            
-        }
-        catch(NoSuchProviderException ex) {
-            ex.printStackTrace();
-            
-        }
-        catch(MessagingException ex) {
-            ex.printStackTrace();
-            
-        }
+        
+        Session session = Session.getDefaultInstance(props, null);
+        store = session.getStore("imaps");
+        store.connect("smtp.gmail.com", email, pwd);
+        System.out.println("Connected successfully");
+        inbox = store.getFolder("inbox");
+        inbox.open(Folder.READ_ONLY);
+
+        
+        
 
     }
     
@@ -98,57 +92,71 @@ public abstract class GetStore {
     public void searchInfoSince(String fromDate) throws AddressException, ParseException, MessagingException {
         //get searchterm 
         SearchTerm senderTerm = new FromTerm(new InternetAddress(emailSender));
-        SimpleDateFormat df1 = new SimpleDateFormat( "MM/dd/yy" );
-            
-            Date dDate = df1.parse(fromDate);
-            SearchTerm dateTerm = new ReceivedDateTerm(ComparisonTerm.GT,dDate);
-        
-            Message[] messages = inbox.search(new AndTerm(senderTerm, dateTerm)); //construct basic search terms and search
-            System.out.println(messages.length);
-            for(Message msg: messages) {
-                
-//                if (msg.getSubject().contains(orderSubject)) {
-//                    
-//                    String[] body = getBody(msg);
-//                    
-//                    Document doc = Jsoup.parse(body[1]);
-//                    
-//                    Order order = extractOrder(doc.text());
-//                    order.orderDate = msg.getReceivedDate();
-//                    order.storeName = this.storeName;
-//                    System.out.println(order.toString());
-//                    orders.add(order);
-//                    
-//                }
-                
-                if (msg.getSubject().contains(shipSubject)) {
-                    
-                    String[] body = getBody(msg);
-                    Document doc = Jsoup.parse(body[1]);
-                    
-                    
-                    Shipment shipment = extractShipment(doc.text());
-                    
-                    //for toysrus , the shipment email order number is in subject. 
-                    if(this.storeName.equals("Toysrus")) {
-                        String subject = msg.getSubject();
-                        Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
-                        Matcher m = orderNum.matcher(subject);
-                        if(m.find()) {
-                            shipment.orderNum = m.group(1);
-                        }
-                    }
-                    
-                    shipment.shipDate = msg.getReceivedDate(); 
-                    shipments.add(shipment);
-                    
-                }
+        SimpleDateFormat df1 = new SimpleDateFormat("MM/dd/yy");
+
+        Date dDate = df1.parse(fromDate);
+        SearchTerm dateTerm = new ReceivedDateTerm(ComparisonTerm.GT, dDate);
+
+        Message[] messages = inbox.search(new AndTerm(senderTerm, dateTerm)); //construct basic search terms and search
+        System.out.println(messages.length);
+        for (Message msg : messages) {
+
+            if (msg.getSubject().contains(orderSubject)) {
+
+                String[] body = getBody(msg);
+
+                Document doc = Jsoup.parse(body[1]);
+
+                Order order = extractOrder(doc.text());
+                order.orderDate = msg.getReceivedDate();
+                order.storeName = this.storeName;
+                orders.add(order);
+
+                System.out.println(order.toString());
+
             }
-        
+
+            if (msg.getSubject().contains(shipSubject)) {
+
+                String[] body = getBody(msg);
+                Document doc = Jsoup.parse(body[1]);
+
+                Shipment shipment = extractShipment(doc.text());
+
+                //for toysrus , the shipment email order number is in subject. 
+                if (this.storeName.equals("Toysrus")) {
+                    String subject = msg.getSubject();
+                    Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
+                    Matcher m = orderNum.matcher(subject);
+                    if (m.find()) {
+                        shipment.orderNum = m.group(1);
+                    }
+                }
+
+                shipment.shipDate = msg.getReceivedDate();
+                shipments.add(shipment);
+                System.out.println(shipment.toString());
+
+            }
+        }
+
     }
     
-    
-    
+    //step by step operations
+    public Message[] getMessages(String fromDate) throws MessagingException, ParseException {
+        //get searchterm 
+        SearchTerm senderTerm = new FromTerm(new InternetAddress(emailSender));
+        SimpleDateFormat df1 = new SimpleDateFormat("MM/dd/yy");
+
+        Date dDate = df1.parse(fromDate);
+        SearchTerm dateTerm = new ReceivedDateTerm(ComparisonTerm.GT, dDate);
+
+        Message[] messages = inbox.search(new AndTerm(senderTerm, dateTerm)); //construct basic search terms and search
+        System.out.println(messages.length);
+        
+        return messages;
+        
+    }
     
     
     public abstract Order extractOrder(String text);
@@ -239,6 +247,22 @@ public abstract class GetStore {
 
     public void setShipments(ArrayList<Shipment> shipments) {
         this.shipments = shipments;
+    }
+
+    public String getOrderSubject() {
+        return orderSubject;
+    }
+
+    public void setOrderSubject(String orderSubject) {
+        this.orderSubject = orderSubject;
+    }
+
+    public String getShipSubject() {
+        return shipSubject;
+    }
+
+    public void setShipSubject(String shipSubject) {
+        this.shipSubject = shipSubject;
     }
     
     
