@@ -18,12 +18,14 @@ import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import static com.kk.AutoFillSystem.Database.Operations.AddressOp.createNewAddress;
 import static com.kk.AutoFillSystem.Database.Operations.CarrierOp.createNewCarrier;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
+import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrderFromEntity;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrderline;
 import static com.kk.AutoFillSystem.Database.Operations.ProductOp.createNewProduct;
 import static com.kk.AutoFillSystem.Database.Operations.StoreOp.createNewStore;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createCnTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewTrkline;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewUsTrkFromEntity;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateUsTrk;
 import com.kk.AutoFillSystem.Database.Services.AddressService;
@@ -55,12 +57,14 @@ public class DataController {
     private static EntityManagerFactory emf ;
     private static EntityManager em ;
     
+    private List<Orders> orders;
     
     public DataController() {
         //initialize db connection
         emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");
         em = emf.createEntityManager();
         
+        orders = getDbOrders();
     }
     
    
@@ -77,7 +81,7 @@ public class DataController {
      * Get db data
      **/
     
-    public List<Orders> getOrders() {
+    public List<Orders> getDbOrders() {
         OrderService os = new OrderService(em, Orders.class);
         return os.findAll();
     }
@@ -106,12 +110,20 @@ public class DataController {
         return createNewOrder(em, orderInfo);
     }
     
+   public Orders createOrder(Orders order) {
+       return createNewOrderFromEntity(em, order);
+   }
+    
     public void createOrderline(Orderlines orderline) {
         createNewOrderline(em, orderline);
     }
     
     public Ustrkings createUsTrking(Shipment shipInfo) {
         return createUsTrk(em, shipInfo);
+    }
+    
+    public Ustrkings createUsTrking(Ustrkings ustrk) {
+        return createNewUsTrkFromEntity(em, ustrk);
     }
     
     public Ustrkings updateUsTrking(Ustrkings ustrk) {
@@ -156,6 +168,10 @@ public class DataController {
 
     public static EntityManager getEm() {
         return em;
+    }
+
+    public List<Orders> getOrders() {
+        return orders;
     }
 
     

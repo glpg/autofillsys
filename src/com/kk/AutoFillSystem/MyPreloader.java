@@ -27,9 +27,7 @@ public class MyPreloader extends Preloader {
         
         VBox root = new VBox(title);
         root.setAlignment(Pos.BOTTOM_CENTER);
-//        root.setBackground(new Background(new BackgroundFill(
-//            Color.LIGHTGREY, CornerRadii.EMPTY,Insets.EMPTY)));
-        
+    
         String image =  getClass().getResource("splash.jpg").toExternalForm();
         root.setStyle("-fx-background-image: url('" + image + "'); " +
            "-fx-background-position: center center; " +

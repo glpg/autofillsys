@@ -217,6 +217,7 @@ public class MainWindowController implements Initializable {
     }
     
     public void reloadTable() {
+        dataCenter.getDbOrders();
         loadData();
         orderTable.setItems(tableRows);
     }

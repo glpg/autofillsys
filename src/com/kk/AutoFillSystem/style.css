@@ -1,0 +1,10 @@
+.combo-box .list-cell 
+{
+    -fx-background-color: lightgrey;
+    
+}
+
+.vbox {
+    -fx-border-width:5;
+    -fx-border-color:blue;
+}

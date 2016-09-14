@@ -5,9 +5,12 @@
  */
 package com.kk.AutoFillSystem;
 
+import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Windows.MainWindowController;
+import com.sun.javafx.application.LauncherImpl;
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.application.Preloader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -32,9 +35,18 @@ public class AutoFillSystem extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(args);
+        //launch(args);
+        LauncherImpl.launchApplication(AutoFillSystem.class, MyPreloader.class, args);
     }
     
+    
+    @Override
+    public void init() throws Exception {
+        
+        //initialize the data center, especially establish the connection links and load records
+        new DataController();
+        Thread.sleep(2000);
+    }
     
     @Override
     public void start( Stage st1 ){

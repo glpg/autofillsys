@@ -200,5 +200,15 @@ public class TrackOp {
         em.getTransaction().commit();    
     }
     
+    
+    public static Ustrkings createNewUsTrkFromEntity(EntityManager em, Ustrkings ustrk) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.persist(ustrk);
+        addMessageWithDate("New US shipment : " + ustrk.getTrkingNum()+ " is created.");
+        
+        em.getTransaction().commit();   
+        return ustrk;
+    }
 }
 

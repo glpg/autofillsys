@@ -112,5 +112,14 @@ public class OrderOp {
         em.getTransaction().commit();    
     }
     
+    public static Orders createNewOrderFromEntity(EntityManager em, Orders order) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.persist(order);
+        addMessageWithDate("New order : " + order.getOrderNum()+ " is created.");
+        
+        em.getTransaction().commit();   
+        return order;
+    }
     
 }
