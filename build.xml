@@ -70,4 +70,34 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <!-- set the date and version here -->
+    <property name="creation-date" value="2016-09-14"/>
+    <property name="version" value="1.0.0"/>
+    
+    <!-- this is the jar name when it is created -->
+    <property name="jarname" value="TrackSystem-${version}"/>
+
+    <!-- this creates a manifest to get the date and version of the jar -->
+    <target name="-post-init">
+        <manifest file="src/com/kk/AutoFillSystem/MANIFEST.MF">
+            <attribute name="creation-date" value="${creation-date}" />
+            <attribute name="version" value="${version}" />
+        </manifest>
+    </target>
+    
+    
+    
+    <target name="-post-jar">
+        <delete dir="target"/>
+        <jar jarfile="target/${jarname}.jar">
+            <zipfileset src="${dist.jar}" excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA" />
+            <zipgroupfileset dir="lib" excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA" />
+            <manifest>
+                <attribute name="Main-Class" value="com.kk.AutoFillSystem.AutoFillSystem"/> 
+            </manifest>
+        </jar>
+    </target>
+
+    
 </project>
