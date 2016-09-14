@@ -103,5 +103,14 @@ public class OrderOp {
     }
     
     
+    public static void createNewOrderline(EntityManager em, Orderlines orderline) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.persist(orderline);
+        addMessageWithDate("New orderline : " + orderline.getProductId().getProdNum() +  " for order " + orderline.getOrderId().getOrderNum()+ " is created.");
+        
+        em.getTransaction().commit();    
+    }
+    
     
 }

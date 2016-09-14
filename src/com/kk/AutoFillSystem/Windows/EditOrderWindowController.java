@@ -6,14 +6,20 @@
 package com.kk.AutoFillSystem.Windows;
 
 import com.kk.AutoFillSystem.DataCenter.DataController;
+import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
+import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
+import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,11 +45,12 @@ import javafx.stage.Stage;
  *
  * @author Yi
  */
-public class OrderWindowController implements Initializable {
+public class EditOrderWindowController implements Initializable {
     private DataController dataCenter;
     private MainWindowController mainWindow;
-    private Order orderInfo;
     private ArrayList<Product> prods;
+    private JoinRecord record;
+    
    
     
     @FXML
@@ -69,10 +76,10 @@ public class OrderWindowController implements Initializable {
     
     
     //constructor
-    public OrderWindowController(){
+    public EditOrderWindowController(JoinRecord record){
         dataCenter = DataController.getInstance();
         prods = new ArrayList();
-        orderInfo = new Order();
+        this.record = record;
     }
 
     /**
@@ -81,8 +88,9 @@ public class OrderWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
+        
         //buttons
-        buttonCreateOrder.setOnAction(e->{createOrder(e);});
+        buttonCreateOrder.setOnAction(e->{editOrder(e);});
         buttonCancel.setOnAction(e->{closeWindow(e);});
         buttonAdd.setOnAction(e->{addItem();});
         buttonClear.setOnAction(e->{clearItems();});
@@ -104,6 +112,32 @@ public class OrderWindowController implements Initializable {
         }
         FXCollections.sort(productList);
         comboBoxItem.setItems(productList);
+        
+        //get currrent order
+        Orders order = record.getOrder();
+        
+        //set up known info
+        
+        buttonCreateOrder.setText("Update Order");
+        
+        Instant instant = Instant.ofEpochMilli(record.getOrderDate().getTime());
+        
+        LocalDate localDate = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
+        datePicker.setValue(localDate);
+        textFieldOrderNum.setText(order.getOrderNum());
+        comboBoxStore.setValue(order.getStoreId().getName());
+        if(order.getOrderlinesCollection() != null && order.getOrderlinesCollection().size() > 0) {
+            for(Orderlines item : order.getOrderlinesCollection()) {
+                textAreaOrderlines.appendText(item.getProductId().getProdNum() + " : " + item.getQuantity() + "\n");
+            }
+        }
+        
+        //set disable
+        datePicker.setDisable(true);
+        textFieldOrderNum.setDisable(true);
+        comboBoxStore.setDisable(true);
+        
+        
         
         
         
@@ -151,40 +185,34 @@ public class OrderWindowController implements Initializable {
         });
     }
     
-    private void createOrder(ActionEvent e){
+    private void editOrder(ActionEvent e){
         
-        if (textFieldOrderNum.getText() == null || textFieldOrderNum.getText().length() == 0) {
-            showAlert("Error", "Order Number Error :" , "Order number is required!");
-            return;
-        }
-        
-        orderInfo.orderNum = textFieldOrderNum.getText();
-        if (comboBoxStore.getValue() == null || comboBoxStore.getValue().length() == 0) {
-            showAlert("Error", "Order Store Error :" , "Order store is required!");
-            return;
-        }
-        
-        orderInfo.storeName = comboBoxStore.getValue();
-        LocalDate date = datePicker.getValue();
-        if (date != null) {
-            Date orderDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            orderInfo.orderDate = orderDate;
+        for(Product prod  : prods) {
+            for(Products entry : mainWindow.getProducts()) {
+                if (prod.name.equals(entry.getProdNum())) {
+                    Orderlines temp = new Orderlines();
+                    temp.setProductId(entry);
+                    temp.setOrderId(record.getOrder());
+                    temp.setQuantity(prod.count);
+                    
+                    dataCenter.createOrderline(temp);
+                    record.getOrder().getOrderlinesCollection().add(temp);
+                    //need to expand info from the newly added orderlines
+                    for(JoinRecord tblRecord : mainWindow.getTableRows()) {
+                        if (tblRecord.getOrderNum().equals(record.getOrderNum())) {
+                            expandInfo(tblRecord);
+                        }
+                    }
+                    
+                }
+            }
             
         }
         
-        orderInfo.products = prods;
-        
-        Orders newOrder = dataCenter.createOrder(orderInfo);
-        
-        if (newOrder == null) {
-            showAlert("Failed", "Creating Failed :" , "The order could not be created !");
-        }
-        else {
-            showAlert("Success", "Record Created :" , "New order is created successfully !");
-            mainWindow.getOrders().add(newOrder);
-            //need to update mainwindow
-            mainWindow.addNewOrder(newOrder);
-        }
+        showAlert("Success", "New Orderlines Created :" , "New orderlines are created successfully !");
+        //forcing refreshing table
+        mainWindow.getOrderTable().getColumns().get(0).setVisible(false);
+        mainWindow.getOrderTable().getColumns().get(0).setVisible(true);
         closeWindow(e);
         
     }

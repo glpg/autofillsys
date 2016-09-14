@@ -6,6 +6,7 @@
 package com.kk.AutoFillSystem.Windows;
 
 import com.kk.AutoFillSystem.AutoFillSystem;
+import static com.kk.AutoFillSystem.AutoFillSystem.primaryStage;
 import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
@@ -20,7 +21,11 @@ import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.TableFilter;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,14 +44,20 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -73,7 +84,7 @@ public class MainWindowController implements Initializable {
     ArrayList<JoinRecord> records;
     
     //observable list 
-    private ObservableList tableRows;
+    private ObservableList<JoinRecord> tableRows;
     
     //menu
     @FXML
@@ -96,6 +107,13 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemSyncEmails;
     @FXML
     private MenuItem menuItemClearFilter;
+    @FXML
+    private MenuItem menuItemEditOrder;
+    @FXML
+    private MenuItem menuItemEditUsTrk;
+    @FXML
+    private MenuItem menuItemExportTable;
+    
     
     //filter area
     @FXML
@@ -116,7 +134,7 @@ public class MainWindowController implements Initializable {
     
     //tableview
     @FXML
-    private TableView<?> orderTable;
+    private TableView<JoinRecord> orderTable;
     @FXML
     private TableColumn<JoinRecord, Number> rowNumber;
     @FXML
@@ -403,6 +421,10 @@ public class MainWindowController implements Initializable {
         
         menuItemSyncEmails.setOnAction(e->{showSyncWindow(e);});
         
+        menuItemEditOrder.setOnAction(e->{showEditOrderWindow(e);});
+        menuItemEditUsTrk.setOnAction(e->{showEditUsTrkWindow(e);});
+        
+        menuItemExportTable.setOnAction(e->{exportTable();});
        
     }
     
@@ -548,6 +570,41 @@ public class MainWindowController implements Initializable {
     }
     
     
+    private void showEditOrderWindow(ActionEvent e){
+	try {
+     
+            JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
+            if (currentRecord == null) {
+                showAlert("Error", "Order Error :" , "You did not select any order in the table !");
+                return;
+            }
+            
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/OrderWindow.fxml"));
+            
+            EditOrderWindowController orderController = new EditOrderWindowController(currentRecord);
+            orderController.setMainWindow(instance);
+            
+            loader.setController(orderController);
+            AnchorPane orderWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(orderWindow));
+            stage.setTitle("Edit order");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        
+        
+
+    }
+    
+    
     private void showUsTrkWindow(ActionEvent e){
 	try {
      
@@ -581,6 +638,38 @@ public class MainWindowController implements Initializable {
 
     }
     
+    private void showEditUsTrkWindow(ActionEvent e){
+	try {
+     
+            JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
+            if (currentRecord == null || currentRecord.getUsTrk() == null) {
+                showAlert("Error", "Record Error :" , "You did not select any record or the record does not have US tracking !");
+                return;
+            }
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/UsTrkWindow.fxml"));
+            
+            EditUsTrkWindowController usTrkController = new EditUsTrkWindowController(currentRecord);
+            usTrkController.setMainWindow(instance);
+            
+            loader.setController(usTrkController);
+            AnchorPane usTrkWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(usTrkWindow));
+            stage.setTitle("Edit US tracking");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        
+        
+
+    }
     
     private void showIntlTrkWindow(ActionEvent e){
 	try {
@@ -678,6 +767,68 @@ public class MainWindowController implements Initializable {
        
     }
     
+    
+    private void exportTable() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save table data");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showSaveDialog(primaryStage);
+        System.out.println(file);
+        
+        if (file != null) {
+            Writer writer = null;
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-YYYY");
+                writer = new BufferedWriter(new FileWriter(file));
+                for (JoinRecord record : tableRows) {
+                    String weight =""; 
+                    String fee = "";
+                    if (record.getWeight() != 0) weight = Integer.toString(record.getWeight()) ;
+                    if (record.getFee() != 0.0) weight = Double.toString(record.getFee());
+                    
+                    String text = format(record.getStore())+ "," + format(record.getOrderNum()) + "," + 
+                            format(record.getOrderDate()) +","+ format(record.getOrderList()) + ", " +
+                            format(record.getUsCarrier()) + "," + format(record.getUsTrkNum()) + "," +
+                            format(record.getShipList()) + "," + format(record.getWarehouse()) + "," +
+                            format(record.getIntlTrkNum()) + "," + weight + "," +
+                            fee + "," + format(record.getCnCarrier()) + "," + format(record.getCnTrk()) +"," +
+                            format(record.getAddress()) +"\n";
+
+                    writer.write(text);
+                    
+                }
+                
+                writer.flush();
+                writer.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } 
+        }
+        
+        showAlert("Success", "Table Exported :" , "Table data is exported successfully !");
+        
+        
+    }
+    
+    private String format(Object obj) {
+        if (obj == null) return "";
+        else {
+            if (obj instanceof String) return  (String)obj ;
+            if (obj instanceof Date) {
+                SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-YYYY");
+                return sdf.format((Date)obj);
+            
+            }
+            
+        }
+        return "";
+    }
+    
+    
+   
+    
     private void setupTable()
     {
         
@@ -758,6 +909,46 @@ public class MainWindowController implements Initializable {
             };
         });
         
+        
+        //create a context menu and set it to tablerows
+        ContextMenu menu = new ContextMenu();
+        MenuItem addUsTrk = new MenuItem("Add Us Tracking");
+        addUsTrk.setOnAction(e -> {
+            showUsTrkWindow(e);
+        });
+        MenuItem addIntlTrk = new MenuItem("Add Intl Tracking");
+        addIntlTrk.setOnAction(e -> {
+            showIntlTrkWindow(e);
+        });
+        MenuItem addCnTrk = new MenuItem("Add Cn Tracking");
+        addCnTrk.setOnAction(e -> {
+            showCnTrkWindow(e);
+        });
+        SeparatorMenuItem line = new SeparatorMenuItem();
+        MenuItem editOrder = new MenuItem("Edit Order");
+        editOrder.setOnAction(e -> {
+            showEditOrderWindow(e);
+        });
+        MenuItem editUsTrk = new MenuItem("Edit Us Tracking");
+        
+        editUsTrk.setOnAction(e -> {
+            showEditUsTrkWindow(e);
+        });
+
+        menu.getItems().addAll(addUsTrk, addIntlTrk, addCnTrk, line, editOrder, editUsTrk);
+        
+        orderTable.setRowFactory(new Callback<TableView<JoinRecord>, TableRow<JoinRecord>>() {  
+            @Override  
+            public TableRow<JoinRecord> call(TableView<JoinRecord> tableView) {  
+                final TableRow<JoinRecord> row = new TableRow<>();  
+                row.setContextMenu(menu);
+               
+                return row ;  
+            }  
+        });  
+        
+
+        
         //set up table data
         orderTable.setItems(tableRows);
         
@@ -818,11 +1009,11 @@ public class MainWindowController implements Initializable {
         this.addresses = addresses;
     }
 
-    public ObservableList getTableRows() {
+    public ObservableList<JoinRecord> getTableRows() {
         return tableRows;
     }
 
-    public void setTableRows(ObservableList tableRows) {
+    public void setTableRows(ObservableList<JoinRecord> tableRows) {
         this.tableRows = tableRows;
     }
 

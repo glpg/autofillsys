@@ -115,18 +115,22 @@ public class Tools {
         String warehouse = "unknown";
         if (text.contains("ivy KangXue")) {
             warehouse = "ZZ";
+            return warehouse;
         }
        
         if (text.contains("RSJEP HDB")) {
             warehouse = "HDB";
+            return warehouse;
         }
         
         if (text.contains("LTFHN TT")) {
             warehouse = "TT";
+            return warehouse;
         }
         
         if (text.contains("Yi Xue")) {
             warehouse = "Yi Xue";
+            
         }
         
         return warehouse;

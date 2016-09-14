@@ -181,5 +181,24 @@ public class TrackOp {
         
     }
     
+    public static Ustrkings updateUsTrk(EntityManager em, Ustrkings ustrk) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        Ustrkings updated  = em.merge(ustrk);
+        addMessageWithDate("US shipment : " + ustrk.getTrkingNum() + " is updated.");
+        
+        em.getTransaction().commit();
+        return updated;
+    }
+    
+    public static void createNewTrkline(EntityManager em, Trklines trkline) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.persist(trkline);
+        addMessageWithDate("New trkline : " + trkline.getProductId().getProdNum() +  " for Us trking " + trkline.getUstrkingId().getTrkingNum()+ " is created.");
+        
+        em.getTransaction().commit();    
+    }
+    
 }
 

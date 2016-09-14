@@ -28,13 +28,7 @@
         <menus>
             <Menu mnemonicParsing="false" text="File">
               <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Sync">
-              <items>
-                <MenuItem fx:id="menuItemSyncEmails" mnemonicParsing="false" text="Sync Emails" />
-                  <MenuItem fx:id="menuItemClearFilter" mnemonicParsing="false" text="Clear Filter" />
+                <MenuItem fx:id="menuItemExportTable" mnemonicParsing="false" text="Export Table To File" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Add">
@@ -48,6 +42,18 @@
                   <MenuItem fx:id="menuItemNewCarrier" mnemonicParsing="false" text="New Shipping Carrier" />
                   <MenuItem fx:id="menuItemNewAddr" mnemonicParsing="false" text="New Address" />
                   <MenuItem fx:id="menuItemNewStore" mnemonicParsing="false" text="New Store" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+              <items>
+                <MenuItem fx:id="menuItemEditOrder" mnemonicParsing="false" text="Edit Order" />
+                  <MenuItem fx:id="menuItemEditUsTrk" mnemonicParsing="false" text="Edit US tracking" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Sync">
+              <items>
+                <MenuItem fx:id="menuItemSyncEmails" mnemonicParsing="false" text="Sync Emails" />
+                  <MenuItem fx:id="menuItemClearFilter" mnemonicParsing="false" text="Clear Filter" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

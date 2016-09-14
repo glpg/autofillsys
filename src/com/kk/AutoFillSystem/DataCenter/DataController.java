@@ -8,19 +8,24 @@ package com.kk.AutoFillSystem.DataCenter;
 import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
 import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
+import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
+import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import static com.kk.AutoFillSystem.Database.Operations.AddressOp.createNewAddress;
 import static com.kk.AutoFillSystem.Database.Operations.CarrierOp.createNewCarrier;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
+import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrderline;
 import static com.kk.AutoFillSystem.Database.Operations.ProductOp.createNewProduct;
 import static com.kk.AutoFillSystem.Database.Operations.StoreOp.createNewStore;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createCnTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createIntlTrk;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewTrkline;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateUsTrk;
 import com.kk.AutoFillSystem.Database.Services.AddressService;
 import com.kk.AutoFillSystem.Database.Services.CarrierService;
 import com.kk.AutoFillSystem.Database.Services.OrderService;
@@ -101,8 +106,20 @@ public class DataController {
         return createNewOrder(em, orderInfo);
     }
     
+    public void createOrderline(Orderlines orderline) {
+        createNewOrderline(em, orderline);
+    }
+    
     public Ustrkings createUsTrking(Shipment shipInfo) {
         return createUsTrk(em, shipInfo);
+    }
+    
+    public Ustrkings updateUsTrking(Ustrkings ustrk) {
+        return updateUsTrk(em, ustrk);
+    }
+    
+    public void createTrkline(Trklines trkline) {
+        createNewTrkline(em, trkline);
     }
     
     public void createIntlTrking(Ustocntrkings intlTrk, Ustrkings usTrk) {

@@ -13,14 +13,15 @@ import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.Product;
-import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
+import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,14 +36,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 /**
- * FXML Controller class
  *
  * @author Yi
  */
-public class UsTrkWindowController implements Initializable {
+public class EditUsTrkWindowController implements Initializable{
     private DataController dataCenter;
     private MainWindowController mainWindow;
-    private Shipment shipInfo;
+    
     private ArrayList<Product> prods;
     private JoinRecord record;
     
@@ -73,10 +73,9 @@ public class UsTrkWindowController implements Initializable {
     private Button buttonCancel;
 
     
-    public UsTrkWindowController(JoinRecord record) {
+    public EditUsTrkWindowController(JoinRecord record) {
         dataCenter = DataController.getInstance();
         prods = new ArrayList();
-        shipInfo = new Shipment();
         this.record = record;
     
     }
@@ -89,7 +88,7 @@ public class UsTrkWindowController implements Initializable {
         labelOrderNum.setText(record.getOrderNum());
         
         //buttons
-        buttonCreate.setOnAction(e->{create(e);});
+        buttonCreate.setOnAction(e->{edit(e);});
         buttonCancel.setOnAction(e->{closeWindow(e);});
         buttonAdd.setOnAction(e->{addItem();});
         buttonClear.setOnAction(e->{clearItems();});
@@ -119,6 +118,34 @@ public class UsTrkWindowController implements Initializable {
         
         FXCollections.sort(addrList);
         comboBoxShipto.setItems(addrList);
+        
+        //set up known info
+        buttonCreate.setText("Update Tracking");
+        
+        Instant instant = Instant.ofEpochMilli(record.getOrderDate().getTime());
+        
+        LocalDate localDate = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
+        datePicker.setValue(localDate);
+        textFieldTrkNum.setText(record.getUsTrkNum());
+        comboBoxCarrier.setValue(record.getUsCarrier());
+        if (!record.getWarehouse().equals("unknown")) {
+            comboBoxShipto.setValue(record.getWarehouse());
+            comboBoxShipto.setDisable(true);
+        }
+        if(record.getUsTrk().getTrklinesCollection() != null && record.getUsTrk().getTrklinesCollection().size() > 0) {
+            for(Trklines item : record.getUsTrk().getTrklinesCollection()) {
+                textAreaShipLines.appendText(item.getProductId().getProdNum() + " : " + item.getQuantity() + "\n");
+            }
+        }
+        
+        //set disable
+        datePicker.setDisable(true);
+        textFieldTrkNum.setDisable(true);
+        comboBoxCarrier.setDisable(true);
+        
+        
+        
+        
     }    
     
     
@@ -154,107 +181,56 @@ public class UsTrkWindowController implements Initializable {
     
     
     
-    private void create(ActionEvent e) {
-        if (textFieldTrkNum.getText() == null || textFieldTrkNum.getText().length() == 0) {
-            showAlert("Error", "Trk Number Error :" , "Tracking number is required!");
-            return;
-        }
+    private void edit(ActionEvent e) {
         
-        shipInfo.trackingNum = textFieldTrkNum.getText().trim();
-        
-        //check if trking already exsited
-        for(Ustrkings ustrk : record.getOrder().getUstrkingsCollection()) {
-            if (shipInfo.trackingNum.toLowerCase().equals(ustrk.getTrkingNum().toLowerCase())) {
-                showAlert("Error", "Trk Number Error :" , "Tracking number already exists!");
-                return;
+        if(!comboBoxShipto.isDisabled()) {
+            if (comboBoxShipto.getValue() == null ||comboBoxShipto.getValue().isEmpty()) {
+                showAlert("Error", "Address Failed :" , "The shipto field is required !");
             }
-        }
-        
-        
-        
-        if (comboBoxCarrier.getValue() == null || comboBoxCarrier.getValue().length() == 0) {
-            showAlert("Error", "Carrier Error :" , "Carrier is required!");
-            return;
-        }
-        
-        shipInfo.carrier = comboBoxCarrier.getValue();
-        
-        if (comboBoxShipto.getValue() == null || comboBoxShipto.getValue().length() == 0) {
-            showAlert("Error", "Shipping Address Error :" , "Shipping Address is required!");
-            return;
-        }
-        
-        shipInfo.warehouse = comboBoxShipto.getValue();
-        
-        LocalDate date = datePicker.getValue();
-        if (date != null) {
-            Date orderDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            shipInfo.shipDate = orderDate;
-            
-        }
-        
-        shipInfo.products = prods;
-        shipInfo.orderNum = record.getOrderNum();
-        
-        
-        Ustrkings newTrk = dataCenter.createUsTrking(shipInfo);
-        
-        if (newTrk == null) {
-            showAlert("Failed", "Creating Failed :" , "The us shipment could not be created !");
-        }
-            
-        else {
-            showAlert("Success", "Record Created :" , "New US shipment is created successfully !");
-            //if the current record does not have us trking, add info in
-            if (record.getUsTrk() == null) {
-                record.setUsTrk(newTrk);
-                setTrkInfo(record, newTrk);
-
-                //forcing refreshing table
-                mainWindow.getOrderTable().getColumns().get(0).setVisible(false);
-                mainWindow.getOrderTable().getColumns().get(0).setVisible(true);
-
-            }
-            
             else {
-                //create new record to store info
-                JoinRecord newRecord = new JoinRecord();
-                newRecord.setOrder(record.getOrder());
-                newRecord.setOrderDate(record.getOrderDate());
-                newRecord.setOrderNum(record.getOrderNum());
-                newRecord.setStore(record.getStore());
-                newRecord.setUsTrk(newTrk);
-                setTrkInfo(newRecord, newTrk);
-                
-                mainWindow.getTableRows().add(newRecord);
-                
+                Ustrkings ustrk = record.getUsTrk();
+                for(Addresses item : mainWindow.getWarehouses()) {
+                    if (comboBoxShipto.getValue().equals(item.getName())){
+                        ustrk.setAddressId(item);
+                        //now persist data
+                        Ustrkings updated = dataCenter.updateUsTrking(ustrk);
+                        record.setUsTrk(updated);
+                    }
+                }
+            }
+        }
+        
+        
+        for(Product prod  : prods) {
+            for(Products entry : mainWindow.getProducts()) {
+                if (prod.name.equals(entry.getProdNum())) {
+                    Trklines temp = new Trklines();
+                    temp.setProductId(entry);
+                    temp.setUstrkingId(record.getUsTrk());
+                    temp.setQuantity(prod.count);
+                    
+                    dataCenter.createTrkline(temp);
+                    record.getUsTrk().getTrklinesCollection().add(temp);
+                    
+                    for(JoinRecord tblRecord : mainWindow.getTableRows()) {
+                        if (tblRecord.getUsTrkNum().equals(record.getUsTrkNum())) {
+                            expandInfo(tblRecord);
+                        }
+                    }
+                }
             }
             
         }
+        
+        
+        showAlert("Success", "Record Updated :" , "Us shipment is updated successfully !");
+        //forcing refreshing table
+        mainWindow.getOrderTable().getColumns().get(0).setVisible(false);
+        mainWindow.getOrderTable().getColumns().get(0).setVisible(true);
+         
         closeWindow(e);
         
     }
-    
-    
-    private void setTrkInfo(JoinRecord record, Ustrkings newTrk) {
-        record.setUsCarrier(newTrk.getCarrierId().getName());
-        record.setUsTrkNum(newTrk.getTrkingNum());
-        record.setWarehouse(newTrk.getAddressId().getName());
-
-        StringBuilder sb = new StringBuilder();
-        for (Trklines prd : newTrk.getTrklinesCollection()) {
-
-            sb.append(prd.getProductId().getProdNum()).append(" : ").append(prd.getQuantity()).append(" || ");
-
-        }
-
-        String items = sb.toString();
-        if (items.length() > 0) {
-            record.setShipList(items.substring(0, items.length() - 3));
-        }
-
-    }
-    
     
     
     
@@ -268,7 +244,6 @@ public class UsTrkWindowController implements Initializable {
     public void setMainWindow(MainWindowController mainWindow) {
         this.mainWindow = mainWindow;
     }
-    
     
     
     
