@@ -44,15 +44,16 @@ public class AutoFillSystem extends Application {
     public void init() throws Exception {
         
         //initialize the data center, especially establish the connection links and load records
-        new DataController();
-        Thread.sleep(2000);
+        initMainWindow();
+        
     }
     
     @Override
     public void start( Stage st1 ){
 	
 	primaryStage = st1; 
-	initMainWindow();
+	primaryStage.setScene(mainScene);
+        primaryStage.setTitle("Tracking System 1.0.0");
 		
 	primaryStage.show();
 		
@@ -70,8 +71,7 @@ public class AutoFillSystem extends Application {
             MainWindowController controller = loader.getController();
             //controller.setMainApp(this);
             mainScene = new Scene(rootLayout);
-            primaryStage.setScene(mainScene);
-            primaryStage.setTitle("Tracking System 1.0.0");
+            
             
 
         } catch (IOException e) {

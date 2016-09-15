@@ -110,7 +110,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private MenuItem menuItemSyncEmails;
     @FXML
-    private MenuItem menuItemClearFilter;
+    private MenuItem menuItemReloadTable;
     @FXML
     private MenuItem menuItemEditOrder;
     @FXML
@@ -135,11 +135,13 @@ public class MainWindowController implements Initializable {
     @FXML
     private Button btnClearFilter;
     @FXML
-    private TextField textFieldOrderNum;
+    private TextField textFieldSearchNum;
     @FXML
     private Button buttonSearch;
     @FXML
     private Button buttonReset;
+    @FXML
+    private ComboBox<String> comboBoxSearch;
     
     
     //tableview
@@ -227,7 +229,7 @@ public class MainWindowController implements Initializable {
     }
     
     public void reloadTable() {
-        orders = dataCenter.getDbOrders();
+        
         loadData();
         orderTable.setItems(tableRows);
     }
@@ -361,38 +363,59 @@ public class MainWindowController implements Initializable {
         FXCollections.sort(destinationList);
         comboBoxDestination.setItems(destinationList);
         
+        comboBoxSearch.getItems().addAll("US Track", "Order", "Intl Track");
+        comboBoxSearch.setValue("US Track");
+        
         //set up buttons
         btnApplyFilter.setOnAction(e->{applyFilter();});
         btnClearFilter.setOnAction(e->{clearFilter();});
         
-        buttonSearch.setOnAction(e->{searchOrder();});
+        buttonSearch.setOnAction(e->{search();});
         buttonReset.setOnAction(e->{reset();});
         
     }
     
-    private void searchOrder(){
-        if(textFieldOrderNum.getText() == null || textFieldOrderNum.getText().isEmpty() ) {
-            showAlert("Error", "Order Number Error: ", "You did not input the order number to be searched !");
+    private void search(){
+        if(textFieldSearchNum.getText() == null || textFieldSearchNum.getText().isEmpty() ) {
+            showAlert("Error", "Search field Error: ", "You did not input a number for search !");
             return;
         }
-        else{
-            ObservableList<JoinRecord> results = FXCollections.observableArrayList();
-            for (JoinRecord record: tableRows) {
-                if (record.getOrderNum().contains(textFieldOrderNum.getText())) {
-                    results.add(record);
+        ObservableList<JoinRecord> results = FXCollections.observableArrayList();
+        for (JoinRecord record: tableRows) {
+            String recordValue ;
+            switch (comboBoxSearch.getValue()) {
+                case "US Track" : {
+                    recordValue = record.getUsTrkNum();
+                    break;
                 }
-                
-            }
-            orderTable.setItems(results);
-            textFieldOrderNum.clear();
+                case "Order" :{
+                    recordValue = record.getOrderNum();
+                    break;
+                }
+                default: {
+                    recordValue = record.getIntlTrkNum();
+                }
             
+            
+            }
+            
+            
+            if (recordValue != null && recordValue.contains(textFieldSearchNum.getText())) {
+                results.add(record);
+            }
+
         }
+        orderTable.setItems(results);
+
+        
         
     }
     
+   
+    
     private void reset(){
         orderTable.setItems(tableRows);
-        textFieldOrderNum.clear();
+        textFieldSearchNum.clear();
         
     }
     

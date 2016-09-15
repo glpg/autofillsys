@@ -68,7 +68,6 @@ public class DataController {
         emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");
         em = emf.createEntityManager();
         
-        orders = getDbOrders();
     }
     
    
@@ -85,7 +84,7 @@ public class DataController {
      * Get db data
      **/
     
-    public List<Orders> getDbOrders() {
+    public List<Orders> getOrders() {
         OrderService os = new OrderService(em, Orders.class);
         return os.findAll();
     }
@@ -204,9 +203,7 @@ public class DataController {
         return em;
     }
 
-    public List<Orders> getOrders() {
-        return orders;
-    }
+ 
 
     
     
