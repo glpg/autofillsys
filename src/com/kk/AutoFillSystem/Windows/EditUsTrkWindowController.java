@@ -212,11 +212,7 @@ public class EditUsTrkWindowController implements Initializable{
                     dataCenter.createTrkline(temp);
                     record.getUsTrk().getTrklinesCollection().add(temp);
                     
-                    for(JoinRecord tblRecord : mainWindow.getTableRows()) {
-                        if (tblRecord.getUsTrkNum().equals(record.getUsTrkNum())) {
-                            expandInfo(tblRecord);
-                        }
-                    }
+                    expandInfo(record);
                 }
             }
             

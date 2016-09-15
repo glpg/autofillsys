@@ -27,6 +27,7 @@ import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewTrkline;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewUsTrkFromEntity;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.relateUsandIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateUsTrk;
 import com.kk.AutoFillSystem.Database.Services.AddressService;
 import com.kk.AutoFillSystem.Database.Services.CarrierService;
@@ -163,6 +164,10 @@ public class DataController {
     
     public void createIntlTrking(Ustocntrkings intlTrk, Ustrkings usTrk) {
         createIntlTrk(em,intlTrk, usTrk);
+    }
+    
+    public void createUsAndIntlRelation(Ustocntrkings intlTrk, Ustrkings usTrk) {
+        relateUsandIntlTrk(em, intlTrk, usTrk);
     }
     
     public void createCnTrking(Cntrkings cnTrk) {

@@ -51,6 +51,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
@@ -85,6 +86,9 @@ public class MainWindowController implements Initializable {
     
     //observable list 
     private ObservableList<JoinRecord> tableRows;
+    
+    //cp and paste intl trk
+    private Ustocntrkings copyStoreIntlTrk;
     
     //menu
     @FXML
@@ -130,6 +134,12 @@ public class MainWindowController implements Initializable {
     private Button btnApplyFilter;
     @FXML
     private Button btnClearFilter;
+    @FXML
+    private TextField textFieldOrderNum;
+    @FXML
+    private Button buttonSearch;
+    @FXML
+    private Button buttonReset;
     
     
     //tableview
@@ -217,7 +227,7 @@ public class MainWindowController implements Initializable {
     }
     
     public void reloadTable() {
-        dataCenter.getDbOrders();
+        orders = dataCenter.getDbOrders();
         loadData();
         orderTable.setItems(tableRows);
     }
@@ -355,8 +365,36 @@ public class MainWindowController implements Initializable {
         btnApplyFilter.setOnAction(e->{applyFilter();});
         btnClearFilter.setOnAction(e->{clearFilter();});
         
+        buttonSearch.setOnAction(e->{searchOrder();});
+        buttonReset.setOnAction(e->{reset();});
+        
     }
     
+    private void searchOrder(){
+        if(textFieldOrderNum.getText() == null || textFieldOrderNum.getText().isEmpty() ) {
+            showAlert("Error", "Order Number Error: ", "You did not input the order number to be searched !");
+            return;
+        }
+        else{
+            ObservableList<JoinRecord> results = FXCollections.observableArrayList();
+            for (JoinRecord record: tableRows) {
+                if (record.getOrderNum().contains(textFieldOrderNum.getText())) {
+                    results.add(record);
+                }
+                
+            }
+            orderTable.setItems(results);
+            textFieldOrderNum.clear();
+            
+        }
+        
+    }
+    
+    private void reset(){
+        orderTable.setItems(tableRows);
+        textFieldOrderNum.clear();
+        
+    }
     
     private void applyFilter(){
         String selectedStore = (comboBoxStore.getValue() == null)? null : (String)comboBoxStore.getValue();
@@ -921,8 +959,22 @@ public class MainWindowController implements Initializable {
         editUsTrk.setOnAction(e -> {
             showEditUsTrkWindow(e);
         });
+        SeparatorMenuItem line2 = new SeparatorMenuItem();
+        
+        
+        MenuItem copyIntlTrk = new MenuItem("Copy Intl Tracking");
+        copyIntlTrk.setOnAction(e -> {
+            
+            copyIntlTrk();
+        });
+        MenuItem pasteIntlTrk = new MenuItem("Paste Intl Tracking");
+        
+        pasteIntlTrk.setOnAction(e -> {
+            pasteIntlTrk();
+        });
+       
 
-        menu.getItems().addAll(addUsTrk, addIntlTrk, addCnTrk, line, editOrder, editUsTrk);
+        menu.getItems().addAll(addUsTrk, addIntlTrk, addCnTrk, line, editOrder, editUsTrk, line2, copyIntlTrk, pasteIntlTrk);
         
         orderTable.setRowFactory(new Callback<TableView<JoinRecord>, TableRow<JoinRecord>>() {  
             @Override  
@@ -944,6 +996,35 @@ public class MainWindowController implements Initializable {
         
         
    
+    }
+    
+    private void copyIntlTrk() {
+        JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
+        copyStoreIntlTrk = currentRecord.getIntlTrk();
+    }
+    
+    private void pasteIntlTrk() {
+        if (copyStoreIntlTrk == null) {
+            showAlert("Error", "Intl Trk Error :" , "No intl trking is copied, copy first !");
+            return;
+        }
+        
+        else{
+            JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
+            Ustrkings ustrk = currentRecord.getUsTrk();
+            dataCenter.createUsAndIntlRelation(copyStoreIntlTrk, ustrk);
+            currentRecord.setIntlTrk(copyStoreIntlTrk);
+            expandInfo(currentRecord);
+            
+            //force refreshing
+            //forcing refreshing table
+            orderTable.getColumns().get(0).setVisible(false);
+            orderTable.getColumns().get(0).setVisible(true);
+            //set copystore to null
+            copyStoreIntlTrk = null;
+        }
+            
+        
     }
     
     //setters and getters

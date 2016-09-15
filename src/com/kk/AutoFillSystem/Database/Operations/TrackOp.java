@@ -50,103 +50,116 @@ public class TrackOp {
         TypedQuery<Ustrkings> trkQuery = em.createNamedQuery("Ustrkings.findByTrkingNum", Ustrkings.class).setParameter("trkingNum", shipmentInfo.trackingNum);
         List<Ustrkings> trkResults = trkQuery.getResultList();
         
-        //if existed already, skip
+        //if existed already, fedex trk can be reused, so need to check order number
         if (trkResults != null && trkResults.size() > 0) {
-            addMessage("Shipment " + shipmentInfo.trackingNum + " existed already, pass!");
+            for (Ustrkings tmp : trkResults) {
+                if (tmp.getOrderId().getOrderNum().equals(shipmentInfo.orderNum))
+                    addMessage("Shipment " + shipmentInfo.trackingNum + " existed already, pass!");
+                    return null;
+            }
+            
             
         }
         //else create new shipment
-        else {
-            //find the order
-            TypedQuery<Orders> orderQuery = em.createNamedQuery("Orders.findByOrderNum", Orders.class).setParameter("orderNum", shipmentInfo.orderNum);
-            List<Orders> orderResults = orderQuery.getResultList();
 
-            //if existed ,add the shipping details
-            if (orderResults != null && orderResults.size() > 0) {
-                em.getTransaction().begin();
-                
-                /* create new trkings */
-                ustrking = new Ustrkings();
-                //set order
-                Orders order = orderResults.get(0);
-                ustrking.setOrderId(order);
-                //set trking number
-                ustrking.setTrkingNum(shipmentInfo.trackingNum);
-                //set shipdate
-                ustrking.setShipDate(shipmentInfo.shipDate);
+        //find the order
+        TypedQuery<Orders> orderQuery = em.createNamedQuery("Orders.findByOrderNum", Orders.class).setParameter("orderNum", shipmentInfo.orderNum);
+        List<Orders> orderResults = orderQuery.getResultList();
 
-                //set warehouse
-                String warehouse = shipmentInfo.warehouse;
-                TypedQuery<Addresses> addrQuery = em.createNamedQuery("Addresses.findByName", Addresses.class).setParameter("name", warehouse);
-                List<Addresses> addrResults = addrQuery.getResultList();
+        //if existed ,add the shipping details
+        if (orderResults != null && orderResults.size() > 0) {
+            em.getTransaction().begin();
 
-                if (addrResults != null && addrResults.size() > 0) {
-                    ustrking.setAddressId(addrResults.get(0));
-                } else {
-                    ustrking.setAddressId((Addresses) addrService.find(0));
-                    addMessageWithDate(shipmentInfo.trackingNum + " failed to autofill warehouse, please add manually.");
-                }
+            /* create new trkings */
+            ustrking = new Ustrkings();
+            //set order
+            Orders order = orderResults.get(0);
+            ustrking.setOrderId(order);
+            //set trking number
+            ustrking.setTrkingNum(shipmentInfo.trackingNum);
+            //set shipdate
+            ustrking.setShipDate(shipmentInfo.shipDate);
 
-                //set carrier
-                String carrier = shipmentInfo.carrier;
-                if (carrier.contains("FedEx")) {
-                    carrier = "fedex";
-                }
-                if (carrier.contains("UPS")) {
-                    carrier = "ups";
-                }
-                TypedQuery<Carriers> carrierQuery = em.createNamedQuery("Carriers.findByName", Carriers.class).setParameter("name", carrier);
-                List<Carriers> carrierResults = carrierQuery.getResultList();
-                if (carrierResults != null && carrierResults.size() > 0) {
-                    ustrking.setCarrierId(carrierResults.get(0));
-                } else {
-                    ustrking.setCarrierId((Carriers) carrierService.find(0));
-                    addMessageWithDate(shipmentInfo.trackingNum + " failed to autofill carrier, please add manually.");
-                }
+            //set warehouse
+            String warehouse = shipmentInfo.warehouse;
+            TypedQuery<Addresses> addrQuery = em.createNamedQuery("Addresses.findByName", Addresses.class).setParameter("name", warehouse);
+            List<Addresses> addrResults = addrQuery.getResultList();
 
-                //set trking to order
-                order.getUstrkingsCollection().add(ustrking);
-                ustrkService.create(ustrking);
-
-                /*end of creating new trking for order*/
-                /*create trking lines */
-                for (Product prodInfo : shipmentInfo.products) {
-                    Products prod = findProduct(em, prodInfo.name);
-
-                    if (prod != null) {
-                        Trklines trkLine = new Trklines();
-                        //set trkId
-                        trkLine.setUstrkingId(ustrking);
-                        //set prod
-                        trkLine.setProductId(prod);
-                        //set count
-                        trkLine.setQuantity(prodInfo.count);
-
-                        //add trkline to ustrking
-                        ustrking.getTrklinesCollection().add(trkLine);
-
-                        //persist trkline
-                        trklineService.create(trkLine);
-
-                    } else {
-                        addMessageWithDate("trkingNum : " + shipmentInfo.trackingNum + " failed to add the trkline details.");
-                        addMessageWithDate(prodInfo.name + " " + prodInfo.count);
-                    }
-
-                }
-
-                /*end of trking lines creation*/
-                em.getTransaction().commit();
-                addMessageWithDate("Shipment : " + shipmentInfo.trackingNum + " is created.");
+            if (addrResults != null && addrResults.size() > 0) {
+                ustrking.setAddressId(addrResults.get(0));
             } else {
-                addMessage("trkingNum : " + shipmentInfo.trackingNum + " could not match orders in db.");
+                ustrking.setAddressId((Addresses) addrService.find(0));
+                addMessageWithDate(shipmentInfo.trackingNum + " failed to autofill warehouse, please add manually.");
             }
 
+            //set carrier
+            String carrier = shipmentInfo.carrier;
+            if (carrier.contains("FedEx")) {
+                carrier = "fedex";
+            }
+            if (carrier.contains("UPS")) {
+                carrier = "ups";
+            }
+            TypedQuery<Carriers> carrierQuery = em.createNamedQuery("Carriers.findByName", Carriers.class).setParameter("name", carrier);
+            List<Carriers> carrierResults = carrierQuery.getResultList();
+            if (carrierResults != null && carrierResults.size() > 0) {
+                ustrking.setCarrierId(carrierResults.get(0));
+            } else {
+                ustrking.setCarrierId((Carriers) carrierService.find(0));
+                addMessageWithDate(shipmentInfo.trackingNum + " failed to autofill carrier, please add manually.");
+            }
+
+            //set trking to order
+            order.getUstrkingsCollection().add(ustrking);
+            ustrkService.create(ustrking);
+
+            /*end of creating new trking for order*/
+            /*create trking lines */
+            for (Product prodInfo : shipmentInfo.products) {
+                Products prod = findProduct(em, prodInfo.name);
+
+                if (prod != null) {
+                    Trklines trkLine = new Trklines();
+                    //set trkId
+                    trkLine.setUstrkingId(ustrking);
+                    //set prod
+                    trkLine.setProductId(prod);
+                    //set count
+                    trkLine.setQuantity(prodInfo.count);
+
+                    //add trkline to ustrking
+                    ustrking.getTrklinesCollection().add(trkLine);
+
+                    //persist trkline
+                    trklineService.create(trkLine);
+
+                } else {
+                    addMessageWithDate("trkingNum : " + shipmentInfo.trackingNum + " failed to add the trkline details.");
+                    addMessageWithDate(prodInfo.name + " " + prodInfo.count);
+                }
+
+            }
+
+            /*end of trking lines creation*/
+            em.getTransaction().commit();
+            addMessageWithDate("Shipment : " + shipmentInfo.trackingNum + " is created.");
+        } else {
+            addMessage("trkingNum : " + shipmentInfo.trackingNum + " could not match orders in db.");
         }
-        
+
         return ustrking;
 
         
+    }
+    
+    public static void relateUsandIntlTrk(EntityManager em, Ustocntrkings intlTrk, Ustrkings usTrk) {
+        em.getTransaction().begin();
+        Usanduscntrkings relation = new Usanduscntrkings();
+        relation.setUstocntrkingId(intlTrk);
+        relation.setUstrkingId(usTrk);
+        em.persist(relation);
+        addMessageWithDate("Intl shipment : " + intlTrk.getTrkingNum() + " is correlated with Us trking : " + usTrk.getTrkingNum() + " .");
+        em.getTransaction().commit();
     }
     
     

@@ -19,6 +19,14 @@
             <ComboBox fx:id="comboBoxDestination" prefHeight="25.0" prefWidth="105.0" promptText="Destination" />
             <Button fx:id="btnApplyFilter" mnemonicParsing="false" prefHeight="25.0" prefWidth="78.0" text="Apply" />
             <Button fx:id="btnClearFilter" mnemonicParsing="false" text="Clear Filters" />
+            <Region prefHeight="200.0" prefWidth="200.0" />
+            <TextField fx:id="textFieldOrderNum" promptText="Search Order Number" />
+            <Button fx:id="buttonSearch" alignment="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Search">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonReset" mnemonicParsing="false" prefWidth="60.0" text="Reset" />
          </children>
          <padding>
             <Insets top="10.0" />
