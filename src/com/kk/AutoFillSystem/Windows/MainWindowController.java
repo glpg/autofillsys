@@ -473,6 +473,7 @@ public class MainWindowController implements Initializable {
         menuItemEditUsTrk.setOnAction(e->{showEditUsTrkWindow(e);});
         
         menuItemExportTable.setOnAction(e->{exportTable();});
+        menuItemReloadTable.setOnAction(e->{reloadTable();});
        
     }
     
