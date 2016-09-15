@@ -102,25 +102,33 @@ public abstract class GetStore {
         for (Message msg : messages) {
 
             if (msg.getSubject().contains(orderSubject)) {
-
+                Document doc;
                 String[] body = getBody(msg);
-
-                Document doc = Jsoup.parse(body[1]);
+                if (storeName.equals("Kmart"))
+                    doc = Jsoup.parse(body[0]);
+                else
+                    doc = Jsoup.parse(body[1]);
+                
 
                 Order order = extractOrder(doc.text());
                 order.orderDate = msg.getReceivedDate();
                 order.storeName = this.storeName;
                 orders.add(order);
-
+                
                 System.out.println(order.toString());
-
+              
+               
             }
 
             if (msg.getSubject().contains(shipSubject)) {
 
+                Document doc;
                 String[] body = getBody(msg);
-                Document doc = Jsoup.parse(body[1]);
-
+                if (storeName.equals("Kmart"))
+                    doc = Jsoup.parse(body[0]);
+                else
+                    doc = Jsoup.parse(body[1]);
+                
                 Shipment shipment = extractShipment(doc.text());
 
                 //for toysrus , the shipment email order number is in subject. 

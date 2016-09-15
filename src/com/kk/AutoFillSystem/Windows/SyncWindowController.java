@@ -7,6 +7,7 @@ package com.kk.AutoFillSystem.Windows;
 
 import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
+import com.kk.AutoFillSystem.EmailInfo.GetKmart;
 import com.kk.AutoFillSystem.EmailInfo.GetStore;
 import static com.kk.AutoFillSystem.EmailInfo.GetStore.getBody;
 import com.kk.AutoFillSystem.EmailInfo.GetToysrus;
@@ -59,6 +60,8 @@ public class SyncWindowController implements Initializable {
     @FXML
     private Button buttonSync;
     @FXML
+    private Button buttonTest;
+    @FXML
     private PasswordField passwordFieldPwd;
     
     public SyncWindowController() {
@@ -72,7 +75,8 @@ public class SyncWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         
         
-        buttonSync.setOnAction(e->{sync(e);});
+        buttonSync.setOnAction(e->{sync(e, true);});
+        buttonTest.setOnAction(e->{sync(e, false);});
         
         //load stores
         ObservableList<String> storeList = FXCollections.observableArrayList();
@@ -84,10 +88,14 @@ public class SyncWindowController implements Initializable {
         comboBoxStore.setItems(storeList);
     }    
     
-    private void sync(ActionEvent e) {
+
+    
+    private void sync(ActionEvent e, boolean save) {
         
         //disable once start
         buttonSync.setDisable(true);
+        buttonTest.setDisable(true);
+        
         
         //check missing info
         LocalDate date = datePicker.getValue();
@@ -139,6 +147,10 @@ public class SyncWindowController implements Initializable {
                 query = new GetToysrus(account, pwd);
                 break;
             }
+            case "Kmart" :{
+                query = new GetKmart(account,pwd);
+                break;
+            }
             default :{
                 showAlert("Error", "Not Supported Error :" , store + " is not supported yet !");
                 return;
@@ -171,10 +183,16 @@ public class SyncWindowController implements Initializable {
                     for (Message email : emails) {
 
                         if (email.getSubject().contains(query.getOrderSubject())) {
+                            //this part should be checked depending on stores
+                            //kmart using body[0]
 
                             String[] body = getBody(email);
-
-                            Document doc = Jsoup.parse(body[1]);
+                            Document doc;
+                            if(store.equals("Kmart")) {
+                                doc = Jsoup.parse(body[0]);
+                            }
+                            else
+                                doc = Jsoup.parse(body[1]);
 
                             Order order = query.extractOrder(doc.text());
                             order.orderDate = email.getReceivedDate();
@@ -189,7 +207,12 @@ public class SyncWindowController implements Initializable {
                         if (email.getSubject().contains(query.getShipSubject())) {
 
                             String[] body = getBody(email);
-                            Document doc = Jsoup.parse(body[1]);
+                            Document doc;
+                            if(store.equals("Kmart")) {
+                                doc = Jsoup.parse(body[0]);
+                            }
+                            else
+                                doc = Jsoup.parse(body[1]);
 
                             Shipment shipment = query.extractShipment(doc.text());
 
@@ -212,21 +235,25 @@ public class SyncWindowController implements Initializable {
                         }
                     }
                     
-                    //finally, persist entries in db
-                    for(Order orderInfo : query.getOrders()) {
-                        if (dataCenter.createOrder(orderInfo) != null) {
-                            msg += "\n" + "New order :" + orderInfo.orderNum  + " is created successfully. \n";
-                            updateMessage(msg);
-                        };
-                    }
-                    
-                    for(Shipment shipInfo : query.getShipments()) {
-                        if (dataCenter.createUsTrking(shipInfo) != null) {
-                            msg += "\n" + "New shipment :" + shipInfo.trackingNum  + " is created successfully. \n";
-                            updateMessage(msg);
+                    if (save) {
+                        //finally, persist entries in db
+                        for (Order orderInfo : query.getOrders()) {
+                            if (dataCenter.createOrder(orderInfo) != null) {
+                                msg += "\n" + "New order :" + orderInfo.orderNum + " is created successfully. \n";
+                                updateMessage(msg);
+                            };
                         }
-                        
+
+                        for (Shipment shipInfo : query.getShipments()) {
+                            if (dataCenter.createUsTrking(shipInfo) != null) {
+                                msg += "\n" + "New shipment :" + shipInfo.trackingNum + " is created successfully. \n";
+                                updateMessage(msg);
+                            }
+
+                        }
+
                     }
+
                     
                     msg += "Sync is completed successfully ." ;
                     updateMessage(msg);
@@ -244,6 +271,7 @@ public class SyncWindowController implements Initializable {
             protected void succeeded() {
                 super.succeeded();
                 buttonSync.setDisable(false);
+                buttonTest.setDisable(false);
                 mainWindow.reloadTable();
             }
         
@@ -252,43 +280,7 @@ public class SyncWindowController implements Initializable {
         textAreaInfo.textProperty().bind(task.messageProperty());
         new Thread(task).start();
         
-        
-        
-        
-//        try {
-//            //connect gmail
-//            query.connectGmail();
-//        } catch (Exception ex) {
-//            textAreaInfo.appendText("Gmail logging in error :\n");
-//            textAreaInfo.appendText(ex.getMessage() + "\n");
-//            LoggingAspect.addException(ex);
-//            return;
-//        }
-//        
-//        //proceed to query
-//        textAreaInfo.appendText("Logged in successfully ! \n");
-//        textAreaInfo.appendText("\nNow starting to read emails and extraction info... \n");
-//        textAreaInfo.appendText("\nPlease wait ... \n");
-//        
-//        //final CountDownLatch latch = new CountDownLatch(1);
-//        Platform.runLater(() -> {
-//            try {
-//                query.searchInfoSince(sinceDate);
-//                
-//                
-//            } catch (Exception ex) {
-//                textAreaInfo.appendText("Email extraction error :\n");
-//                textAreaInfo.appendText(ex.getMessage() + "\n");
-//                LoggingAspect.addException(ex);
-//                return;
-//            }
-//        });
-//        
-//
-//            
-//        textAreaInfo.appendText("\nFinished sync data from emails ! \n");
-//        
-        
+
         
         
     }

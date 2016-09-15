@@ -45,33 +45,33 @@ public class GetWalmart extends GetStore {
     
     public static void main(String[] args) throws MessagingException, AddressException, ParseException {
         //get entitymanager
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");
-        EntityManager em = emf.createEntityManager();
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");
+//        EntityManager em = emf.createEntityManager();
         
         //query returned info of orders and shipments
         //using the orderInfo and shipmentInfo, to create new orders and trackings to db
         
-        GetWalmart query = new GetWalmart("gobetterkx@gmail.com","Bnmrc123");
+        GetKmart query = new GetKmart("gobetterkx@gmail.com","Bnmrc123");
         query.connectGmail();
-        query.searchInfoSince("07/22/16");
+        query.searchInfoSince("08/01/16");
         
-        ArrayList<Order> newOrders = query.getOrders();
-        for(Order orderInfo : newOrders) {
-            createNewOrder(em, orderInfo);
-        }
-        
-        
-        ArrayList<Shipment> newShips = query.getShipments();
-        
-        for(Shipment shipInfo : newShips) {
-            createUsTrk(em, shipInfo);
-        }
-       
-
-        em.close();
-        emf.close();
-    
-                
+//        ArrayList<Order> newOrders = query.getOrders();
+//        for(Order orderInfo : newOrders) {
+//            createNewOrder(em, orderInfo);
+//        }
+//        
+//        
+//        ArrayList<Shipment> newShips = query.getShipments();
+//        
+//        for(Shipment shipInfo : newShips) {
+//            createUsTrk(em, shipInfo);
+//        }
+//       
+//
+//        em.close();
+//        emf.close();
+//    
+//                
    }
     
     
