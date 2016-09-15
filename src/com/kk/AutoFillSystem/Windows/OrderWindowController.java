@@ -9,8 +9,10 @@ import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
+import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
+import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.net.URL;
 import java.time.LocalDate;
@@ -177,13 +179,16 @@ public class OrderWindowController implements Initializable {
         Orders newOrder = dataCenter.createOrder(orderInfo);
         
         if (newOrder == null) {
-            showAlert("Failed", "Creating Failed :" , "The order could not be created !");
+            showAlert("Failed", "Creating Failed :" , "The order could not be created, it might already exists!");
         }
         else {
             showAlert("Success", "Record Created :" , "New order is created successfully !");
             mainWindow.getOrders().add(newOrder);
             //need to update mainwindow
-            mainWindow.addNewOrder(newOrder);
+            JoinRecord record = new JoinRecord();
+            record.setOrder(newOrder);
+            expandInfo(record);
+            mainWindow.getTableRows().add(record);
         }
         closeWindow(e);
         

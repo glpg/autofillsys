@@ -302,21 +302,7 @@ public class MainWindowController implements Initializable {
         
     }
     
-    
-
-    
-    public void addNewOrder(Orders order) {
-        JoinRecord record = new JoinRecord();
-        record.setOrder(order);
-
-        record.setOrderDate(order.getOrderDate());
-        record.setOrderNum(order.getOrderNum());
-        record.setStore(order.getStoreId().getName());
-
-        tableRows.add(record);
-        
-    }
-
+   
     /**
      * Initializes the controller class.
      */

@@ -30,9 +30,12 @@ import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateUsTrk;
 import com.kk.AutoFillSystem.Database.Services.AddressService;
 import com.kk.AutoFillSystem.Database.Services.CarrierService;
+import com.kk.AutoFillSystem.Database.Services.CntrackingService;
+import com.kk.AutoFillSystem.Database.Services.IntltrackingService;
 import com.kk.AutoFillSystem.Database.Services.OrderService;
 import com.kk.AutoFillSystem.Database.Services.ProductService;
 import com.kk.AutoFillSystem.Database.Services.StoreService;
+import com.kk.AutoFillSystem.Database.Services.UStrackingService;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Shipment;
 import java.util.List;
@@ -86,6 +89,11 @@ public class DataController {
         return os.findAll();
     }
     
+    public List<Ustrkings> getUstrkings() {
+        UStrackingService us = new UStrackingService(em, Ustrkings.class);
+        return us.findAll();
+    }
+    
     public List<Stores> getStores() {
         StoreService ss = new StoreService(em, Stores.class);
         return ss.findAll();
@@ -101,10 +109,29 @@ public class DataController {
         return as.findAll();
     }
     
+    public Addresses getAddress(int i) {
+        AddressService as = new AddressService(em, Addresses.class);
+        return (Addresses) as.find(i);
+    }
+    
     public List<Products> getProducts() {
         ProductService ps = new ProductService(em, Products.class);
         return ps.findAll();
     }
+    
+    public List<Ustocntrkings> getIntlTrkings() {
+        IntltrackingService is = new IntltrackingService(em, Ustocntrkings.class);
+        return is.findAll();
+    }
+    
+    public List<Cntrkings> getCnTrkings() {
+        CntrackingService cs = new CntrackingService(em, Cntrkings.class);
+        return cs.findAll();
+    }
+    
+    
+    
+    
     
     public Orders createOrder(Order orderInfo) {
         return createNewOrder(em, orderInfo);
@@ -157,6 +184,8 @@ public class DataController {
     public void createAddress(Addresses addr) {
         createNewAddress(em, addr);
     }
+    
+    
     /**
      * Getters and Setters
      * @return 

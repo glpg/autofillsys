@@ -200,7 +200,8 @@ public class Tools {
         if (record.getIntlTrk() != null) {
             record.setIntlTrkNum(record.getIntlTrk().getTrkingNum());
             record.setWeight(record.getIntlTrk().getWeight());
-            record.setFee(record.getIntlTrk().getShippingfee().doubleValue());
+            if(record.getIntlTrk().getShippingfee() != null)
+                record.setFee(record.getIntlTrk().getShippingfee().doubleValue());
         }
         
         if (record.getCnTrk() != null) {

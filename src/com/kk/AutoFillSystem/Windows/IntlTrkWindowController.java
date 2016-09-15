@@ -149,7 +149,10 @@ public class IntlTrkWindowController implements Initializable {
             record.setIntlTrk(intlTrk);
             record.setIntlTrkNum(intlTrk.getTrkingNum());
             record.setWeight(intlTrk.getWeight());
-            record.setFee(intlTrk.getShippingfee().doubleValue());
+            if (intlTrk.getShippingfee()!=null) {
+                record.setFee(intlTrk.getShippingfee().doubleValue());
+            }
+            
             
             //forcing refreshing table
             mainWindow.getOrderTable().getColumns().get(0).setVisible(false);

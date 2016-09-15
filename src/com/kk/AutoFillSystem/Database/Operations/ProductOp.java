@@ -50,8 +50,9 @@ public class ProductOp {
     }
     
     public static Products findProduct(EntityManager em, String desc) {
-        
-        Map<String, String> nameToNum = readMapFile("e:\\itemnames.txt");
+        String fileName = "C:\\Users\\" + System.getProperty("user.name") + 
+                    "\\Documents\\AutoFillSystem\\itemnames.txt";
+        Map<String, String> nameToNum = readMapFile(fileName);
         
         //lego prod number could be 5 or 7 digits
         Pattern prodNumP = Pattern.compile("(\\d{7}|\\d{5})");
