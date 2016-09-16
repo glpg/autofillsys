@@ -241,6 +241,7 @@ public class SyncWindowController implements Initializable {
                             if (dataCenter.createOrder(orderInfo) != null) {
                                 msg += "\n" + "New order :" + orderInfo.orderNum + " is created successfully. \n";
                                 updateMessage(msg);
+                                mainWindow.getNewOrders().add(orderInfo.orderNum);
                             };
                         }
 
@@ -248,6 +249,7 @@ public class SyncWindowController implements Initializable {
                             if (dataCenter.createUsTrking(shipInfo) != null) {
                                 msg += "\n" + "New shipment :" + shipInfo.trackingNum + " is created successfully. \n";
                                 updateMessage(msg);
+                                mainWindow.getNewShipments().add(shipInfo.trackingNum);
                             }
 
                         }

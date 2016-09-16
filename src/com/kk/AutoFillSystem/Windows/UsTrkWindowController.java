@@ -15,6 +15,7 @@ import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
+import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.net.URL;
 import java.time.LocalDate;
@@ -224,7 +225,7 @@ public class UsTrkWindowController implements Initializable {
                 newRecord.setOrderNum(record.getOrderNum());
                 newRecord.setStore(record.getStore());
                 newRecord.setUsTrk(newTrk);
-                setTrkInfo(newRecord, newTrk);
+                expandInfo(newRecord);
                 
                 mainWindow.getTableRows().add(newRecord);
                 

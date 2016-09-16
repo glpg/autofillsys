@@ -30,8 +30,10 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -57,6 +59,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -81,6 +84,10 @@ public class MainWindowController implements Initializable {
     private List<Products> products;
     private  List<Carriers> carriers;
     private  List<Addresses> addresses;
+    
+    //new order and new trk
+    private Set<String> newOrders = new HashSet();
+    private Set<String> newShipments = new HashSet();
     
     
     //records combining orders and trkings
@@ -162,7 +169,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private TableColumn<?, ?> usCarrier;
     @FXML
-    private TableColumn<?, ?> usTrkNum;
+    private TableColumn<JoinRecord, String> usTrkNum;
     @FXML
     private TableColumn<?, ?> shipList;
    
@@ -907,6 +914,44 @@ public class MainWindowController implements Initializable {
         address.setCellValueFactory(new PropertyValueFactory("address"));
     
         
+        orderNum.setCellFactory(column -> {
+            return new TableCell<JoinRecord, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || item.isEmpty())
+                        setText(null);
+                    else {
+                        if (newOrders.contains(item))
+                            setStyle("-fx-text-fill: blue; -fx-font-weight:bold;");
+                        
+                        setText(item);
+                    }
+                   
+
+                }
+            };
+        });
+        
+        usTrkNum.setCellFactory(column -> {
+            return new TableCell<JoinRecord, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || item.isEmpty())
+                        setText(null);
+                    else {
+                        if (newShipments.contains(item))
+                            setStyle("-fx-text-fill: #00FF00; -fx-font-weight:bold;");
+                        
+                        setText(item);
+                    }
+                   
+
+                }
+            };
+        });
+        
         
         weight.setCellFactory(column -> {
             return new TableCell<JoinRecord, Integer>() {
@@ -1147,6 +1192,24 @@ public class MainWindowController implements Initializable {
     public ComboBox getComboBoxDestination() {
         return comboBoxDestination;
     }
+
+    public Set<String> getNewOrders() {
+        return newOrders;
+    }
+
+    public void setNewOrders(Set<String> newOrders) {
+        this.newOrders = newOrders;
+    }
+
+    public Set<String> getNewShipments() {
+        return newShipments;
+    }
+
+    public void setNewShipments(Set<String> newShipments) {
+        this.newShipments = newShipments;
+    }
+
+
     
     
     
