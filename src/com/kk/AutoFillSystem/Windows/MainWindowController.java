@@ -53,6 +53,8 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -178,6 +180,7 @@ public class MainWindowController implements Initializable {
     private TableColumn<?, ?> cnTrkNum;
     @FXML
     private TableColumn<?, ?> address;
+    private Object clipboardString;
     
     
     
@@ -996,9 +999,15 @@ public class MainWindowController implements Initializable {
         pasteIntlTrk.setOnAction(e -> {
             pasteIntlTrk();
         });
-       
-
-        menu.getItems().addAll(addUsTrk, addIntlTrk, addCnTrk, line, editOrder, editUsTrk, line2, copyIntlTrk, pasteIntlTrk);
+        
+        SeparatorMenuItem line3 = new SeparatorMenuItem();
+        MenuItem copyToClipboard = new MenuItem("Copy US Trk to Clipboard");
+        copyToClipboard.setOnAction(e -> {
+            copyUsTrkToClipboard();
+        });
+        
+        menu.getItems().addAll(addUsTrk, addIntlTrk, addCnTrk, line, editOrder, editUsTrk, line2, copyIntlTrk, pasteIntlTrk
+        , line3, copyToClipboard);
         
         orderTable.setRowFactory(new Callback<TableView<JoinRecord>, TableRow<JoinRecord>>() {  
             @Override  
@@ -1020,6 +1029,16 @@ public class MainWindowController implements Initializable {
         
         
    
+    }
+    
+    
+    private void copyUsTrkToClipboard(){
+        JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
+        String usTrkNum = currentRecord.getUsTrkNum();
+        
+        ClipboardContent content = new ClipboardContent();
+        content.putString(usTrkNum);
+        Clipboard.getSystemClipboard().setContent(content);
     }
     
     private void copyIntlTrk() {
