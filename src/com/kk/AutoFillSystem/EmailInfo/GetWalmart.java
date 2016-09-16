@@ -12,8 +12,12 @@ import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.getWarehouse;
+import static com.kk.AutoFillSystem.utility.Tools.readFileLines;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.MessagingException;
@@ -51,9 +55,11 @@ public class GetWalmart extends GetStore {
         //query returned info of orders and shipments
         //using the orderInfo and shipmentInfo, to create new orders and trackings to db
         
-        GetKmart query = new GetKmart("gobetterkx@gmail.com","Bnmrc123");
-        query.connectGmail();
-        query.searchInfoSince("08/01/16");
+//        GetKmart query = new GetKmart("fatblackcat2016@gmail.com","bnmrc123");
+//        query.connectGmail();
+//        query.searchInfoSince("09/15/16");
+        
+       
         
 //        ArrayList<Order> newOrders = query.getOrders();
 //        for(Order orderInfo : newOrders) {
@@ -71,7 +77,9 @@ public class GetWalmart extends GetStore {
 //        em.close();
 //        emf.close();
 //    
-//                
+//    
+        
+        
    }
     
     

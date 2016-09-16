@@ -27,6 +27,7 @@ import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewTrkline;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewUsTrkFromEntity;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.findIntlTrking;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.relateUsandIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateUsTrk;
 import com.kk.AutoFillSystem.Database.Services.AddressService;
@@ -119,9 +120,15 @@ public class DataController {
         return ps.findAll();
     }
     
+    
+    
     public List<Ustocntrkings> getIntlTrkings() {
         IntltrackingService is = new IntltrackingService(em, Ustocntrkings.class);
         return is.findAll();
+    }
+    
+    public List<Ustocntrkings> getIntlTrking(String trkNum) {
+        return findIntlTrking(em, trkNum);
     }
     
     public List<Cntrkings> getCnTrkings() {
@@ -167,6 +174,10 @@ public class DataController {
     
     public void createUsAndIntlRelation(Ustocntrkings intlTrk, Ustrkings usTrk) {
         relateUsandIntlTrk(em, intlTrk, usTrk);
+    }
+    
+    public void createIntlTrking(Ustocntrkings intlTrk) {
+        createIntlTrk(em,intlTrk);
     }
     
     public void createCnTrking(Cntrkings cnTrk) {

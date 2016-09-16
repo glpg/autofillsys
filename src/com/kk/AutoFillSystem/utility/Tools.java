@@ -8,12 +8,14 @@ package com.kk.AutoFillSystem.utility;
 import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javafx.event.ActionEvent;
@@ -73,6 +75,43 @@ public class Tools {
         return uniqueStr;
         
     }
+    
+    
+     //read file, return unique set , for lego set numbers
+    public static List<String> readFileLines(File file) {
+        BufferedReader br = null;
+        
+        ArrayList<String> lines = new ArrayList();
+        
+        //ArrayList<Products> prods = new ArrayList();
+
+        try {
+
+            String sCurrentLine;
+
+            br = new BufferedReader(new FileReader(file));
+
+            while ((sCurrentLine = br.readLine()) != null) {
+                lines.add(sCurrentLine);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (br != null)br.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
+        return lines;
+        
+    }
+    
+    
+    
+    
 
     //read file, name and set to a map
     public static Map<String, String> readMapFile(String fileName) {

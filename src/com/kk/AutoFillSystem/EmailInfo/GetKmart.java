@@ -60,7 +60,7 @@ public class GetKmart extends GetStore {
             }
             
             
-            Pattern cntP = Pattern.compile("PRICE QTY ITEM SUBTOTAL .* ([0-9]+) [0-9.]+");
+            Pattern cntP = Pattern.compile("PRICE QTY ITEM SUBTOTAL .* ([1-9]{1}) [0-9.]+");
             Matcher m2 = cntP.matcher(orderTextLine);
             if(m2.find()) {
                 tmp.count = Integer.parseInt(m2.group(1));

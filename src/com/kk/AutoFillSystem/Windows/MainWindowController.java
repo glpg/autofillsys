@@ -18,14 +18,17 @@ import com.kk.AutoFillSystem.Database.Entities.Usanduscntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import com.kk.AutoFillSystem.utility.JoinRecord;
+import static com.kk.AutoFillSystem.utility.LoggingAspect.addMessage;
 import com.kk.AutoFillSystem.utility.TableFilter;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
+import static com.kk.AutoFillSystem.utility.Tools.readFileLines;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +39,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -57,9 +62,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -88,6 +91,7 @@ public class MainWindowController implements Initializable {
     //new order and new trk
     private Set<String> newOrders = new HashSet();
     private Set<String> newShipments = new HashSet();
+    private Set<String> newIntlShipments = new HashSet();
     
     
     //records combining orders and trkings
@@ -126,6 +130,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemEditUsTrk;
     @FXML
     private MenuItem menuItemExportTable;
+    @FXML
+    private MenuItem menuItemSyncHDB;
     
     
     //filter area
@@ -176,7 +182,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private TableColumn<?, ?> warehouse;
     @FXML
-    private TableColumn<?, ?> intlTrkNum;
+    private TableColumn<JoinRecord, String> intlTrkNum;
     @FXML
     private TableColumn<JoinRecord, Integer> weight;
     @FXML
@@ -478,13 +484,102 @@ public class MainWindowController implements Initializable {
         menuItemNewStore.setOnAction(e->{showStoreWindow(e);});
         
         menuItemSyncEmails.setOnAction(e->{showSyncWindow(e);});
+        menuItemSyncHDB.setOnAction(e->{syncHDB();});
         
         menuItemEditOrder.setOnAction(e->{showEditOrderWindow(e);});
         menuItemEditUsTrk.setOnAction(e->{showEditUsTrkWindow(e);});
         
         menuItemExportTable.setOnAction(e->{exportTable();});
         menuItemReloadTable.setOnAction(e->{reloadTable();});
+        
+        
+        
        
+    }
+    
+    
+    private void syncHDB() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open File");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showOpenDialog(primaryStage);
+        
+        if (file != null) {
+            List<String> lines = readFileLines(file);
+
+            for (int i = 0; i < lines.size(); i += 4) {
+                double shippingfee = 0.0;
+                //us trk
+                ArrayList<String> ustrks = new ArrayList();
+                Pattern trkP = Pattern.compile("([a-zA-Z0-9]+)");
+                Matcher m1 = trkP.matcher(lines.get(i));
+                while (m1.find()) {
+                    ustrks.add(m1.group(1));
+                }
+
+                //shiiping fee
+                Pattern feeP = Pattern.compile("([0-9.]+)");
+                Matcher m = feeP.matcher(lines.get(i + 2));
+                if (m.find()) {
+                    shippingfee = Double.parseDouble(m.group(1));
+                }
+
+                //intl trk and weight
+                String[] info = lines.get(i + 3).split("\\s+");
+                String intlTrk = info[1];
+                int weight = (int) (Double.parseDouble(info[2]) * 1000.0);
+
+                addHDBIntlTrk(ustrks, intlTrk, weight, shippingfee);
+                
+                showAlert("Success", "Update Finished :" , "HDB info is updated successfully !");
+            }
+
+        }
+
+    }
+    
+    
+    private void addHDBIntlTrk(List<String> ustrks, String intlTrkNum, int weight, double fee){
+        if (dataCenter.getIntlTrking(intlTrkNum) == null || dataCenter.getIntlTrking(intlTrkNum).size() == 0) {
+            Ustocntrkings intlTrk = new Ustocntrkings();
+            intlTrk.setTrkingNum(intlTrkNum);
+            intlTrk.setWeight(weight);
+            for (Addresses addr : warehouses) {
+                if (addr.getName().equals("HDB")) {
+                    intlTrk.setAddressId(addr);
+                    break;
+                }
+            }
+
+            if (fee != 0.0) {
+                intlTrk.setShippingfee(BigDecimal.valueOf(fee));
+            }
+            dataCenter.createIntlTrking(intlTrk);
+            newIntlShipments.add(intlTrkNum);
+
+            for (String ustrkNum : ustrks) {
+                for (JoinRecord record : tableRows) {
+                    if (record.getUsTrk() != null && record.getUsTrkNum().equalsIgnoreCase(ustrkNum) && record.getIntlTrk() == null) {
+                        dataCenter.createUsAndIntlRelation(intlTrk, record.getUsTrk());
+                        record.setIntlTrk(intlTrk);
+                        expandInfo(record);
+                    }
+                }
+            }
+
+        }
+        
+        else {
+            addMessage("Intl Tracking " + intlTrkNum + " existed already, pass!");
+        }
+        
+        
+        
+        
+        
+     
     }
     
     private void showSyncWindow(ActionEvent e) {
@@ -692,8 +787,7 @@ public class MainWindowController implements Initializable {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        
-        
+            
 
     }
     
@@ -922,8 +1016,13 @@ public class MainWindowController implements Initializable {
                     if (item == null || item.isEmpty())
                         setText(null);
                     else {
-                        if (newOrders.contains(item))
+                        if (newOrders.contains(item)){
                             setStyle("-fx-text-fill: blue; -fx-font-weight:bold;");
+                            System.out.println("new order :" + item);
+                        }
+                        else
+                            setStyle("-fx-text-fill: black");
+                            
                         
                         setText(item);
                     }
@@ -933,6 +1032,32 @@ public class MainWindowController implements Initializable {
             };
         });
         
+        
+        intlTrkNum.setCellFactory(column -> {
+            return new TableCell<JoinRecord, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || item.isEmpty())
+                        setText(null);
+                    else {
+                        if (newIntlShipments.contains(item)){
+                            setStyle("-fx-text-fill: red; -fx-font-weight:bold;");
+                            System.out.println("new intl trk :" + item);
+                        }
+                        else
+                            setStyle("-fx-text-fill: black");
+                            
+                        
+                        setText(item);
+                    }
+                   
+
+                }
+            };
+        });
+        
+        
         usTrkNum.setCellFactory(column -> {
             return new TableCell<JoinRecord, String>() {
                 @Override
@@ -941,8 +1066,13 @@ public class MainWindowController implements Initializable {
                     if (item == null || item.isEmpty())
                         setText(null);
                     else {
-                        if (newShipments.contains(item))
+                        if (newShipments.contains(item)){
+                            System.out.println("new Ship :" + item);
                             setStyle("-fx-text-fill: #00FF00; -fx-font-weight:bold;");
+                        }
+                        else
+                            setStyle("-fx-text-fill: black");
+                            
                         
                         setText(item);
                     }
@@ -1102,6 +1232,26 @@ public class MainWindowController implements Initializable {
             Ustrkings ustrk = currentRecord.getUsTrk();
             dataCenter.createUsAndIntlRelation(copyStoreIntlTrk, ustrk);
             currentRecord.setIntlTrk(copyStoreIntlTrk);
+            
+            if (copyStoreIntlTrk.getCntrkingsCollection().size() == 1)
+                currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
+            
+            if (copyStoreIntlTrk.getCntrkingsCollection().size() > 1) {
+                Cntrkings[] cntrks = (Cntrkings[]) copyStoreIntlTrk.getCntrkingsCollection().toArray();
+                currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
+                for(int i = 1; i < cntrks.length; i++) {
+                    JoinRecord newRecord = new JoinRecord();
+                    newRecord.setOrder(currentRecord.getOrder());
+                    newRecord.setUsTrk(currentRecord.getUsTrk());
+                    newRecord.setIntlTrk(copyStoreIntlTrk);
+                    newRecord.setCnTrk(cntrks[i]);
+                    expandInfo(newRecord);
+                    orderTable.getItems().add(newRecord);
+                }
+            }
+            
+            
+            
             expandInfo(currentRecord);
             
             //force refreshing

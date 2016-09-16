@@ -34,6 +34,13 @@ import javax.persistence.TypedQuery;
  */
 public class TrackOp {
     
+    
+    public static List<Ustocntrkings> findIntlTrking(EntityManager em, String trkNum) {
+        TypedQuery<Ustocntrkings> trkQuery = em.createNamedQuery("Ustocntrkings.findByTrkingNum", Ustocntrkings.class).setParameter("trkingNum", trkNum);
+        return trkQuery.getResultList();
+        
+    }
+    
     //create new order  and orderlines
     public static Ustrkings createUsTrk(EntityManager em, Shipment shipmentInfo){ 
         // Create new todo
@@ -177,6 +184,16 @@ public class TrackOp {
         //add relation to both intlTrk and usTrk
         ustrk.getUsanduscntrkingsCollection().add(relation);
         intlTrk.getUsanduscntrkingsCollection().add(relation);
+        
+        em.getTransaction().commit();
+        
+    }
+    
+     public static void createIntlTrk(EntityManager em, Ustocntrkings intlTrk){
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.persist(intlTrk);
+        addMessageWithDate("Intl shipment : " + intlTrk.getTrkingNum() + " is created.");
         
         em.getTransaction().commit();
         

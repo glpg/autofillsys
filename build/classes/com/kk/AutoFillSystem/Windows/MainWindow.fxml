@@ -109,6 +109,8 @@
             <Menu mnemonicParsing="false" text="Tools">
               <items>
                 <MenuItem fx:id="menuItemSyncEmails" mnemonicParsing="false" text="Sync Emails" />
+                  <MenuItem fx:id="menuItemSyncHDB" mnemonicParsing="false" text="Sync HDB From File" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemReloadTable" mnemonicParsing="false" text="Reload Table" />
               </items>
             </Menu>
