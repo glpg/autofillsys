@@ -86,7 +86,7 @@
               <items>
                 <MenuItem fx:id="menuItemExportTable" mnemonicParsing="false" text="Export Table To File" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="buttonQuit" mnemonicParsing="false" text="Quit" />
+                  <MenuItem fx:id="menuItemQuit" mnemonicParsing="false" text="Quit" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Add">
@@ -112,9 +112,9 @@
               <items>
                 <MenuItem fx:id="menuItemSyncEmails" mnemonicParsing="false" text="Sync Emails" />
                   <MenuItem fx:id="menuItemSyncHDB" mnemonicParsing="false" text="Sync HDB From File" />
+                  <MenuItem fx:id="menuItemOpenWebpage" mnemonicParsing="false" text="Sync ZZ From Web" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemReloadTable" mnemonicParsing="false" text="Reload Table" />
-                  <MenuItem fx:id="menuItemOpenWebpage" mnemonicParsing="false" text="Open Webpage" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

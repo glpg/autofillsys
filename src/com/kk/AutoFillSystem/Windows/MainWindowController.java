@@ -504,7 +504,7 @@ public class MainWindowController implements Initializable {
     }
     
     private void systemQuit(ActionEvent e) {
-        dataCenter.exit();
+        
         Platform.exit();
     }
     
