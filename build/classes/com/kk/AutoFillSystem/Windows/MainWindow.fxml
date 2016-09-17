@@ -59,7 +59,7 @@
                   <Insets top="10.0" />
                </HBox.margin>
             </ComboBox>
-            <TextField fx:id="textFieldSearchNum" prefWidth="120.0" promptText="Search Order Number">
+            <TextField fx:id="textFieldSearchNum" prefWidth="120.0" promptText="Search Number">
                <HBox.margin>
                   <Insets top="10.0" />
                </HBox.margin></TextField>
@@ -85,6 +85,8 @@
             <Menu mnemonicParsing="false" text="File">
               <items>
                 <MenuItem fx:id="menuItemExportTable" mnemonicParsing="false" text="Export Table To File" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="buttonQuit" mnemonicParsing="false" text="Quit" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Add">
@@ -112,6 +114,7 @@
                   <MenuItem fx:id="menuItemSyncHDB" mnemonicParsing="false" text="Sync HDB From File" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemReloadTable" mnemonicParsing="false" text="Reload Table" />
+                  <MenuItem fx:id="menuItemOpenWebpage" mnemonicParsing="false" text="Open Webpage" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

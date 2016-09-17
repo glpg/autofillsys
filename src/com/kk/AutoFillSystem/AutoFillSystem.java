@@ -10,6 +10,7 @@ import com.kk.AutoFillSystem.Windows.MainWindowController;
 import com.sun.javafx.application.LauncherImpl;
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.application.Preloader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -53,8 +54,9 @@ public class AutoFillSystem extends Application {
 	
 	primaryStage = st1; 
 	primaryStage.setScene(mainScene);
-        primaryStage.setTitle("Tracking System 1.0.0");
-		
+        primaryStage.setTitle("Tracking System");
+        
+        
 	primaryStage.show();
 		
     }

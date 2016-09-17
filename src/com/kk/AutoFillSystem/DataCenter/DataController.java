@@ -200,6 +200,11 @@ public class DataController {
         createNewAddress(em, addr);
     }
     
+    public void exit() {
+        emf.close();
+        em.close();
+    }
+    
     
     /**
      * Getters and Setters
@@ -216,6 +221,7 @@ public class DataController {
 
  
 
+    
     
     
     

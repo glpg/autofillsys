@@ -41,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -63,6 +64,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -132,6 +135,10 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemExportTable;
     @FXML
     private MenuItem menuItemSyncHDB;
+    @FXML
+    private MenuItem menuItemOpenWebpage;
+    @FXML
+    private MenuItem menuItemQuit;
     
     
     //filter area
@@ -193,8 +200,6 @@ public class MainWindowController implements Initializable {
     private TableColumn<?, ?> cnTrkNum;
     @FXML
     private TableColumn<?, ?> address;
-    private Object clipboardString;
-    
     
     
     
@@ -493,8 +498,43 @@ public class MainWindowController implements Initializable {
         menuItemReloadTable.setOnAction(e->{reloadTable();});
         
         
-        
+        menuItemOpenWebpage.setOnAction(e->{showWebWindow();});
+        menuItemQuit.setOnAction(e->{systemQuit(e);});
        
+    }
+    
+    private void systemQuit(ActionEvent e) {
+        dataCenter.exit();
+        Platform.exit();
+    }
+    
+    private void showWebWindow() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/WebWindow.fxml"));
+            
+            WebWindowController webController = new WebWindowController();
+            webController.setMainWindow(instance);
+            
+            loader.setController(webController);
+            AnchorPane webWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(webWindow));
+            stage.setTitle("Web browser");
+//            stage.initModality(Modality.WINDOW_MODAL);
+//            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+            stage.toFront();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
+        
+        
+        
     }
     
     
@@ -519,7 +559,7 @@ public class MainWindowController implements Initializable {
                     ustrks.add(m1.group(1));
                 }
 
-                //shiiping fee
+                //shipping fee
                 Pattern feeP = Pattern.compile("([0-9.]+)");
                 Matcher m = feeP.matcher(lines.get(i + 2));
                 if (m.find()) {
@@ -531,9 +571,14 @@ public class MainWindowController implements Initializable {
                 String intlTrk = info[1];
                 int weight = (int) (Double.parseDouble(info[2]) * 1000.0);
 
-                addHDBIntlTrk(ustrks, intlTrk, weight, shippingfee);
+                if (addIntlTrk(ustrks, intlTrk, weight, shippingfee, "HDB")) {
+                    showAlert("Success", "Update Finished :" , "HDB tracking " + intlTrk + " is updated successfully !");
+                }
+                else{
+                    showAlert("Failed", "Update Error :" , "HDB tracking " + intlTrk + " already existed !");
+                }
                 
-                showAlert("Success", "Update Finished :" , "HDB info is updated successfully !");
+                
             }
 
         }
@@ -541,13 +586,13 @@ public class MainWindowController implements Initializable {
     }
     
     
-    private void addHDBIntlTrk(List<String> ustrks, String intlTrkNum, int weight, double fee){
+    public boolean addIntlTrk(List<String> ustrks, String intlTrkNum, int weight, double fee, String warehouseName){
         if (dataCenter.getIntlTrking(intlTrkNum) == null || dataCenter.getIntlTrking(intlTrkNum).size() == 0) {
             Ustocntrkings intlTrk = new Ustocntrkings();
             intlTrk.setTrkingNum(intlTrkNum);
             intlTrk.setWeight(weight);
             for (Addresses addr : warehouses) {
-                if (addr.getName().equals("HDB")) {
+                if (addr.getName().equals(warehouseName)) {
                     intlTrk.setAddressId(addr);
                     break;
                 }
@@ -562,17 +607,21 @@ public class MainWindowController implements Initializable {
             for (String ustrkNum : ustrks) {
                 for (JoinRecord record : tableRows) {
                     if (record.getUsTrk() != null && record.getUsTrkNum().equalsIgnoreCase(ustrkNum) && record.getIntlTrk() == null) {
+                        
                         dataCenter.createUsAndIntlRelation(intlTrk, record.getUsTrk());
                         record.setIntlTrk(intlTrk);
                         expandInfo(record);
                     }
                 }
             }
+            
+            return true;
 
         }
         
         else {
             addMessage("Intl Tracking " + intlTrkNum + " existed already, pass!");
+            return false;
         }
         
         
