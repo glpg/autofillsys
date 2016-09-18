@@ -29,6 +29,7 @@ import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewUsTrkFr
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.findIntlTrking;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.relateUsandIntlTrk;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateCnDelivery;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateUsTrk;
 import com.kk.AutoFillSystem.Database.Services.AddressService;
 import com.kk.AutoFillSystem.Database.Services.CarrierService;
@@ -200,6 +201,9 @@ public class DataController {
         createNewAddress(em, addr);
     }
     
+    public void updateDelivery(Cntrkings cntrk) {
+        updateCnDelivery(em, cntrk);
+    }
     
     
     

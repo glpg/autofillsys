@@ -22,10 +22,10 @@ public class TableFilter {
     private ObservableList<JoinRecord> totalItems ;
     private Map<String, String> filters = new HashMap();
     
-    public TableFilter(TableView table) {
+    public TableFilter(TableView table, ObservableList<JoinRecord> tableRows) {
         this.table = table;
         //full record
-        totalItems = table.getItems();
+        totalItems = tableRows;
         initFilters();
        
     }

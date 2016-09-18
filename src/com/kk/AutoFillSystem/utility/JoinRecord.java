@@ -10,6 +10,7 @@ import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import java.util.Date;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -39,6 +40,9 @@ public class JoinRecord {
     private SimpleStringProperty cnCarrier = new SimpleStringProperty();
     private SimpleStringProperty cnTrkNum = new SimpleStringProperty();
     private SimpleStringProperty address = new SimpleStringProperty();
+    
+    //delivered or not
+    private SimpleBooleanProperty delivered = new SimpleBooleanProperty();
    
     private Orders order;
     private Ustrkings usTrk;
@@ -198,5 +202,13 @@ public class JoinRecord {
     }
     
     
+    public void setDelivered (boolean delivered) {
+        this.delivered.set(delivered);
+    }
+    
+    public boolean getDelivered(){
+        return delivered.get();
+    }
+            
     
 }

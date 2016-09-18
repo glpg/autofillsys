@@ -54,6 +54,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -139,6 +140,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemOpenWebpage;
     @FXML
     private MenuItem menuItemQuit;
+    @FXML
+    private MenuItem menuItemConfirmDelivery;
     
     
     //filter area
@@ -200,7 +203,9 @@ public class MainWindowController implements Initializable {
     private TableColumn<?, ?> cnTrkNum;
     @FXML
     private TableColumn<?, ?> address;
-    
+    @FXML
+    private TableColumn<JoinRecord, Boolean> delivered;
+   
     
     
     //constructor
@@ -384,7 +389,7 @@ public class MainWindowController implements Initializable {
         FXCollections.sort(destinationList);
         comboBoxDestination.setItems(destinationList);
         
-        comboBoxSearch.getItems().addAll("US Track", "Order", "Intl Track");
+        comboBoxSearch.getItems().addAll("US Track", "Order", "Intl Track", "CN Track");
         comboBoxSearch.setValue("US Track");
         
         //set up buttons
@@ -411,6 +416,11 @@ public class MainWindowController implements Initializable {
                 }
                 case "Order" :{
                     recordValue = record.getOrderNum();
+                    break;
+                }
+                
+                case "CN Track" :{
+                    recordValue = record.getCnTrkNum();
                     break;
                 }
                 default: {
@@ -500,7 +510,43 @@ public class MainWindowController implements Initializable {
         
         menuItemOpenWebpage.setOnAction(e->{showWebWindow();});
         menuItemQuit.setOnAction(e->{systemQuit(e);});
+        
+        menuItemConfirmDelivery.setOnAction(e->{confirmDelivery();});
        
+    }
+    
+    
+    private void confirmDelivery() {
+        ObservableList<JoinRecord> selectedRows = orderTable.getSelectionModel().getSelectedItems();
+        if (selectedRows == null || selectedRows.size() == 0) return;
+        else {
+            Set<String> trkNums = new HashSet();
+            for(JoinRecord tmp : selectedRows) {
+                if (tmp.getCnTrk() == null) continue;
+                else {
+                    if (trkNums.contains(tmp.getCnTrk().getTrkingNum())) {
+                        expandInfo(tmp);
+                    }
+                    else {
+                        Cntrkings cntrk = tmp.getCnTrk();
+                        if (!cntrk.getDelivered()) {
+                            cntrk.setDelivered(true);
+                            dataCenter.updateDelivery(cntrk);
+                            expandInfo(tmp);
+                            trkNums.add(cntrk.getTrkingNum());
+                        }
+                        
+                        
+                    }
+                }
+            }
+            
+            //force table reloading
+            //forcing refreshing table
+            orderTable.getColumns().get(0).setVisible(false);
+            orderTable.getColumns().get(0).setVisible(true);
+        }
+        
     }
     
     private void systemQuit(ActionEvent e) {
@@ -1033,7 +1079,7 @@ public class MainWindowController implements Initializable {
     
     private void setupTable()
     {
-        
+         orderTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         
         //set up cellvalue factory
         rowNumber.setCellValueFactory(column-> new ReadOnlyObjectWrapper<Number>(orderTable.getItems().indexOf(column.getValue()) +1));
@@ -1055,7 +1101,8 @@ public class MainWindowController implements Initializable {
         cnCarrier.setCellValueFactory(new PropertyValueFactory("cnCarrier"));
         cnTrkNum.setCellValueFactory(new PropertyValueFactory("cnTrkNum"));
         address.setCellValueFactory(new PropertyValueFactory("address"));
-    
+        
+        delivered.setCellValueFactory(new PropertyValueFactory("delivered"));
         
         orderNum.setCellFactory(column -> {
             return new TableCell<JoinRecord, String>() {
@@ -1080,6 +1127,34 @@ public class MainWindowController implements Initializable {
                 }
             };
         });
+        
+        delivered.setCellFactory(column -> {
+            return new TableCell<JoinRecord, Boolean>() {
+                @Override
+                protected void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null)
+                        setText(null);
+                    else {
+                        if (item){
+                            setStyle("-fx-text-fill: #008000; -fx-font-weight:bold;");
+                            setText("Yes");
+                            
+                        }
+                        else{
+                            setStyle("-fx-text-fill: red; -fx-font-weight:bold;");
+                            setText("No");
+                        }
+                            
+                       
+                    }
+                   
+
+                }
+            };
+        });
+        
+        
         
         
         intlTrkNum.setCellFactory(column -> {
@@ -1249,7 +1324,7 @@ public class MainWindowController implements Initializable {
         orderTable.setItems(tableRows);
         
         //set up filter
-        filter = new TableFilter(orderTable);
+        filter = new TableFilter(orderTable, tableRows);
         
         
    

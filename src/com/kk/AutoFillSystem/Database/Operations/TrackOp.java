@@ -240,5 +240,16 @@ public class TrackOp {
         em.getTransaction().commit();   
         return ustrk;
     }
+    
+    public static void updateCnDelivery(EntityManager em, Cntrkings cntrk) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.persist(cntrk);
+        addMessageWithDate("CN shipment : " + cntrk.getTrkingNum()+ " is delivered.");
+        
+        em.getTransaction().commit();   
+    }
+    
+    
 }
 

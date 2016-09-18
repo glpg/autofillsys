@@ -249,6 +249,10 @@ public class Tools {
             record.setAddress(record.getCnTrk().getAddressId().getName());
         }
         
+        if (record.getCnTrk() != null && record.getCnTrk().getDelivered())
+            record.setDelivered(true);
+        
+        
     }
 
 }
