@@ -205,6 +205,11 @@ public class DataController {
         updateCnDelivery(em, cntrk);
     }
     
+    public void clearCache(){
+        em.getEntityManagerFactory().getCache().evictAll();
+        em.close();
+        em = emf.createEntityManager();
+    }
     
     
     /**

@@ -255,7 +255,7 @@ public class MainWindowController implements Initializable {
     }
     
     public void reloadTable() {
-        
+        dataCenter.clearCache();
         loadData();
         orderTable.setItems(tableRows);
     }
@@ -534,6 +534,9 @@ public class MainWindowController implements Initializable {
                             dataCenter.updateDelivery(cntrk);
                             expandInfo(tmp);
                             trkNums.add(cntrk.getTrkingNum());
+                        }
+                        else {
+                            if (! tmp.getDelivered()) tmp.setDelivered(true);
                         }
                         
                         
@@ -1324,7 +1327,7 @@ public class MainWindowController implements Initializable {
         orderTable.setItems(tableRows);
         
         //set up filter
-        filter = new TableFilter(orderTable, tableRows);
+        filter = new TableFilter(orderTable);
         
         
    
