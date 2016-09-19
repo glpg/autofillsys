@@ -64,6 +64,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -398,6 +399,12 @@ public class MainWindowController implements Initializable {
         
         buttonSearch.setOnAction(e->{search();});
         buttonReset.setOnAction(e->{reset();});
+        
+        //set up enter event for search text
+        textFieldSearchNum.setOnKeyPressed((e) -> {
+            if (e.getCode() == KeyCode.ENTER)
+                search();
+        });
         
     }
     
@@ -1487,11 +1494,7 @@ public class MainWindowController implements Initializable {
     }
 
 
-    
-    
-    
-    
-    
+ 
     
 }
         
