@@ -102,21 +102,22 @@ public class GetWalmart extends GetStore {
         
         Document doc = Jsoup.parse(html);
         
-        Elements values = doc.select(".value");
         
-        
-        
-        System.out.println(values.get(1).text());
-        System.out.println(values.get(5).text());
-        System.out.println(values.get(6).text());
-        
-        Element ustrkTable = doc.select("tbody").get(1);
-        
-        Elements ustrks = ustrkTable.select("tr");
-        
-        for(Element ustrk : ustrks){
-            System.out.println(ustrk.select("td").first().text());
-        }
+//        Elements values = doc.select(".value");
+//        
+//        
+//        
+//        System.out.println(values.get(1).text());
+//        System.out.println(values.get(5).text());
+//        System.out.println(values.get(6).text());
+//        
+//        Element ustrkTable = doc.select("tbody").get(1);
+//        
+//        Elements ustrks = ustrkTable.select("tr");
+//        
+//        for(Element ustrk : ustrks){
+//            System.out.println(ustrk.select("td").first().text());
+//        }
    }
     
     

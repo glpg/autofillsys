@@ -58,6 +58,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -1090,6 +1091,7 @@ public class MainWindowController implements Initializable {
     private void setupTable()
     {
          orderTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+         
         
         //set up cellvalue factory
         rowNumber.setCellValueFactory(column-> new ReadOnlyObjectWrapper<Number>(orderTable.getItems().indexOf(column.getValue()) +1));
@@ -1320,12 +1322,28 @@ public class MainWindowController implements Initializable {
         
         orderTable.setRowFactory(new Callback<TableView<JoinRecord>, TableRow<JoinRecord>>() {  
             @Override  
-            public TableRow<JoinRecord> call(TableView<JoinRecord> tableView) {  
-                final TableRow<JoinRecord> row = new TableRow<>();  
+            public TableRow<JoinRecord> call(TableView<JoinRecord> tableView) {
+                final TableRow<JoinRecord> row = new TableRow<>();
                 row.setContextMenu(menu);
-               
-                return row ;  
-            }  
+                row.setOnMouseClicked(event -> {
+                    if (event.getClickCount() == 2) {
+                        
+                        TablePosition pos = orderTable.getSelectionModel().getSelectedCells().get(0);
+                        int rowIndex = pos.getRow();
+                        JoinRecord item = orderTable.getItems().get(rowIndex);
+                        TableColumn col = pos.getTableColumn();
+                        String data = col.getCellObservableValue(item).getValue().toString();
+                        copyToClipboard(data);
+   
+                    }
+                    
+                });
+
+                return row;
+            }
+            
+            
+            
         });  
         
 
@@ -1347,6 +1365,13 @@ public class MainWindowController implements Initializable {
         
         ClipboardContent content = new ClipboardContent();
         content.putString(usTrkNum);
+        Clipboard.getSystemClipboard().setContent(content);
+    }
+    
+    private void copyToClipboard(String value){
+        
+        ClipboardContent content = new ClipboardContent();
+        content.putString(value);
         Clipboard.getSystemClipboard().setContent(content);
     }
     

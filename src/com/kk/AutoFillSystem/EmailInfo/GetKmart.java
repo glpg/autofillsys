@@ -78,7 +78,7 @@ public class GetKmart extends GetStore {
     @Override
     public Shipment extractShipment(String text) {
         Shipment shipment = new Shipment();
-        
+        String[] texts = text.split("Order Summary");
         //carrier
         Pattern carrierP = Pattern.compile("Shipping Vendor ([a-zA-Z]+)");
         Matcher m = carrierP.matcher(text);
@@ -108,9 +108,9 @@ public class GetKmart extends GetStore {
         shipment.warehouse = getWarehouse(text);
         
         
-        //get items
+        //get items, use texts[0] in case some unshipped
         //put item in products
-        String[] items = text.split("ITEM DETAILS");
+        String[] items = texts[0].split("ITEM DETAILS");
         ArrayList<Product> products = new ArrayList();
         for(int i = 1; i < items.length; i++) {
             String orderTextLine = items[i];

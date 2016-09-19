@@ -5,6 +5,7 @@
  */
 package com.kk.AutoFillSystem.Windows;
 
+import com.kk.AutoFillSystem.AutoFillSystem;
 import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
@@ -17,7 +18,11 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Worker;
+import javafx.concurrent.Worker.State;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -26,6 +31,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebEngine;
@@ -57,6 +64,8 @@ public class WebWindowController implements Initializable {
     private Button buttonBack;
     @FXML
     private Button buttonForward; 
+    @FXML
+    private ImageView imageView;
 
     /**
      * Initializes the controller class.
@@ -72,6 +81,25 @@ public class WebWindowController implements Initializable {
         
         buttonBack.setOnAction(e->{goBack();});
         buttonForward.setOnAction(e->{goForward();});
+        //imageview setup
+        imageView.setFitHeight(25);
+        imageView.setFitWidth(25);
+        Image loading = new Image(AutoFillSystem.class.getResourceAsStream("resources/loading.gif"));
+        imageView.setImage(loading);
+        imageView.setVisible(false);
+        
+        //set up webviewer
+        webView.getEngine().getLoadWorker().stateProperty().addListener(
+            new  ChangeListener<State>() {
+                public void changed(ObservableValue ov, State oldState, State newState) {
+                    if (newState == State.SUCCEEDED) {
+                        imageView.setVisible(false);
+                    
+                    }
+                    
+                }
+            });
+                
     }   
     
     
@@ -180,6 +208,7 @@ public class WebWindowController implements Initializable {
         if (e.getCode() == KeyCode.ENTER) {
             WebEngine webEngine = webView.getEngine();
             webEngine.load(textFieldUrl.getText());
+            imageView.setVisible(true);
         }
     }
     
