@@ -5,13 +5,10 @@
  */
 package com.kk.AutoFillSystem;
 
-import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Windows.MainWindowController;
 import com.sun.javafx.application.LauncherImpl;
 import java.io.IOException;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.application.Preloader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;

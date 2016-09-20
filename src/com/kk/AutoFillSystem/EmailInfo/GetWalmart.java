@@ -200,6 +200,10 @@ public class GetWalmart extends GetStore {
   
     @Override
     public Shipment extractShipment(String text) {
+        
+        
+        
+        
         Shipment shipment = new Shipment();
         
         //tracking

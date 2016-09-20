@@ -129,6 +129,9 @@ public abstract class GetStore {
                 else
                     doc = Jsoup.parse(body[1]);
                 
+                //walmart might have more than 1 shipment in one email
+                //this situation has not been dealt here !
+                
                 Shipment shipment = extractShipment(doc.text());
 
                 //for toysrus , the shipment email order number is in subject. 

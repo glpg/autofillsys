@@ -16,17 +16,22 @@ import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.readFile;
 import static com.kk.AutoFillSystem.utility.Tools.readFileLines;
+import static com.kk.AutoFillSystem.utility.Tools.readMapFile;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -94,14 +99,21 @@ public class SyncWindowController implements Initializable {
         //preload accts
         String fileName = "C:\\Users\\" + System.getProperty("user.name") + 
                     "\\Documents\\AutoFillSystem\\acct.txt";
-        List<String> accts = readFileLines(new File(fileName));
-       
-        ObservableList<String> acctList = FXCollections.observableArrayList(accts);
+        Map<String, String> accts = readMapFile(fileName);
+        List<String> gmails = new ArrayList<String>(accts.keySet());
+        ObservableList<String> acctList = FXCollections.observableArrayList(gmails);
         FXCollections.sort(acctList);
         comboBoxAcct.setItems(acctList);
+        comboBoxAcct.setValue(null);
         
-        //preset password
-        passwordFieldPwd.setText("bnmrc123");
+        //add listener to combobox
+        comboBoxAcct.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String oldValue, String newValue) {
+                passwordFieldPwd.setText(accts.get(newValue));
+            }
+        });
+        
     }    
     
 
@@ -230,23 +242,46 @@ public class SyncWindowController implements Initializable {
                             else
                                 doc = Jsoup.parse(body[1]);
 
-                            Shipment shipment = query.extractShipment(doc.text());
-
-                            //for toysrus , the shipment email order number is in subject. 
-                            if (store.equals("Toysrus")) {
-                                String subject = email.getSubject();
-                                Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
-                                Matcher m = orderNum.matcher(subject);
-                                if (m.find()) {
-                                    shipment.orderNum = m.group(1);
+                            
+                            
+                            //take care more than 1 shipments in walmart email
+                            
+                            String[] shipTexts = doc.text().split("Return Code");
+                            if (store.equals("Walmart") && shipTexts.length > 2) {
+                                for(int i = 0; i< shipTexts.length -1; i++) {
+                                    String tmpText = shipTexts[i] + "Return Code" + shipTexts[shipTexts.length -1];
+                                    Shipment shipment = query.extractShipment(tmpText);
+                                    shipment.shipDate = email.getReceivedDate();
+                                    query.getShipments().add(shipment);
+                                    msg += "\n" + shipment.toString() + "\n";
+                                    updateMessage(msg);
+                                    
                                 }
                             }
+                            //end of more than 1 shipment in walmart store
+                            //below is the routine
+                            else {
+                                Shipment shipment = query.extractShipment(doc.text());
+                                //for toysrus , the shipment email order number is in subject. 
+                                if (store.equals("Toysrus")) {
+                                    String subject = email.getSubject();
+                                    Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
+                                    Matcher m = orderNum.matcher(subject);
+                                    if (m.find()) {
+                                        shipment.orderNum = m.group(1);
+                                    }
+                                }
 
-                            shipment.shipDate = email.getReceivedDate();
-                            query.getShipments().add(shipment);
+                                shipment.shipDate = email.getReceivedDate();
+                                query.getShipments().add(shipment);
+
+                                msg += "\n" + shipment.toString() + "\n";
+                                updateMessage(msg);
+
+                            }
+
+
                             
-                            msg += "\n" + shipment.toString() + "\n";
-                            updateMessage(msg);
                     
                         }
                     }
