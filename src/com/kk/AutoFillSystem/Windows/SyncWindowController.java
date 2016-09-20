@@ -14,12 +14,16 @@ import com.kk.AutoFillSystem.EmailInfo.GetToysrus;
 import com.kk.AutoFillSystem.EmailInfo.GetWalmart;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Shipment;
+import static com.kk.AutoFillSystem.utility.Tools.readFile;
+import static com.kk.AutoFillSystem.utility.Tools.readFileLines;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
+import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,7 +58,7 @@ public class SyncWindowController implements Initializable {
     @FXML
     private ComboBox<String> comboBoxStore;
     @FXML
-    private TextField textFieldAcct;
+    private ComboBox<String> comboBoxAcct;
     @FXML
     private TextArea textAreaInfo;
     @FXML
@@ -86,6 +90,18 @@ public class SyncWindowController implements Initializable {
         
         FXCollections.sort(storeList);
         comboBoxStore.setItems(storeList);
+        
+        //preload accts
+        String fileName = "C:\\Users\\" + System.getProperty("user.name") + 
+                    "\\Documents\\AutoFillSystem\\acct.txt";
+        List<String> accts = readFileLines(new File(fileName));
+       
+        ObservableList<String> acctList = FXCollections.observableArrayList(accts);
+        FXCollections.sort(acctList);
+        comboBoxAcct.setItems(acctList);
+        
+        //preset password
+        passwordFieldPwd.setText("bnmrc123");
     }    
     
 
@@ -111,7 +127,7 @@ public class SyncWindowController implements Initializable {
         }
         
         
-        if (textFieldAcct.getText() == null || textFieldAcct.getText().isEmpty()) {
+        if (comboBoxAcct.getValue() == null || comboBoxAcct.getValue().isEmpty()) {
             showAlert("Error", "Account Error :" , "Gmail account is required!");
             return;
         }
@@ -131,7 +147,7 @@ public class SyncWindowController implements Initializable {
         String store = comboBoxStore.getValue();
         
         //acct
-        String account = textFieldAcct.getText().trim();
+        String account = comboBoxAcct.getValue();
         
         //pwd
         String pwd = passwordFieldPwd.getText().trim();
@@ -305,6 +321,8 @@ public class SyncWindowController implements Initializable {
     public void setTextAreaInfo(TextArea textAreaInfo) {
         this.textAreaInfo = textAreaInfo;
     }
+
+   
     
     
 }

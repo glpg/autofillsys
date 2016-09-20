@@ -61,7 +61,6 @@
                   <Insets left="30.0" />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="textFieldAcct" prefWidth="170.0" promptText="jane.doe@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <PasswordField fx:id="passwordFieldPwd" prefWidth="170.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Button fx:id="buttonTest" mnemonicParsing="false" text="Test Run" GridPane.rowIndex="4">
                <font>
@@ -71,6 +70,7 @@
                   <Insets left="20.0" />
                </GridPane.margin>
             </Button>
+            <ComboBox fx:id="comboBoxAcct" prefHeight="25.0" prefWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </children>

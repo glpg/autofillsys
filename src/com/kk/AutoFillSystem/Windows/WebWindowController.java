@@ -84,7 +84,7 @@ public class WebWindowController implements Initializable {
         //imageview setup
         imageView.setFitHeight(25);
         imageView.setFitWidth(25);
-        Image loading = new Image(AutoFillSystem.class.getResourceAsStream("resources/loading.gif"));
+        Image loading = new Image(AutoFillSystem.class.getResourceAsStream("Resources/loading.gif"));
         imageView.setImage(loading);
         imageView.setVisible(false);
         
