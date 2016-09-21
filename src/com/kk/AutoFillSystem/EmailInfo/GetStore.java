@@ -7,10 +7,12 @@ import com.kk.AutoFillSystem.utility.Shipment;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -51,6 +53,7 @@ public abstract class GetStore {
     protected String orderSubject;
     protected String shipSubject;
     protected String storeName;
+    protected ArrayList<String> emailSenders;
     
     protected ArrayList<Order> orders;
     protected ArrayList<Shipment> shipments;
@@ -155,6 +158,19 @@ public abstract class GetStore {
     
     //step by step operations
     public Message[] getMessages(String fromDate) throws MessagingException, ParseException {
+
+        if(!storeName.equals("Kmart")) return getEmails(fromDate, emailSender);
+        else{
+            ArrayList<Message> msgs = new ArrayList();
+            for(String email: emailSenders) {
+                Collections.addAll(msgs, getEmails(fromDate, email));
+            }
+            return msgs.toArray(new Message[msgs.size()]);
+        }
+        
+    }
+    
+    private Message[] getEmails(String fromDate, String emailSender) throws MessagingException, ParseException {
         //get searchterm 
         SearchTerm senderTerm = new FromTerm(new InternetAddress(emailSender));
         SimpleDateFormat df1 = new SimpleDateFormat("MM/dd/yy");
@@ -162,8 +178,7 @@ public abstract class GetStore {
         Date dDate = df1.parse(fromDate);
         SearchTerm dateTerm = new ReceivedDateTerm(ComparisonTerm.GT, dDate);
 
-        Message[] messages = inbox.search(new AndTerm(senderTerm, dateTerm)); //construct basic search terms and search
-        System.out.println(messages.length);
+        Message[] messages = inbox.search(new AndTerm(dateTerm, senderTerm)); //construct basic search terms and search
         
         return messages;
         
@@ -274,6 +289,30 @@ public abstract class GetStore {
 
     public void setShipSubject(String shipSubject) {
         this.shipSubject = shipSubject;
+    }
+
+    public String getEmailSender() {
+        return emailSender;
+    }
+
+    public void setEmailSender(String emailSender) {
+        this.emailSender = emailSender;
+    }
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public ArrayList<String> getEmailSenders() {
+        return emailSenders;
+    }
+
+    public void setEmailSenders(ArrayList<String> emailSenders) {
+        this.emailSenders = emailSenders;
     }
     
     

@@ -203,7 +203,9 @@ public class SyncWindowController implements Initializable {
                     //extract emails
                     msg += "Starting to retrive emails from " + store + " ... \n";
                     updateMessage(msg);
+                    
                     Message[] emails = query.getMessages(sinceDate);
+                    
                     msg += "Total " + emails.length + " emails retrieved ! \n";
                     updateMessage(msg);
                     

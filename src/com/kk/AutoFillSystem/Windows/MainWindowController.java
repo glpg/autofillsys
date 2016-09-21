@@ -1352,7 +1352,7 @@ public class MainWindowController implements Initializable {
         orderTable.setItems(tableRows);
         
         //set up filter
-        filter = new TableFilter(orderTable);
+        filter = new TableFilter(orderTable, tableRows);
         
         
    
@@ -1390,8 +1390,14 @@ public class MainWindowController implements Initializable {
             JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
             Ustrkings ustrk = currentRecord.getUsTrk();
             dataCenter.createUsAndIntlRelation(copyStoreIntlTrk, ustrk);
-            currentRecord.setIntlTrk(copyStoreIntlTrk);
             
+            if (currentRecord.getIntlTrk() != null) {
+                currentRecord = copyRecordforIntl(currentRecord);
+                orderTable.getItems().add(currentRecord);
+            }
+                
+              
+            currentRecord.setIntlTrk(copyStoreIntlTrk);
             if (copyStoreIntlTrk.getCntrkingsCollection().size() == 1)
                 currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
             
@@ -1421,6 +1427,16 @@ public class MainWindowController implements Initializable {
             copyStoreIntlTrk = null;
         }
             
+        
+    }
+    
+    
+    private JoinRecord copyRecordforIntl(JoinRecord record) {
+        JoinRecord copy = new JoinRecord();
+        copy.setOrder(record.getOrder());
+        copy.setUsTrk(record.getUsTrk());
+        expandInfo(copy);
+        return copy;
         
     }
     

@@ -27,6 +27,9 @@ public class GetKmart extends GetStore {
         orderSubject = "thank you for your order";
         shipSubject = "have shipped!";
         storeName = "Kmart";
+        emailSenders = new ArrayList();
+        emailSenders.add(emailSender);
+        emailSenders.add("kmart@kmart.rsys5.com");
     }
     
     
