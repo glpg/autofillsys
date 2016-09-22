@@ -186,7 +186,8 @@ public abstract class GetStore {
     
     
     public abstract Order extractOrder(String text);
-    public abstract Shipment extractShipment(String text);
+    protected abstract Shipment extractShipment(String text);
+    public abstract ArrayList<Shipment> extractShipments(Message email);
     
     public static String[] getBody(Message msg){
 		

@@ -8,6 +8,7 @@ package com.kk.AutoFillSystem.EmailInfo;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
+import com.kk.AutoFillSystem.utility.LoggingAspect;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
@@ -18,8 +19,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.persistence.EntityManager;
@@ -199,11 +203,8 @@ public class GetWalmart extends GetStore {
   //get information for delivery confirm email : We just delivered a shipment on your order
   
     @Override
-    public Shipment extractShipment(String text) {
-        
-        
-        
-        
+    protected Shipment extractShipment(String text) {
+     
         Shipment shipment = new Shipment();
         
         //tracking
@@ -221,9 +222,6 @@ public class GetWalmart extends GetStore {
         if(m1.find()) {
             shipment.orderNum = m1.group(1);
         }
-        
-        //ship to 
-        shipment.warehouse = getWarehouse(text);
         
         
         //get items
@@ -275,6 +273,47 @@ public class GetWalmart extends GetStore {
         }
         
        
+    }
+
+    @Override
+    public ArrayList<Shipment> extractShipments(Message email) {
+        
+        String[] body = getBody(email);
+        Document doc = Jsoup.parse(body[1]);
+        String content = doc.text();
+        
+        ArrayList<Shipment> found = new ArrayList();
+        String[] shipTexts = content.split("Return Code");
+        if (shipTexts.length > 2) {
+            for (int i = 0; i < shipTexts.length - 1; i++) {
+                try {
+                    String tmpText = shipTexts[i] + "Return Code" + shipTexts[shipTexts.length - 1];
+                    Shipment shipment = extractShipment(tmpText);
+                    shipment.shipDate = email.getReceivedDate();
+                    //ship to 
+                    shipment.warehouse = getWarehouse(content);
+                    found.add(shipment);
+                } catch (MessagingException ex) {
+                    LoggingAspect.addException(ex);
+                }
+
+            }
+        }
+        
+        else {
+            try {
+                Shipment shipment = extractShipment(content);
+                shipment.shipDate = email.getReceivedDate();
+                //ship to 
+                shipment.warehouse = getWarehouse(content);
+                found.add(shipment);
+            } catch (MessagingException ex) {
+                LoggingAspect.addException(ex);
+            }
+        }
+        
+        return found;
+
     }
     
     

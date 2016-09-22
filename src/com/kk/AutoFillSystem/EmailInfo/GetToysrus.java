@@ -5,21 +5,29 @@
  */
 package com.kk.AutoFillSystem.EmailInfo;
 
-import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
+import static com.kk.AutoFillSystem.EmailInfo.GetStore.getBody;
+import com.kk.AutoFillSystem.utility.LoggingAspect;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.getWarehouse;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  *
@@ -128,9 +136,6 @@ public class GetToysrus extends GetStore{
             shipment.trackingNum = m.group(2);
         }
         
-        //get warehouse
-        //ship to
-        shipment.warehouse = getWarehouse(text);
         
         
         //get items and tracking number
@@ -158,6 +163,60 @@ public class GetToysrus extends GetStore{
         shipment.products = products;
         
         return shipment;
+    }
+
+    @Override
+    public ArrayList<Shipment> extractShipments(Message email) {
+        String[] body = getBody(email);
+        Document doc = Jsoup.parse(body[1]);
+        String content = doc.text();
+        
+        ArrayList<Shipment> found = new ArrayList();
+        
+        //split track blocks
+        String[] shipTexts = content.split("Track @:");
+        
+        //check if blocks have different tracking number
+        Map<String, String> uniqueTrack = new HashMap();
+        for(String shiptext : shipTexts) {
+            Pattern trkline = Pattern.compile("Shipped via: ([^@]*) Tracking Number: ([a-zA-Z0-9]+)");
+            Matcher m = trkline.matcher(shiptext);
+            if(m.find()) {
+                String trkNum = m.group(2);
+                if(uniqueTrack.containsKey(trkNum)) {
+                    String newText = uniqueTrack.get(trkNum);
+                    newText += shiptext;
+                    uniqueTrack.put(trkNum, newText);
+                }
+                else 
+                    uniqueTrack.put(trkNum, shiptext);
+            }
+        }
+        
+        //now start to extract shipment
+        for(String tmp : uniqueTrack.values()) {
+            Shipment temp = extractShipment(tmp);
+            try {
+                String subject = email.getSubject();
+                Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
+                Matcher m = orderNum.matcher(subject);
+                
+        
+                if (m.find()) {
+                    temp.orderNum = m.group(1);
+                }
+                
+                temp.shipDate = email.getReceivedDate();
+                //get warehouse
+                temp.warehouse = getWarehouse(content);
+            } catch (MessagingException ex) {
+                LoggingAspect.addException(ex);
+            }
+            found.add(temp);
+        }
+        
+        
+        return found;
     }
     
 }

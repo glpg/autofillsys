@@ -1352,7 +1352,7 @@ public class MainWindowController implements Initializable {
         orderTable.setItems(tableRows);
         
         //set up filter
-        filter = new TableFilter(orderTable, tableRows);
+        filter = new TableFilter(orderTable);
         
         
    

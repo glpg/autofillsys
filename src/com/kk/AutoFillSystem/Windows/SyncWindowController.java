@@ -14,11 +14,8 @@ import com.kk.AutoFillSystem.EmailInfo.GetToysrus;
 import com.kk.AutoFillSystem.EmailInfo.GetWalmart;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Shipment;
-import static com.kk.AutoFillSystem.utility.Tools.readFile;
-import static com.kk.AutoFillSystem.utility.Tools.readFileLines;
 import static com.kk.AutoFillSystem.utility.Tools.readMapFile;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
-import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -28,8 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -43,7 +39,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javax.mail.Message;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -114,7 +109,7 @@ public class SyncWindowController implements Initializable {
             }
         });
         
-    }    
+    }
     
 
     
@@ -236,55 +231,18 @@ public class SyncWindowController implements Initializable {
 
                         if (email.getSubject().contains(query.getShipSubject())) {
 
-                            String[] body = getBody(email);
-                            Document doc;
-                            if(store.equals("Kmart")) {
-                                doc = Jsoup.parse(body[0]);
-                            }
-                            else
-                                doc = Jsoup.parse(body[1]);
-
                             
                             
-                            //take care more than 1 shipments in walmart email
-                            
-                            String[] shipTexts = doc.text().split("Return Code");
-                            if (store.equals("Walmart") && shipTexts.length > 2) {
-                                for(int i = 0; i< shipTexts.length -1; i++) {
-                                    String tmpText = shipTexts[i] + "Return Code" + shipTexts[shipTexts.length -1];
-                                    Shipment shipment = query.extractShipment(tmpText);
-                                    shipment.shipDate = email.getReceivedDate();
-                                    query.getShipments().add(shipment);
-                                    msg += "\n" + shipment.toString() + "\n";
-                                    updateMessage(msg);
-                                    
-                                }
-                            }
-                            //end of more than 1 shipment in walmart store
-                            //below is the routine
-                            else {
-                                Shipment shipment = query.extractShipment(doc.text());
-                                //for toysrus , the shipment email order number is in subject. 
-                                if (store.equals("Toysrus")) {
-                                    String subject = email.getSubject();
-                                    Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
-                                    Matcher m = orderNum.matcher(subject);
-                                    if (m.find()) {
-                                        shipment.orderNum = m.group(1);
-                                    }
-                                }
-
-                                shipment.shipDate = email.getReceivedDate();
-                                query.getShipments().add(shipment);
-
-                                msg += "\n" + shipment.toString() + "\n";
+                            //revise using extractshipments
+                            ArrayList<Shipment> found = query.extractShipments(email);
+                            for(Shipment tmp: found) {
+                                msg += "\n" + tmp.toString() + "\n";
                                 updateMessage(msg);
-
                             }
-
-
                             
-                    
+                            query.getShipments().addAll(found);
+                            
+                            
                         }
                     }
                     

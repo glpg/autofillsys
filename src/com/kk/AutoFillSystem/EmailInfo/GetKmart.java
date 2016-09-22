@@ -5,13 +5,21 @@
  */
 package com.kk.AutoFillSystem.EmailInfo;
 
+import static com.kk.AutoFillSystem.EmailInfo.GetStore.getBody;
+import com.kk.AutoFillSystem.utility.LoggingAspect;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.getWarehouse;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  *
@@ -79,7 +87,7 @@ public class GetKmart extends GetStore {
     
 
     @Override
-    public Shipment extractShipment(String text) {
+    protected Shipment extractShipment(String text) {
         Shipment shipment = new Shipment();
         String[] texts = text.split("Order Summary");
         //carrier
@@ -139,5 +147,23 @@ public class GetKmart extends GetStore {
         shipment.products = products;
         
         return shipment;
+    }
+
+    @Override
+    public ArrayList<Shipment> extractShipments(Message email) {
+        ArrayList<Shipment> found = new ArrayList();
+        try {
+            
+            String[] body = getBody(email);
+            Document doc = Jsoup.parse(body[0]);
+            Shipment shipment = extractShipment(doc.text());
+            shipment.shipDate = email.getReceivedDate();
+            found.add(shipment);
+            return found;
+        } catch (MessagingException ex) {
+            LoggingAspect.addException(ex);
+            return found;
+        }
+                          
     }
 }

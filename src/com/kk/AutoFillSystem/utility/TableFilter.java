@@ -22,10 +22,10 @@ public class TableFilter {
     private ObservableList<JoinRecord> totalItems ;
     private Map<String, String> filters = new HashMap();
     
-    public TableFilter(TableView table, ObservableList<JoinRecord> totalItems) {
+    public TableFilter(TableView table) {
         this.table = table;
         //full record
-        this.totalItems = totalItems;
+        
         initFilters();
        
     }
@@ -63,7 +63,7 @@ public class TableFilter {
         
         filteredItems.clear();
         //always apply all the currently stored filters, so you can change things freely 
-        
+        totalItems = table.getItems();
         
         for(JoinRecord record : totalItems) {
             String warehouse = (record.getWarehouse()==null)?"":record.getWarehouse();
