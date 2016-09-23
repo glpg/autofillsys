@@ -35,17 +35,11 @@
                <HBox.margin>
                   <Insets top="10.0" />
                </HBox.margin></ComboBox>
-            <Button fx:id="btnApplyFilter" mnemonicParsing="false" prefWidth="85.0" text="Apply">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
+            <Button fx:id="btnApplyFilter" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Apply">
                <HBox.margin>
                   <Insets top="10.0" />
                </HBox.margin></Button>
-            <Button fx:id="btnClearFilter" mnemonicParsing="false" prefWidth="85.0" text="Clear Filters">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
+            <Button fx:id="btnClearFilter" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Clear Filters">
                <HBox.margin>
                   <Insets top="10.0" />
                </HBox.margin></Button>
@@ -63,18 +57,12 @@
                <HBox.margin>
                   <Insets top="10.0" />
                </HBox.margin></TextField>
-            <Button fx:id="buttonSearch" alignment="CENTER" mnemonicParsing="false" prefWidth="60.0" text="Search">
+            <Button fx:id="buttonSearch" alignment="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Search">
                <HBox.margin>
                   <Insets top="10.0" />
                </HBox.margin>
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
             </Button>
-            <Button fx:id="buttonReset" mnemonicParsing="false" prefWidth="60.0" text="Reset">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
+            <Button fx:id="buttonReset" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Reset">
                <HBox.margin>
                   <Insets top="10.0" />
                </HBox.margin></Button>

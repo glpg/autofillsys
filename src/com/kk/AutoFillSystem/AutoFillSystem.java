@@ -70,8 +70,10 @@ public class AutoFillSystem extends Application {
             MainWindowController controller = loader.getController();
             //controller.setMainApp(this);
             mainScene = new Scene(rootLayout);
-            
-            
+            String css = getClass().getResource("style.css").toExternalForm();
+            mainScene.getStylesheets().clear();
+            mainScene.getStylesheets().add(css);
+
 
         } catch (IOException e) {
             e.printStackTrace();

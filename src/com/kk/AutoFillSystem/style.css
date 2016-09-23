@@ -1,10 +1,60 @@
-.combo-box .list-cell 
-{
-    -fx-background-color: lightgrey;
-    
-}
-
 .vbox {
     -fx-border-width:5;
     -fx-border-color:blue;
 }
+
+#menuItemSyncEmails > .label {
+    -fx-graphic: url("Resources/email.png");
+}
+
+#menuItemSyncHDB > .label {
+    -fx-graphic: url("Resources/file.png");
+}
+
+#menuItemOpenWebpage > .label {
+    -fx-graphic: url("Resources/web.png");
+}
+
+
+#menuItemReloadTable > .label {
+    -fx-graphic: url("Resources/reload.png");
+}
+
+
+#menuItemConfirmDelivery > .label {
+    -fx-graphic: url("Resources/delivery.png");
+}
+
+
+#menuItemEditOrder > .label {
+    -fx-graphic: url("Resources/order.png");
+}
+
+#menuItemEditUsTrk > .label {
+    -fx-graphic: url("Resources/ship.png");
+}
+
+#menuItemExportTable > .label {
+    -fx-graphic: url("Resources/save.png");
+}
+
+
+.button {
+
+    -fx-background-color: 
+        #000000,
+        linear-gradient(#7ebcea, #2f4b8f),
+        linear-gradient(#426ab7, #263e75),
+        linear-gradient(#395cab, #223768);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+    -fx-text-fill: white;
+    -fx-font-size: 12 px;
+    -fx-font-weight: bold;
+}
+
+.button:pressed{
+   -fx-text-fill: #A9A9A9;
+   
+}
+
