@@ -23,6 +23,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -102,7 +104,7 @@ public class CnTrkWindowController implements Initializable {
         Cntrkings cnTrk = new Cntrkings();
         //set trk number
         if (textFieldTrkNum.getText() == null || textFieldTrkNum.getText().length() == 0) {
-            showAlert("Error", "Trk Number Error :" , "Tracking number is required!");
+            showAlert("Error", "Trk Number Error :" , "Tracking number is required!", AlertType.ERROR);
             return;
         }
         
@@ -114,7 +116,7 @@ public class CnTrkWindowController implements Initializable {
         for(Cntrkings trk : record.getIntlTrk().getCntrkingsCollection()) {
             
             if (trk.getTrkingNum().equals(cnTrk.getTrkingNum())) {
-                showAlert("Error", "Trk Number Error :" , "Tracking number already exists!");
+                showAlert("Error", "Trk Number Error :" , "Tracking number already exists!", AlertType.ERROR);
                 return;
             }
             
@@ -132,7 +134,7 @@ public class CnTrkWindowController implements Initializable {
         
         //set carrier
         if (comboBoxCarrier.getValue() == null || comboBoxCarrier.getValue().length() == 0) {
-            showAlert("Error", "Carrier Error :" , "Carrier is required!");
+            showAlert("Error", "Carrier Error :" , "Carrier is required!", AlertType.ERROR);
             return;
         }
         
@@ -146,7 +148,7 @@ public class CnTrkWindowController implements Initializable {
         
         //set address
         if (comboBoxAddr.getValue() == null || comboBoxAddr.getValue().length() == 0) {
-            showAlert("Error", "Address Error :" , "Address is required!");
+            showAlert("Error", "Address Error :" , "Address is required!",AlertType.ERROR);
             return;
         }
         
@@ -164,7 +166,7 @@ public class CnTrkWindowController implements Initializable {
         
 
         dataCenter.createCnTrking(cnTrk);
-        showAlert("Success", "Record Created :" , "New China shipment is created successfully !");
+        showAlert("Success", "Record Created :" , "New China shipment is created successfully !", AlertType.INFORMATION);
         //now modify tablerows
         if (record.getCnTrk() == null) {
             record.setCnTrk(cnTrk);

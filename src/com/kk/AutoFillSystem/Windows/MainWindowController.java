@@ -50,6 +50,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -144,6 +145,12 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemQuit;
     @FXML
     private MenuItem menuItemConfirmDelivery;
+    @FXML
+    private MenuItem menuItemAbout;
+    @FXML
+    private MenuItem menuItemStat;
+    
+    
     
     
     //filter area
@@ -152,7 +159,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private ComboBox comboBoxWarehouse;
     @FXML
-    private ComboBox comboBoxProduct;
+    private ComboBox<String> comboBoxProduct;
     @FXML
     private ComboBox comboBoxUnshipped;
     @FXML
@@ -411,7 +418,7 @@ public class MainWindowController implements Initializable {
     
     private void search(){
         if(textFieldSearchNum.getText() == null || textFieldSearchNum.getText().isEmpty() ) {
-            showAlert("Error", "Search field Error: ", "You did not input a number for search !");
+            showAlert("Error", "Search field Error: ", "You did not input a number for search !", AlertType.ERROR);
             return;
         }
         ObservableList<JoinRecord> results = FXCollections.observableArrayList();
@@ -520,7 +527,67 @@ public class MainWindowController implements Initializable {
         menuItemQuit.setOnAction(e->{systemQuit(e);});
         
         menuItemConfirmDelivery.setOnAction(e->{confirmDelivery();});
+        
+        menuItemStat.setOnAction(e->{showStat();});
        
+    }
+    
+    private void showStat(){
+        if (comboBoxProduct.getValue() == null ||comboBoxProduct.getValue().isEmpty()) {
+            showAlert("Error", "Missing Product :" , "Product number is required for statistics summary !", AlertType.ERROR);
+        }
+        String prod  = comboBoxProduct.getValue();
+        int orderCnt = 0; 
+        int shipCnt = 0; 
+        int deliverCnt = 0; 
+        Pattern pa = Pattern.compile(prod +" : ([0-9]+)");
+        
+        
+        ObservableList<JoinRecord> items = orderTable.getItems();
+        Set<String> orders = new HashSet();
+        Set<String> trks = new HashSet();
+        Set<String> cntrks = new HashSet();
+        
+        for(JoinRecord record: items) {
+            if(!orders.contains(record.getOrderNum())) {
+                orders.add(record.getOrderNum());
+                //count in numbers
+                Matcher m = pa.matcher(record.getOrderList());
+                while(m.find()) {
+                    int cnt = Integer.parseInt(m.group(1));
+                    orderCnt += cnt;
+                }
+                
+            }
+            
+            if(record.getUsTrk()!= null && !trks.contains(record.getUsTrkNum())) {
+                trks.add(record.getUsTrkNum());
+                //count in numbers
+                Matcher m = pa.matcher(record.getShipList());
+                if(m.find()) {
+                    int cnt = Integer.parseInt(m.group(1));
+                    shipCnt += cnt;
+                }
+            }
+            
+            if(record.getCnTrk() != null && !cntrks.contains(record.getCnTrkNum())) {
+                cntrks.add(record.getCnTrkNum());
+                if (record.getDelivered()) {
+                    Matcher m = pa.matcher(record.getShipList());
+                    if (m.find()) {
+                        int cnt = Integer.parseInt(m.group(1));
+                        shipCnt += cnt;
+                    }
+                }
+            }
+
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("Ordered : ").append(orderCnt).append("\n").append("Shipped : ").append(shipCnt).append("\n");
+        
+        showAlert("Stat Summary", prod + " Stats :",sb.toString(), AlertType.INFORMATION);
+        
     }
     
     
@@ -629,10 +696,10 @@ public class MainWindowController implements Initializable {
                 int weight = (int) (Double.parseDouble(info[2]) * 1000.0);
 
                 if (addIntlTrk(ustrks, intlTrk, weight, shippingfee, "HDB")) {
-                    showAlert("Success", "Update Finished :" , "HDB tracking " + intlTrk + " is updated successfully !");
+                    showAlert("Success", "Update Finished :" , "HDB tracking " + intlTrk + " is updated successfully !", AlertType.INFORMATION);
                 }
                 else{
-                    showAlert("Failed", "Update Error :" , "HDB tracking " + intlTrk + " already existed !");
+                    showAlert("Failed", "Update Error :" , "HDB tracking " + intlTrk + " already existed !", AlertType.WARNING);
                 }
                 
                 
@@ -835,7 +902,7 @@ public class MainWindowController implements Initializable {
      
             JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
             if (currentRecord == null) {
-                showAlert("Error", "Order Error :" , "You did not select any order in the table !");
+                showAlert("Error", "Order Error :" , "You did not select any order in the table !", AlertType.ERROR);
                 return;
             }
             
@@ -870,7 +937,7 @@ public class MainWindowController implements Initializable {
      
             JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
             if (currentRecord == null) {
-                showAlert("Error", "Order Error :" , "You did not select any order in the table !");
+                showAlert("Error", "Order Error :" , "You did not select any order in the table !", AlertType.ERROR);
                 return;
             }
             Stage stage = new Stage();
@@ -902,7 +969,7 @@ public class MainWindowController implements Initializable {
      
             JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
             if (currentRecord == null || currentRecord.getUsTrk() == null) {
-                showAlert("Error", "Record Error :" , "You did not select any record or the record does not have US tracking !");
+                showAlert("Error", "Record Error :" , "You did not select any record or the record does not have US tracking !", AlertType.ERROR);
                 return;
             }
             Stage stage = new Stage();
@@ -935,7 +1002,7 @@ public class MainWindowController implements Initializable {
      
             JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
             if (currentRecord == null || currentRecord.getUsTrk() == null) {
-                showAlert("Error", "Record Error :" , "You did not select any record or the record does not have US trking !");
+                showAlert("Error", "Record Error :" , "You did not select any record or the record does not have US trking !", AlertType.ERROR);
                 return;
             }
             
@@ -970,7 +1037,7 @@ public class MainWindowController implements Initializable {
      
             JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
             if (currentRecord == null || currentRecord.getIntlTrk() == null) {
-                showAlert("Error", "Record Error :" , "You did not select any record or the record does not have international trking !");
+                showAlert("Error", "Record Error :" , "You did not select any record or the record does not have international trking !", AlertType.ERROR);
                 return;
             }
             
@@ -1066,7 +1133,7 @@ public class MainWindowController implements Initializable {
             } 
         }
         
-        showAlert("Success", "Table Exported :" , "Table data is exported successfully !");
+        showAlert("Success", "Table Exported :" , "Table data is exported successfully !", AlertType.INFORMATION);
         
         
     }
@@ -1382,7 +1449,7 @@ public class MainWindowController implements Initializable {
     
     private void pasteIntlTrk() {
         if (copyStoreIntlTrk == null) {
-            showAlert("Error", "Intl Trk Error :" , "No intl trking is copied, copy first !");
+            showAlert("Error", "Intl Trk Error :" , "No intl trking is copied, copy first !", AlertType.ERROR);
             return;
         }
         

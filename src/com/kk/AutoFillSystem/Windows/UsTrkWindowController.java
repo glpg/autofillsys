@@ -28,6 +28,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -129,7 +130,7 @@ public class UsTrkWindowController implements Initializable {
         try{
             String prodNum = comboBoxItem.getValue();
             if(prodNum == null || prodNum.length() == 0) {
-                showAlert("Error", "Product Error :" , "You did not select product !");
+                showAlert("Error", "Product Error :" , "You did not select product !", AlertType.ERROR);
                 return;
             } 
             int count = Integer.parseInt(textFieldQuantity.getText());
@@ -137,7 +138,7 @@ public class UsTrkWindowController implements Initializable {
             prods.add(new Product(prodNum, count));
         }
         catch (NumberFormatException e) {
-            showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !");
+            showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !", AlertType.ERROR);
             textFieldQuantity.setText(null);
         }
         
@@ -157,7 +158,7 @@ public class UsTrkWindowController implements Initializable {
     
     private void create(ActionEvent e) {
         if (textFieldTrkNum.getText() == null || textFieldTrkNum.getText().length() == 0) {
-            showAlert("Error", "Trk Number Error :" , "Tracking number is required!");
+            showAlert("Error", "Trk Number Error :" , "Tracking number is required!", AlertType.ERROR);
             return;
         }
         
@@ -166,7 +167,7 @@ public class UsTrkWindowController implements Initializable {
         //check if trking already exsited
         for(Ustrkings ustrk : record.getOrder().getUstrkingsCollection()) {
             if (shipInfo.trackingNum.toLowerCase().equals(ustrk.getTrkingNum().toLowerCase())) {
-                showAlert("Error", "Trk Number Error :" , "Tracking number already exists!");
+                showAlert("Error", "Trk Number Error :" , "Tracking number already exists!", AlertType.ERROR);
                 return;
             }
         }
@@ -174,14 +175,14 @@ public class UsTrkWindowController implements Initializable {
         
         
         if (comboBoxCarrier.getValue() == null || comboBoxCarrier.getValue().length() == 0) {
-            showAlert("Error", "Carrier Error :" , "Carrier is required!");
+            showAlert("Error", "Carrier Error :" , "Carrier is required!", AlertType.ERROR);
             return;
         }
         
         shipInfo.carrier = comboBoxCarrier.getValue();
         
         if (comboBoxShipto.getValue() == null || comboBoxShipto.getValue().length() == 0) {
-            showAlert("Error", "Shipping Address Error :" , "Shipping Address is required!");
+            showAlert("Error", "Shipping Address Error :" , "Shipping Address is required!", AlertType.ERROR);
             return;
         }
         
@@ -201,11 +202,11 @@ public class UsTrkWindowController implements Initializable {
         Ustrkings newTrk = dataCenter.createUsTrking(shipInfo);
         
         if (newTrk == null) {
-            showAlert("Failed", "Creating Failed :" , "The us shipment could not be created !");
+            showAlert("Failed", "Creation Failed :" , "The us shipment could not be created, it might be duplicated !", AlertType.ERROR);
         }
             
         else {
-            showAlert("Success", "Record Created :" , "New US shipment is created successfully !");
+            showAlert("Success", "Record Created :" , "New US shipment is created successfully !", AlertType.INFORMATION);
             //if the current record does not have us trking, add info in
             if (record.getUsTrk() == null) {
                 record.setUsTrk(newTrk);

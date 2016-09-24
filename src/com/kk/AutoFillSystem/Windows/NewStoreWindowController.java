@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
@@ -52,7 +53,7 @@ public class NewStoreWindowController implements Initializable {
     private void create(ActionEvent e) {
         Stores store = new Stores();
         if (textFieldStore.getText() == null || textFieldStore.getText().isEmpty()) {
-            showAlert("Error", "Store Error :" , "Store name is required!");
+            showAlert("Error", "Store Error :" , "Store name is required!", AlertType.ERROR);
             return;
         }
         
@@ -62,7 +63,7 @@ public class NewStoreWindowController implements Initializable {
         
         for(Stores temp : mainWindow.getStores()) {
             if (store.getName().equals(temp.getName())) {
-                showAlert("Error", "Duplicate Error :" , "Store already exists!");
+                showAlert("Error", "Duplicate Error :" , "Store already exists!", AlertType.WARNING);
                 return;
             }
                 
@@ -72,7 +73,7 @@ public class NewStoreWindowController implements Initializable {
         
         dataCenter.createStore(store);
         
-        showAlert("Success", "Record Created :" , "New store is created successfully !");
+        showAlert("Success", "Record Created :" , "New store is created successfully !", AlertType.INFORMATION);
         mainWindow.getStores().add(store);
         mainWindow.getComboBoxStore().getItems().add(store.getName());
       

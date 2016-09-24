@@ -21,6 +21,8 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -86,7 +88,7 @@ public class IntlTrkWindowController implements Initializable {
         Ustocntrkings intlTrk = new Ustocntrkings();
         //set trk number
         if (textFieldTrkNum.getText() == null || textFieldTrkNum.getText().length() == 0) {
-            showAlert("Error", "Trk Number Error :" , "Tracking number is required!");
+            showAlert("Error", "Trk Number Error :" , "Tracking number is required!", AlertType.ERROR);
             return;
         }
         
@@ -98,7 +100,7 @@ public class IntlTrkWindowController implements Initializable {
         for(Usanduscntrkings relation : record.getUsTrk().getUsanduscntrkingsCollection()) {
             Ustocntrkings intl = relation.getUstocntrkingId();
             if (intlTrk.getTrkingNum().equals(intl.getTrkingNum())) {
-                showAlert("Error", "Trk Number Error :" , "Tracking number already exists!");
+                showAlert("Error", "Trk Number Error :" , "Tracking number already exists!", AlertType.ERROR);
                 return;
             }
             
@@ -122,7 +124,7 @@ public class IntlTrkWindowController implements Initializable {
             try {
                 intlTrk.setWeight(Integer.parseInt(textFieldWeight.getText()));
             } catch (NumberFormatException ex) {
-                showAlert("Error", "Weight Error :", "Weight has to be integers !");
+                showAlert("Error", "Weight Error :", "Weight has to be integers !", AlertType.ERROR);
                 textFieldWeight.setText(null);
             }
 
@@ -133,14 +135,14 @@ public class IntlTrkWindowController implements Initializable {
                 BigDecimal fee = new BigDecimal(Double.parseDouble(textFieldFee.getText()));
                 intlTrk.setShippingfee(fee);
             } catch (NumberFormatException ex) {
-                showAlert("Error", "ShippingFee Error :", "Shipping fee has to be float value !");
+                showAlert("Error", "ShippingFee Error :", "Shipping fee has to be float value !", AlertType.ERROR);
                 textFieldFee.setText(null);
             }
 
         }
 
         dataCenter.createIntlTrking(intlTrk, record.getUsTrk());
-        showAlert("Success", "Record Created :" , "New international shipment is created successfully !");
+        showAlert("Success", "Record Created :" , "New international shipment is created successfully !", AlertType.INFORMATION);
         //now modify tablerows
         if (record.getIntlTrk() == null) {
             record.setIntlTrk(intlTrk);

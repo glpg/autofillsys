@@ -34,6 +34,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -124,23 +125,23 @@ public class SyncWindowController implements Initializable {
         LocalDate date = datePicker.getValue();
         if (date == null) {
             
-            showAlert("Error", "Start Date Error :" , "Start date is required!");
+            showAlert("Error", "Start Date Error :" , "Start date is required!", AlertType.ERROR);
             return;    
         }
         
         if (comboBoxStore.getValue() == null || comboBoxStore.getValue().isEmpty()) {
-            showAlert("Error", "Store Error :" , "Store is required!");
+            showAlert("Error", "Store Error :" , "Store is required!", AlertType.ERROR);
             return;
         }
         
         
         if (comboBoxAcct.getValue() == null || comboBoxAcct.getValue().isEmpty()) {
-            showAlert("Error", "Account Error :" , "Gmail account is required!");
+            showAlert("Error", "Account Error :" , "Gmail account is required!", AlertType.ERROR);
             return;
         }
         
         if (passwordFieldPwd.getText() == null || passwordFieldPwd.getText().isEmpty()) {
-            showAlert("Error", "Password Error :" , "Password is required!");
+            showAlert("Error", "Password Error :" , "Password is required!", AlertType.ERROR);
             return;
         }
         
@@ -175,7 +176,7 @@ public class SyncWindowController implements Initializable {
                 break;
             }
             default :{
-                showAlert("Error", "Not Supported Error :" , store + " is not supported yet !");
+                showAlert("Error", "Not Supported Error :" , store + " is not supported yet !", AlertType.WARNING);
                 return;
             }
                 

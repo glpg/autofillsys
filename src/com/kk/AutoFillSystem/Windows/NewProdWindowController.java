@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
@@ -55,7 +56,7 @@ public class NewProdWindowController implements Initializable {
     private void create(ActionEvent e) {
         Products prod = new Products();
         if (textFieldProdNum.getText() == null || textFieldProdNum.getText().isEmpty()) {
-            showAlert("Error", "Product Number Error :" , "Product number is required!");
+            showAlert("Error", "Product Number Error :" , "Product number is required!", AlertType.ERROR);
             return;
         }
         
@@ -63,7 +64,7 @@ public class NewProdWindowController implements Initializable {
         
         for(Products temp : mainWindow.getProducts()) {
             if (prod.getProdNum().equals(temp.getProdNum())) {
-                showAlert("Error", "Product Error :" , "Product already exists!");
+                showAlert("Error", "Product Error :" , "Product already exists!", AlertType.WARNING);
                 return;
             }
                 
@@ -76,7 +77,7 @@ public class NewProdWindowController implements Initializable {
         
         dataCenter.createProduct(prod);
         
-        showAlert("Success", "Record Created :" , "New product is created successfully !");
+        showAlert("Success", "Record Created :" , "New product is created successfully !", AlertType.INFORMATION);
         mainWindow.getProducts().add(prod);
         mainWindow.getComboBoxProduct().getItems().add(prod.getProdNum());
         

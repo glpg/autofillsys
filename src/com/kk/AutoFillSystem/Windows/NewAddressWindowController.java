@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -73,7 +74,7 @@ public class NewAddressWindowController implements Initializable {
     private void create(ActionEvent e) {
         Addresses addr = new Addresses();
         if (textFieldName.getText() == null || textFieldName.getText().isEmpty()) {
-            showAlert("Error", "Carrier Error :" , "Carrier name is required!");
+            showAlert("Error", "Carrier Error :" , "Carrier name is required!", AlertType.ERROR);
             return;
         }
         
@@ -81,7 +82,7 @@ public class NewAddressWindowController implements Initializable {
         //check if exists
         for(Addresses temp : mainWindow.getAddresses()) {
             if (addr.getName().equals(temp.getName())) {
-                showAlert("Error", "Duplicate Error :" , "Address already exists!");
+                showAlert("Error", "Duplicate Error :" , "Address already exists!", AlertType.WARNING);
                 return;
             }
                 
@@ -89,7 +90,7 @@ public class NewAddressWindowController implements Initializable {
         
         //country must set
         if (comboBoxCountry.getValue() == null || comboBoxCountry.getValue().isEmpty()) {
-            showAlert("Error", "Country Error :" , "Country is required!");
+            showAlert("Error", "Country Error :" , "Country is required!", AlertType.ERROR);
             return;
         }
         
@@ -124,7 +125,7 @@ public class NewAddressWindowController implements Initializable {
         //create address
         dataCenter.createAddress(addr);
         
-        showAlert("Success", "Record Created :" , "New address is created successfully !");
+        showAlert("Success", "Record Created :" , "New address is created successfully !", AlertType.INFORMATION);
         mainWindow.getAddresses().add(addr);
         
         if (addr.getCountry().equals("CN")) 

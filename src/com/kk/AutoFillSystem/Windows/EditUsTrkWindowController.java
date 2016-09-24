@@ -28,6 +28,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -155,7 +157,7 @@ public class EditUsTrkWindowController implements Initializable{
         try{
             String prodNum = comboBoxItem.getValue();
             if(prodNum == null || prodNum.length() == 0) {
-                showAlert("Error", "Product Error :" , "You did not select product !");
+                showAlert("Error", "Product Error :" , "You did not select product !", AlertType.ERROR);
                 return;
             } 
             int count = Integer.parseInt(textFieldQuantity.getText());
@@ -163,7 +165,7 @@ public class EditUsTrkWindowController implements Initializable{
             prods.add(new Product(prodNum, count));
         }
         catch (NumberFormatException e) {
-            showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !");
+            showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !", AlertType.ERROR);
             textFieldQuantity.setText(null);
         }
         
@@ -185,7 +187,7 @@ public class EditUsTrkWindowController implements Initializable{
         
         if(!comboBoxShipto.isDisabled()) {
             if (comboBoxShipto.getValue() == null ||comboBoxShipto.getValue().isEmpty()) {
-                showAlert("Error", "Address Failed :" , "The shipto field is required !");
+                showAlert("Error", "Address Failed :" , "The shipto field is required !", AlertType.ERROR);
             }
             else {
                 Ustrkings ustrk = record.getUsTrk();
@@ -219,7 +221,7 @@ public class EditUsTrkWindowController implements Initializable{
         }
         
         
-        showAlert("Success", "Record Updated :" , "Us shipment is updated successfully !");
+        showAlert("Success", "Record Updated :" , "Us shipment is updated successfully !", AlertType.INFORMATION);
         //forcing refreshing table
         mainWindow.getOrderTable().getColumns().get(0).setVisible(false);
         mainWindow.getOrderTable().getColumns().get(0).setVisible(true);

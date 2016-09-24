@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
@@ -51,7 +52,7 @@ public class NewCarrierWindowController implements Initializable {
     private void create(ActionEvent e) {
         Carriers carrier = new Carriers();
         if (textFieldCarrier.getText() == null || textFieldCarrier.getText().isEmpty()) {
-            showAlert("Error", "Carrier Error :" , "Carrier name is required!");
+            showAlert("Error", "Carrier Error :" , "Carrier name is required!", AlertType.ERROR);
             return;
         }
         
@@ -61,7 +62,7 @@ public class NewCarrierWindowController implements Initializable {
         
         for(Carriers temp : mainWindow.getCarriers()) {
             if (carrier.getName().equals(temp.getName())) {
-                showAlert("Error", "Duplicate Error :" , "Carrier already exists!");
+                showAlert("Error", "Duplicate Error :" , "Carrier already exists!", AlertType.WARNING);
                 return;
             }
                 
@@ -71,7 +72,7 @@ public class NewCarrierWindowController implements Initializable {
         
         dataCenter.createCarrier(carrier);
         
-        showAlert("Success", "Record Created :" , "New carrier is created successfully !");
+        showAlert("Success", "Record Created :" , "New carrier is created successfully !", AlertType.INFORMATION);
         mainWindow.getCarriers().add(carrier);
        
         closeWindow(e);

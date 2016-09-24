@@ -38,6 +38,58 @@
     -fx-graphic: url("Resources/save.png");
 }
 
+#menuItemQuit > .label {
+    -fx-graphic: url("Resources/exit.png");
+}
+
+#menuItemNewOrder > .label {
+    -fx-graphic: url("Resources/neworder.png");
+}
+
+#menuItemNewUsTrk> .label {
+    -fx-graphic: url("Resources/ground.png");
+}
+
+#menuItemNewIntlTrk> .label {
+    -fx-graphic: url("Resources/intltrk.png");
+}
+
+#menuItemNewCnTrk> .label {
+    -fx-graphic: url("Resources/ground.png");
+}
+
+#menuItemNewProduct> .label {
+    -fx-graphic: url("Resources/newprd.png");
+}
+
+#menuItemNewAddr> .label {
+    -fx-graphic: url("Resources/newaddr.png");
+}
+
+#menuItemNewCarrier> .label {
+    -fx-graphic: url("Resources/newshipper.png");
+}
+
+#menuItemNewStore> .label {
+    -fx-graphic: url("Resources/store.png");
+}
+
+#menuItemAbout> .label {
+    -fx-graphic: url("Resources/about.png");
+}
+
+#menuItemStat> .label {
+    -fx-graphic: url("Resources/stat.png");
+}
+
+
+
+
+
+
+
+
+
 
 .button {
 

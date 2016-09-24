@@ -6,7 +6,6 @@
 package com.kk.AutoFillSystem.Windows;
 
 import com.kk.AutoFillSystem.AutoFillSystem;
-import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
@@ -21,7 +20,6 @@ import java.util.regex.Pattern;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -193,10 +191,10 @@ public class WebWindowController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonConfirm) {
             if (mainWindow.addIntlTrk(ustrkNums, intlTrkNum, weight, fee, "ZZ")) {
-                showAlert("Success", "Update Finished :" , "ZZ tracking " + intlTrkNum + " is updated successfully !");
+                showAlert("Success", "Update Finished :" , "ZZ tracking " + intlTrkNum + " is updated successfully !", AlertType.INFORMATION);
             }
             else
-                showAlert("Failed", "Update Error :" , "ZZ tracking " + intlTrkNum + " already existed !");
+                showAlert("Failed", "Update Error :" , "ZZ tracking " + intlTrkNum + " already existed !", AlertType.WARNING);
             
     
         } 

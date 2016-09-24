@@ -11,6 +11,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javax.persistence.EntityManager;
@@ -52,7 +53,8 @@ public class AutoFillSystem extends Application {
 	primaryStage = st1; 
 	primaryStage.setScene(mainScene);
         primaryStage.setTitle("Tracking System");
-        
+        primaryStage.getIcons().add(
+                new Image(getClass().getResourceAsStream("Resources/app.png")));
         
 	primaryStage.show();
 		
@@ -70,9 +72,7 @@ public class AutoFillSystem extends Application {
             MainWindowController controller = loader.getController();
             //controller.setMainApp(this);
             mainScene = new Scene(rootLayout);
-            String css = getClass().getResource("style.css").toExternalForm();
-            mainScene.getStylesheets().clear();
-            mainScene.getStylesheets().add(css);
+            
 
 
         } catch (IOException e) {
