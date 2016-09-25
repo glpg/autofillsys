@@ -88,15 +88,19 @@ public class WebWindowController implements Initializable {
         
         //set up webviewer
         webView.getEngine().getLoadWorker().stateProperty().addListener(
-            new  ChangeListener<State>() {
-                public void changed(ObservableValue ov, State oldState, State newState) {
-                    if (newState == State.SUCCEEDED) {
-                        imageView.setVisible(false);
-                    
+                new ChangeListener<State>() {
+                    public void changed(ObservableValue ov, State oldState, State newState) {
+                        if (newState == State.SUCCEEDED) {
+                            imageView.setVisible(false);
+
+                        }
+
                     }
-                    
-                }
-            });
+                });
+        
+        textFieldUrl.setText("https://www.uszcn.com");
+        webView.getEngine().load("https://www.uszcn.com");
+        imageView.setVisible(true);
                 
     }   
     

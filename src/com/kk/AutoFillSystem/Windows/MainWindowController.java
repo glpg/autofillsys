@@ -539,14 +539,14 @@ public class MainWindowController implements Initializable {
         String prod  = comboBoxProduct.getValue();
         int orderCnt = 0; 
         int shipCnt = 0; 
-        int deliverCnt = 0; 
+        
         Pattern pa = Pattern.compile(prod +" : ([0-9]+)");
         
         
         ObservableList<JoinRecord> items = orderTable.getItems();
         Set<String> orders = new HashSet();
         Set<String> trks = new HashSet();
-        Set<String> cntrks = new HashSet();
+        
         
         for(JoinRecord record: items) {
             if(!orders.contains(record.getOrderNum())) {
@@ -570,16 +570,7 @@ public class MainWindowController implements Initializable {
                 }
             }
             
-            if(record.getCnTrk() != null && !cntrks.contains(record.getCnTrkNum())) {
-                cntrks.add(record.getCnTrkNum());
-                if (record.getDelivered()) {
-                    Matcher m = pa.matcher(record.getShipList());
-                    if (m.find()) {
-                        int cnt = Integer.parseInt(m.group(1));
-                        shipCnt += cnt;
-                    }
-                }
-            }
+            
 
         }
         

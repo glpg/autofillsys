@@ -107,6 +107,10 @@ public abstract class GetStore {
             if (msg.getSubject().contains(orderSubject)) {
                 Document doc;
                 String[] body = getBody(msg);
+                doc = Jsoup.parse(body[1]);
+                System.out.println(doc.text());
+                
+                
                 if (storeName.equals("Kmart"))
                     doc = Jsoup.parse(body[0]);
                 else
@@ -123,35 +127,37 @@ public abstract class GetStore {
                
             }
 
-            if (msg.getSubject().contains(shipSubject)) {
+//            if (msg.getSubject().contains(shipSubject)) {
+//
+//                Document doc;
+//                String[] body = getBody(msg);
+//                doc = Jsoup.parse(body[1]);
+//                System.out.println(doc.text());
+//                if (storeName.equals("Kmart"))
+//                    doc = Jsoup.parse(body[0]);
+//                else
+//                    doc = Jsoup.parse(body[1]);
+//                
+//                //walmart might have more than 1 shipment in one email
+//                //this situation has not been dealt here !
+//                
+//                Shipment shipment = extractShipment(doc.text());
+//
+//                //for toysrus , the shipment email order number is in subject. 
+//                if (this.storeName.equals("Toysrus")) {
+//                    String subject = msg.getSubject();
+//                    Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
+//                    Matcher m = orderNum.matcher(subject);
+//                    if (m.find()) {
+//                        shipment.orderNum = m.group(1);
+//                    }
+//                }
+//
+//                shipment.shipDate = msg.getReceivedDate();
+//                shipments.add(shipment);
+//                System.out.println(shipment.toString());
 
-                Document doc;
-                String[] body = getBody(msg);
-                if (storeName.equals("Kmart"))
-                    doc = Jsoup.parse(body[0]);
-                else
-                    doc = Jsoup.parse(body[1]);
-                
-                //walmart might have more than 1 shipment in one email
-                //this situation has not been dealt here !
-                
-                Shipment shipment = extractShipment(doc.text());
-
-                //for toysrus , the shipment email order number is in subject. 
-                if (this.storeName.equals("Toysrus")) {
-                    String subject = msg.getSubject();
-                    Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
-                    Matcher m = orderNum.matcher(subject);
-                    if (m.find()) {
-                        shipment.orderNum = m.group(1);
-                    }
-                }
-
-                shipment.shipDate = msg.getReceivedDate();
-                shipments.add(shipment);
-                System.out.println(shipment.toString());
-
-            }
+   //         }
         }
 
     }

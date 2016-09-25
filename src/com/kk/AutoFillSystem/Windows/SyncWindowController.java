@@ -12,6 +12,7 @@ import com.kk.AutoFillSystem.EmailInfo.GetStore;
 import static com.kk.AutoFillSystem.EmailInfo.GetStore.getBody;
 import com.kk.AutoFillSystem.EmailInfo.GetToysrus;
 import com.kk.AutoFillSystem.EmailInfo.GetWalmart;
+import com.kk.AutoFillSystem.EmailInfo.GetYoyo;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.readMapFile;
@@ -173,6 +174,11 @@ public class SyncWindowController implements Initializable {
             }
             case "Kmart" :{
                 query = new GetKmart(account,pwd);
+                break;
+            }
+            case "Yoyo" :{
+                System.out.println("yoyo selected");
+                query = new GetYoyo(account, pwd);
                 break;
             }
             default :{
