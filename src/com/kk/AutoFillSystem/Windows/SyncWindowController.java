@@ -9,7 +9,6 @@ import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
 import com.kk.AutoFillSystem.EmailInfo.GetKmart;
 import com.kk.AutoFillSystem.EmailInfo.GetStore;
-import static com.kk.AutoFillSystem.EmailInfo.GetStore.getBody;
 import com.kk.AutoFillSystem.EmailInfo.GetToysrus;
 import com.kk.AutoFillSystem.EmailInfo.GetWalmart;
 import com.kk.AutoFillSystem.EmailInfo.GetYoyo;
@@ -26,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -42,8 +40,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javax.mail.Message;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 /**
  * FXML Controller class
@@ -206,7 +202,7 @@ public class SyncWindowController implements Initializable {
                     msg += "Starting to retrive emails from " + store + " ... \n";
                     updateMessage(msg);
                     
-                    Message[] emails = query.getMessages(sinceDate);
+                    Message[] emails = query.getMessagesSinceDate(sinceDate);
                     
                     msg += "Total " + emails.length + " emails retrieved ! \n";
                     updateMessage(msg);
@@ -215,20 +211,10 @@ public class SyncWindowController implements Initializable {
                     for (Message email : emails) {
 
                         if (email.getSubject().contains(query.getOrderSubject())) {
-                            //this part should be checked depending on stores
-                            //kmart using body[0]
+                            
 
-                            String[] body = getBody(email);
-                            Document doc;
-                            if(store.equals("Kmart")) {
-                                doc = Jsoup.parse(body[0]);
-                            }
-                            else
-                                doc = Jsoup.parse(body[1]);
-
-                            Order order = query.extractOrder(doc.text());
-                            order.orderDate = email.getReceivedDate();
-                            order.storeName = store;
+                            Order order = query.extractOrder(email);
+                            
                             query.getOrders().add(order);
 
                             msg += "\n" + order.toString() + "\n";
@@ -238,8 +224,6 @@ public class SyncWindowController implements Initializable {
 
                         if (email.getSubject().contains(query.getShipSubject())) {
 
-                            
-                            
                             //revise using extractshipments
                             ArrayList<Shipment> found = query.extractShipments(email);
                             for(Shipment tmp: found) {

@@ -5,14 +5,12 @@
  */
 package com.kk.AutoFillSystem.EmailInfo;
 
-import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
 import static com.kk.AutoFillSystem.EmailInfo.GetStore.getBody;
 import com.kk.AutoFillSystem.utility.LoggingAspect;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.getWarehouse;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -39,48 +33,18 @@ public class GetToysrus extends GetStore{
         super();
         this.email = email;
         this.pwd = pwd;
-        emailSender = "ToysRUs";
+        emailSenders = new ArrayList();
+        emailSenders.add("ToysRUs");
+                
         orderSubject = "Babies R Us Order Confirmation";
         shipSubject = "Babiesrus.com Shipment Confirmation";
         storeName = "Toysrus";
     }
     
-    
-    public static void main(String[] args) throws MessagingException, AddressException, ParseException {
-        //get entitymanager
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("AutoFillSystemPU");
-        EntityManager em = emf.createEntityManager();
-        
-        //query returned info of orders and shipments
-        //using the orderInfo and shipmentInfo, to create new orders and trackings to db
-        
-        GetToysrus query = new GetToysrus("fatblackcat2016@gmail.com","bnmrc123");
-        query.connectGmail();
-        //query.searchInfoSince("09/01/16");
-        
-//        ArrayList<Order> newOrders = query.getOrders();
-//        for(Order orderInfo : newOrders) {
-//            createNewOrder(em, orderInfo);
-//        }
-       
-        ArrayList<Shipment> newShips = query.getShipments();
-        
-        for(Shipment shipInfo : newShips) {
-            createUsTrk(em, shipInfo);
-            
-        }
-       
-        em.close();
-        emf.close();
-        
    
-       
-                
-   }
-    
    
     @Override
-    public Order extractOrder(String text) {
+    protected Order extractOrder(String text) {
         
         Order order = new Order();
         //get order number
@@ -217,6 +181,21 @@ public class GetToysrus extends GetStore{
         
         
         return found;
+    }
+
+    @Override
+    public Order extractOrder(Message email) {
+        String[] body = getBody(email);
+        Document doc = Jsoup.parse(body[1]);
+
+        Order order = extractOrder(doc.text());
+        order.storeName = this.storeName;
+        try {
+            order.orderDate = email.getReceivedDate();
+        } catch (MessagingException ex) {
+            LoggingAspect.addException(ex);
+        }
+        return order;
     }
     
 }

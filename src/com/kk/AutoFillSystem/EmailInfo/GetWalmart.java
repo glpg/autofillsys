@@ -29,7 +29,8 @@ public class GetWalmart extends GetStore {
         super();
         this.email = email;
         this.pwd = pwd;
-        emailSender = "help@walmart.com";
+        emailSenders = new ArrayList();
+        emailSenders.add("help@walmart.com");
         orderSubject = "Order received";
         shipSubject = "Shipped";
         storeName = "Walmart";
@@ -38,7 +39,7 @@ public class GetWalmart extends GetStore {
     
     
     @Override
-    public Order extractOrder(String text) {
+    protected Order extractOrder(String text) {
         
         Order order = new Order();
         //get order number
@@ -226,6 +227,22 @@ public class GetWalmart extends GetStore {
         
         return found;
 
+    }
+
+    @Override
+    public Order extractOrder(Message email) {
+        String[] body = getBody(email);
+        Document doc = Jsoup.parse(body[1]);
+        Order order = extractOrder(doc.text());
+        order.storeName = this.storeName;
+        try {
+            order.orderDate = email.getReceivedDate();
+        } catch (MessagingException ex) {
+            LoggingAspect.addException(ex);
+        }
+        
+        return order;
+        
     }
     
     

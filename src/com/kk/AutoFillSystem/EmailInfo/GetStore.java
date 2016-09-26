@@ -1,7 +1,5 @@
 package com.kk.AutoFillSystem.EmailInfo;
 
-import static com.kk.AutoFillSystem.EmailInfo.GetWalmart.getBody;
-import com.kk.AutoFillSystem.Windows.SyncWindowController;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Shipment;
 import java.text.ParseException;
@@ -10,9 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -21,15 +16,12 @@ import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.search.AndTerm;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.FromTerm;
 import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -49,7 +41,7 @@ public abstract class GetStore {
     protected Store store;
     
     //parameters for order specific info
-    protected String emailSender;
+    //protected String emailSender;
     protected String orderSubject;
     protected String shipSubject;
     protected String storeName;
@@ -89,90 +81,18 @@ public abstract class GetStore {
 
     }
     
-    /*
-    **Search for both order email and shipment email
-    */
-    public void searchInfoSince(String fromDate) throws AddressException, ParseException, MessagingException {
-        //get searchterm 
-        SearchTerm senderTerm = new FromTerm(new InternetAddress(emailSender));
-        SimpleDateFormat df1 = new SimpleDateFormat("MM/dd/yy");
 
-        Date dDate = df1.parse(fromDate);
-        SearchTerm dateTerm = new ReceivedDateTerm(ComparisonTerm.GT, dDate);
-
-        Message[] messages = inbox.search(new AndTerm(senderTerm, dateTerm)); //construct basic search terms and search
-        System.out.println(messages.length);
-        for (Message msg : messages) {
-
-            if (msg.getSubject().contains(orderSubject)) {
-                Document doc;
-                String[] body = getBody(msg);
-                doc = Jsoup.parse(body[1]);
-                System.out.println(doc.text());
-                
-                
-                if (storeName.equals("Kmart"))
-                    doc = Jsoup.parse(body[0]);
-                else
-                    doc = Jsoup.parse(body[1]);
-                
-
-                Order order = extractOrder(doc.text());
-                order.orderDate = msg.getReceivedDate();
-                order.storeName = this.storeName;
-                orders.add(order);
-                
-                System.out.println(order.toString());
-              
-               
-            }
-
-//            if (msg.getSubject().contains(shipSubject)) {
-//
-//                Document doc;
-//                String[] body = getBody(msg);
-//                doc = Jsoup.parse(body[1]);
-//                System.out.println(doc.text());
-//                if (storeName.equals("Kmart"))
-//                    doc = Jsoup.parse(body[0]);
-//                else
-//                    doc = Jsoup.parse(body[1]);
-//                
-//                //walmart might have more than 1 shipment in one email
-//                //this situation has not been dealt here !
-//                
-//                Shipment shipment = extractShipment(doc.text());
-//
-//                //for toysrus , the shipment email order number is in subject. 
-//                if (this.storeName.equals("Toysrus")) {
-//                    String subject = msg.getSubject();
-//                    Pattern orderNum = Pattern.compile("Order # ([0-9]+)");
-//                    Matcher m = orderNum.matcher(subject);
-//                    if (m.find()) {
-//                        shipment.orderNum = m.group(1);
-//                    }
-//                }
-//
-//                shipment.shipDate = msg.getReceivedDate();
-//                shipments.add(shipment);
-//                System.out.println(shipment.toString());
-
-   //         }
-        }
-
-    }
     
     //step by step operations
-    public Message[] getMessages(String fromDate) throws MessagingException, ParseException {
+    
+    public Message[] getMessagesSinceDate(String fromDate) throws MessagingException, ParseException {
 
-        if(!storeName.equals("Kmart")) return getEmails(fromDate, emailSender);
-        else{
-            ArrayList<Message> msgs = new ArrayList();
-            for(String email: emailSenders) {
-                Collections.addAll(msgs, getEmails(fromDate, email));
-            }
-            return msgs.toArray(new Message[msgs.size()]);
+        ArrayList<Message> msgs = new ArrayList();
+        for (String email : emailSenders) {
+            Collections.addAll(msgs, getEmails(fromDate, email));
         }
+        return msgs.toArray(new Message[msgs.size()]);
+        
         
     }
     
@@ -191,7 +111,8 @@ public abstract class GetStore {
     }
     
     
-    public abstract Order extractOrder(String text);
+    protected abstract Order extractOrder(String text);
+    public abstract Order extractOrder(Message email);
     protected abstract Shipment extractShipment(String text);
     public abstract ArrayList<Shipment> extractShipments(Message email);
     
@@ -298,13 +219,7 @@ public abstract class GetStore {
         this.shipSubject = shipSubject;
     }
 
-    public String getEmailSender() {
-        return emailSender;
-    }
 
-    public void setEmailSender(String emailSender) {
-        this.emailSender = emailSender;
-    }
 
     public String getStoreName() {
         return storeName;
@@ -321,6 +236,7 @@ public abstract class GetStore {
     public void setEmailSenders(ArrayList<String> emailSenders) {
         this.emailSenders = emailSenders;
     }
+    
     
     
     

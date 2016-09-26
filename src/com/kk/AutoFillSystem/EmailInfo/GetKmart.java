@@ -12,8 +12,6 @@ import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.getWarehouse;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Message;
@@ -31,19 +29,21 @@ public class GetKmart extends GetStore {
         super();
         this.email = email;
         this.pwd = pwd;
-        emailSender = "kmart@value.kmart.com";
         orderSubject = "thank you for your order";
         shipSubject = "have shipped!";
         storeName = "Kmart";
+        
+        //kmart has multiple shipping email address
         emailSenders = new ArrayList();
-        emailSenders.add(emailSender);
-        emailSenders.add("kmart@kmart.rsys5.com");
+        emailSenders.add("Kmart");
+//        emailSenders.add("kmart@value.kmart.com");
+//        emailSenders.add("kmart@kmart.rsys5.com");
     }
     
     
 
     @Override
-    public Order extractOrder(String text) {
+    protected Order extractOrder(String text) {
         Order order = new Order();
         //get order number
         
@@ -165,5 +165,21 @@ public class GetKmart extends GetStore {
             return found;
         }
                           
+    }
+
+    @Override
+    public Order extractOrder(Message email) {
+        
+        String[] body = getBody(email);
+        Document doc = Jsoup.parse(body[0]);
+        Order order = extractOrder(doc.text());
+        order.storeName = this.storeName;
+        try {
+            order.orderDate = email.getReceivedDate();
+        } catch (MessagingException ex) {
+            LoggingAspect.addException(ex);
+        }
+        return order;
+ 
     }
 }
