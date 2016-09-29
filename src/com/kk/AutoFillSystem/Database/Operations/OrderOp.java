@@ -103,23 +103,27 @@ public class OrderOp {
     }
     
     
-    public static void createNewOrderline(EntityManager em, Orderlines orderline) {
+    public static boolean createNewOrderline(EntityManager em, Orderlines orderline) {
         em.getTransaction().begin();
         //persist new intl trk
         em.persist(orderline);
         addMessageWithDate("New orderline : " + orderline.getProductId().getProdNum() +  " for order " + orderline.getOrderId().getOrderNum()+ " is created.");
         
-        em.getTransaction().commit();    
+        em.getTransaction().commit();  
+        return (em.contains(orderline));
+        
     }
     
-    public static Orders createNewOrderFromEntity(EntityManager em, Orders order) {
+    public static boolean createNewOrderFromEntity(EntityManager em, Orders order) {
         em.getTransaction().begin();
         //persist new intl trk
         em.persist(order);
         addMessageWithDate("New order : " + order.getOrderNum()+ " is created.");
         
         em.getTransaction().commit();   
-        return order;
+        
+        return (em.contains(order));
+        
     }
     
 }

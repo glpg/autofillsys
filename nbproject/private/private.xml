@@ -3,11 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/build.xml</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Windows/SyncWindowController.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/utility/TableFilter.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/EmailInfo/GetYoyo.java</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/EmailInfo/GetWalmart.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/EmailInfo/GetStore.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/EmailInfo/GetKmart.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Database/Operations/TrackOp.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/utility/Order.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Windows/SyncWindowController.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Database/Operations/OrderOp.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Database/Operations/ProductOp.java</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/EmailInfo/GetToysrus.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/EmailInfo/GetTarget.java</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Windows/MainWindowController.java</file>
         </group>
     </open-files>

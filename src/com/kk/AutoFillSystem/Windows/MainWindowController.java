@@ -535,6 +535,7 @@ public class MainWindowController implements Initializable {
     private void showStat(){
         if (comboBoxProduct.getValue() == null ||comboBoxProduct.getValue().isEmpty()) {
             showAlert("Error", "Missing Product :" , "Product number is required for statistics summary !", AlertType.ERROR);
+            return;
         }
         String prod  = comboBoxProduct.getValue();
         int orderCnt = 0; 

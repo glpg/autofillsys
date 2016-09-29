@@ -6,6 +6,7 @@
 package com.kk.AutoFillSystem.Windows;
 
 import com.kk.AutoFillSystem.DataCenter.DataController;
+import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
@@ -44,8 +45,9 @@ import javafx.stage.Stage;
 public class OrderWindowController implements Initializable {
     private DataController dataCenter;
     private MainWindowController mainWindow;
-    private Order orderInfo;
-    private ArrayList<Product> prods;
+    private Orders order;
+    private ArrayList<Orderlines> orderlines;
+    
    
     
     @FXML
@@ -73,8 +75,8 @@ public class OrderWindowController implements Initializable {
     //constructor
     public OrderWindowController(){
         dataCenter = DataController.getInstance();
-        prods = new ArrayList();
-        orderInfo = new Order();
+        order = new Orders();
+        orderlines = new ArrayList();
     }
 
     /**
@@ -121,9 +123,21 @@ public class OrderWindowController implements Initializable {
                 showAlert("Error", "Product Error :" , "You did not select product !");
                 return;
             } 
+            
             int count = Integer.parseInt(textFieldQuantity.getText());
             textAreaOrderlines.appendText(prodNum + " : " + count + "\n");
-            prods.add(new Product(prodNum, count));
+            
+            //new order line
+            Orderlines newOl = new Orderlines();
+            newOl.setQuantity(count);
+            for(Products prd : mainWindow.getProducts()) {
+                if (prd.getProdNum().equals(prodNum)) {
+                    newOl.setProductId(prd);
+                    break;
+                }
+            }
+            
+            orderlines.add(newOl);
         }
         catch (NumberFormatException e) {
             showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !");
@@ -139,7 +153,7 @@ public class OrderWindowController implements Initializable {
         textFieldQuantity.clear();
         textAreaOrderlines.clear();
         //clear saved products
-        prods.clear();
+        orderlines.clear();
     }
 
     private void showAlert(String title, String header, String content) {
@@ -160,33 +174,49 @@ public class OrderWindowController implements Initializable {
             return;
         }
         
-        orderInfo.orderNum = textFieldOrderNum.getText();
+        order.setOrderNum(textFieldOrderNum.getText());
         if (comboBoxStore.getValue() == null || comboBoxStore.getValue().length() == 0) {
             showAlert("Error", "Order Store Error :" , "Order store is required!");
             return;
         }
         
-        orderInfo.storeName = comboBoxStore.getValue();
+        for(Stores store: mainWindow.getStores()) {
+            if (store.getName().equals(comboBoxStore.getValue())) {
+                order.setStoreId(store);
+                break;
+            }
+                
+        }
+        
         LocalDate date = datePicker.getValue();
         if (date != null) {
             Date orderDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            orderInfo.orderDate = orderDate;
-            
+            order.setOrderDate(orderDate);
         }
         
-        orderInfo.products = prods;
+        //create order
+        dataCenter.createOrder(order);
         
-        Orders newOrder = dataCenter.createOrder(orderInfo);
         
-        if (newOrder == null) {
+        
+        
+         
+        if (!dataCenter.createOrder(order)) {
             showAlert("Failed", "Creating Failed :" , "The order could not be created, it might already exists!");
+            return;
         }
         else {
+            //create orderlines
+            for (Orderlines ol : orderlines) {
+                ol.setOrderId(order);
+                dataCenter.createOrderline(ol);
+                order.getOrderlinesCollection().add(ol);
+            }
             showAlert("Success", "Record Created :" , "New order is created successfully !");
-            mainWindow.getOrders().add(newOrder);
+            mainWindow.getOrders().add(order);
             //need to update mainwindow
             JoinRecord record = new JoinRecord();
-            record.setOrder(newOrder);
+            record.setOrder(order);
             expandInfo(record);
             mainWindow.getTableRows().add(record);
         }

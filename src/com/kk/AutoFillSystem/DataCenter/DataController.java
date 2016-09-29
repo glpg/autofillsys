@@ -145,12 +145,12 @@ public class DataController {
         return createNewOrder(em, orderInfo);
     }
     
-   public Orders createOrder(Orders order) {
+   public boolean createOrder(Orders order) {
        return createNewOrderFromEntity(em, order);
    }
     
-    public void createOrderline(Orderlines orderline) {
-        createNewOrderline(em, orderline);
+    public boolean createOrderline(Orderlines orderline) {
+        return createNewOrderline(em, orderline);
     }
     
     public Ustrkings createUsTrking(Shipment shipInfo) {
