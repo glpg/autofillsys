@@ -231,14 +231,16 @@ public class TrackOp {
     }
     
     
-    public static Ustrkings createNewUsTrkFromEntity(EntityManager em, Ustrkings ustrk) {
+    public static boolean createNewUsTrkFromEntity(EntityManager em, Ustrkings ustrk) {
         em.getTransaction().begin();
         //persist new intl trk
         em.persist(ustrk);
         addMessageWithDate("New US shipment : " + ustrk.getTrkingNum()+ " is created.");
         
-        em.getTransaction().commit();   
-        return ustrk;
+        em.getTransaction().commit();  
+        
+        return em.contains(ustrk);
+        
     }
     
     public static void updateCnDelivery(EntityManager em, Cntrkings cntrk) {

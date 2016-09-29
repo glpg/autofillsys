@@ -157,7 +157,7 @@ public class DataController {
         return createUsTrk(em, shipInfo);
     }
     
-    public Ustrkings createUsTrking(Ustrkings ustrk) {
+    public boolean createUsTrking(Ustrkings ustrk) {
         return createNewUsTrkFromEntity(em, ustrk);
     }
     

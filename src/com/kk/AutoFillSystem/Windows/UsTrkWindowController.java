@@ -44,8 +44,10 @@ import javafx.scene.control.TextField;
 public class UsTrkWindowController implements Initializable {
     private DataController dataCenter;
     private MainWindowController mainWindow;
-    private Shipment shipInfo;
-    private ArrayList<Product> prods;
+    
+    private Ustrkings ustrk;
+    private ArrayList<Trklines> trklines;
+    
     private JoinRecord record;
     
     @FXML
@@ -77,8 +79,8 @@ public class UsTrkWindowController implements Initializable {
     
     public UsTrkWindowController(JoinRecord record) {
         dataCenter = DataController.getInstance();
-        prods = new ArrayList();
-        shipInfo = new Shipment();
+        trklines = new ArrayList();
+        ustrk = new Ustrkings();
         this.record = record;
     
     }
@@ -135,7 +137,18 @@ public class UsTrkWindowController implements Initializable {
             } 
             int count = Integer.parseInt(textFieldQuantity.getText());
             textAreaShipLines.appendText(prodNum + " : " + count +"\n");
-            prods.add(new Product(prodNum, count));
+            
+            //new order line
+            Trklines newTl = new Trklines();
+            newTl.setQuantity(count);
+            for(Products prd : mainWindow.getProducts()) {
+                if (prd.getProdNum().equals(prodNum)) {
+                    newTl.setProductId(prd);
+                    break;
+                }
+            }
+            
+            trklines.add(newTl);
         }
         catch (NumberFormatException e) {
             showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !", AlertType.ERROR);
@@ -151,7 +164,7 @@ public class UsTrkWindowController implements Initializable {
         textFieldQuantity.clear();
         textAreaShipLines.clear();
         //clear saved products
-        prods.clear();
+        trklines.clear();
     }
     
     
@@ -162,16 +175,17 @@ public class UsTrkWindowController implements Initializable {
             return;
         }
         
-        shipInfo.trackingNum = textFieldTrkNum.getText().trim();
+        
+        ustrk.setTrkingNum(textFieldTrkNum.getText().trim());
+        
         
         //check if trking already exsited
         for(Ustrkings ustrk : record.getOrder().getUstrkingsCollection()) {
-            if (shipInfo.trackingNum.toLowerCase().equals(ustrk.getTrkingNum().toLowerCase())) {
+            if (ustrk.getTrkingNum().toLowerCase().equals(ustrk.getTrkingNum().toLowerCase())) {
                 showAlert("Error", "Trk Number Error :" , "Tracking number already exists!", AlertType.ERROR);
                 return;
             }
         }
-        
         
         
         if (comboBoxCarrier.getValue() == null || comboBoxCarrier.getValue().length() == 0) {
@@ -179,38 +193,58 @@ public class UsTrkWindowController implements Initializable {
             return;
         }
         
-        shipInfo.carrier = comboBoxCarrier.getValue();
+        for(Carriers carrier : mainWindow.getCarriers()) {
+            if (carrier.getName().equals(comboBoxCarrier.getValue())) {
+                ustrk.setCarrierId(carrier);
+                break;
+            }
+        }
+        
+        
         
         if (comboBoxShipto.getValue() == null || comboBoxShipto.getValue().length() == 0) {
             showAlert("Error", "Shipping Address Error :" , "Shipping Address is required!", AlertType.ERROR);
             return;
         }
         
-        shipInfo.warehouse = comboBoxShipto.getValue();
+        for(Addresses addr : mainWindow.getAddresses()) {
+            if (addr.getName().equals(comboBoxShipto.getValue())) {
+                ustrk.setAddressId(addr);
+                break;
+            }
+        }
+        
+        
         
         LocalDate date = datePicker.getValue();
         if (date != null) {
             Date orderDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            shipInfo.shipDate = orderDate;
+            ustrk.setShipDate(orderDate);
             
         }
         
-        shipInfo.products = prods;
-        shipInfo.orderNum = record.getOrderNum();
+
+        ustrk.setOrderId(record.getOrder());
         
         
-        Ustrkings newTrk = dataCenter.createUsTrking(shipInfo);
         
-        if (newTrk == null) {
+        if (!dataCenter.createUsTrking(ustrk)) {
             showAlert("Failed", "Creation Failed :" , "The us shipment could not be created, it might be duplicated !", AlertType.ERROR);
         }
             
         else {
+            for(Trklines tl : trklines) {
+                tl.setUstrkingId(ustrk);
+                dataCenter.createTrkline(tl);
+                ustrk.getTrklinesCollection().add(tl);
+            }
+            
+            
             showAlert("Success", "Record Created :" , "New US shipment is created successfully !", AlertType.INFORMATION);
             //if the current record does not have us trking, add info in
             if (record.getUsTrk() == null) {
-                record.setUsTrk(newTrk);
-                setTrkInfo(record, newTrk);
+                record.setUsTrk(ustrk);
+                expandInfo(record);
 
                 //forcing refreshing table
                 mainWindow.getOrderTable().getColumns().get(0).setVisible(false);
@@ -225,7 +259,7 @@ public class UsTrkWindowController implements Initializable {
                 newRecord.setOrderDate(record.getOrderDate());
                 newRecord.setOrderNum(record.getOrderNum());
                 newRecord.setStore(record.getStore());
-                newRecord.setUsTrk(newTrk);
+                newRecord.setUsTrk(ustrk);
                 expandInfo(newRecord);
                 
                 mainWindow.getTableRows().add(newRecord);
