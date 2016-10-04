@@ -388,7 +388,7 @@ public class MainWindowController implements Initializable {
         FXCollections.sort(warehouseList);
         comboBoxWarehouse.setItems(warehouseList);
         
-        comboBoxUnshipped.getItems().addAll("US trking", "Intl trking", "CN trking", "None");
+        comboBoxUnshipped.getItems().addAll("US trking", "Intl trking", "CN trking", "Delivered");
         
         ObservableList<String> destinationList = FXCollections.observableArrayList();
         for(Addresses dest: addresses) {
@@ -485,7 +485,7 @@ public class MainWindowController implements Initializable {
             filter.setUnshippedFilter(selectedUnshipped);
         
         if (selectedDestination != null) 
-            filter.setDestinationFilter(selectedUnshipped);
+            filter.setDestinationFilter(selectedDestination);
         
         filter.applyFilters();
     }    
@@ -496,7 +496,7 @@ public class MainWindowController implements Initializable {
         comboBoxProduct.setValue(null);
         comboBoxWarehouse.setValue(null);
         comboBoxUnshipped.setValue(null);
-        
+        comboBoxDestination.setValue(null);
         filter.clearFilters();
         orderTable.setItems(tableRows);
         

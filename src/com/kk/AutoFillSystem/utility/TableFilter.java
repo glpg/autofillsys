@@ -93,8 +93,8 @@ public class TableFilter {
                         break;
                         
                     }
-                    case "None" : {
-                        if (record.getCnTrk() != null) 
+                    case "Delivered" : {
+                        if (record.getCnTrk() != null && record.getDelivered()) 
                             filteredItems.add(record);
                         break;
                     }
