@@ -1371,13 +1371,13 @@ public class MainWindowController implements Initializable {
         });
         
         SeparatorMenuItem line3 = new SeparatorMenuItem();
-        MenuItem copyToClipboard = new MenuItem("Copy US Trk to Clipboard");
-        copyToClipboard.setOnAction(e -> {
-            copyUsTrkToClipboard();
+        MenuItem confirmD = new MenuItem("Confirm delivery");
+        confirmD.setOnAction(e -> {
+            confirmDelivery();
         });
         
         menu.getItems().addAll(addUsTrk, addIntlTrk, addCnTrk, line, editOrder, editUsTrk, line2, copyIntlTrk, pasteIntlTrk
-        , line3, copyToClipboard);
+        , line3, confirmD);
         
         orderTable.setRowFactory(new Callback<TableView<JoinRecord>, TableRow<JoinRecord>>() {  
             @Override  

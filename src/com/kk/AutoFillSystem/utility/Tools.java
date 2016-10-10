@@ -153,22 +153,22 @@ public class Tools {
     public static String getWarehouse(String text) {
         //ship to 
         String warehouse = "unknown";
-        if (text.contains("ivy KangXue")) {
+        if (text.toLowerCase().contains("ivy kangxue")) {
             warehouse = "ZZ";
             return warehouse;
         }
        
-        if (text.contains("RSJEP HDB")) {
+        if (text.toLowerCase().contains("rsjep hdb")) {
             warehouse = "HDB";
             return warehouse;
         }
         
-        if (text.contains("LTFHN TT")) {
+        if (text.toLowerCase().contains("ltfhn tt")) {
             warehouse = "TT";
             return warehouse;
         }
         
-        if (text.contains("Yi Xue")) {
+        if (text.toLowerCase().contains("yi xue")) {
             warehouse = "Yi Xue";
             
         }
