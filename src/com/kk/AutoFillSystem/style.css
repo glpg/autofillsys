@@ -20,6 +20,9 @@
     -fx-graphic: url("Resources/reload.png");
 }
 
+#menuItemBackupDb > .label {
+    -fx-graphic: url("Resources/db.png");
+}
 
 #menuItemConfirmDelivery > .label {
     -fx-graphic: url("Resources/delivery.png");

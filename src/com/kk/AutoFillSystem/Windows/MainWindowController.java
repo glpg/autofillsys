@@ -18,6 +18,7 @@ import com.kk.AutoFillSystem.Database.Entities.Usanduscntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import com.kk.AutoFillSystem.utility.JoinRecord;
+import com.kk.AutoFillSystem.utility.LoggingAspect;
 import static com.kk.AutoFillSystem.utility.LoggingAspect.addMessage;
 import com.kk.AutoFillSystem.utility.TableFilter;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
@@ -68,8 +69,6 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -137,6 +136,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemEditUsTrk;
     @FXML
     private MenuItem menuItemExportTable;
+    @FXML
+    private MenuItem menuItemBackupDb;
     @FXML
     private MenuItem menuItemSyncHDB;
     @FXML
@@ -520,6 +521,7 @@ public class MainWindowController implements Initializable {
         menuItemEditUsTrk.setOnAction(e->{showEditUsTrkWindow(e);});
         
         menuItemExportTable.setOnAction(e->{exportTable();});
+        menuItemBackupDb.setOnAction(e->{backupDb();});
         menuItemReloadTable.setOnAction(e->{reloadTable();});
         
         
@@ -1498,6 +1500,54 @@ public class MainWindowController implements Initializable {
         return copy;
         
     }
+    
+    
+    private void backupDb() {
+        
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Backup DataBase");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String defaultFileName = "track_"+date +".sql";
+        fileChooser.setInitialFileName(defaultFileName);
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("SQL files (*.sql)", "*.sql");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showSaveDialog(primaryStage);
+        
+        if (file != null) {
+            try {
+                /*NOTE: Creating Database Constraints*/
+                String dbName = "track";
+                String dbUser = "root";
+                String dbPass = "1111";
+
+                /*NOTE: Used to create a cmd command*/
+                String executeCmd = "mysqldump -u" + dbUser + " -p" + dbPass + " --database " + dbName + " -r " + file.getAbsolutePath();
+
+                /*NOTE: Executing the command here*/
+                Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
+                int processComplete = runtimeProcess.waitFor();
+
+                /*NOTE: processComplete=0 if correctly executed, will contain other values if not*/
+                if (processComplete == 0) {
+                    showAlert("Success", "Db Exported :", "Database backup is completed successfully !", AlertType.INFORMATION);
+                    return;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                LoggingAspect.addException(ex);
+                showAlert("Failed", "Db Exported :", "Database backup failed : " + ex.getMessage() + " !", AlertType.ERROR);
+            }
+
+        }
+
+
+        
+        
+    }
+    
+    
+    
     
     //setters and getters
 

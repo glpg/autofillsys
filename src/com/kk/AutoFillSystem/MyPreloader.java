@@ -38,7 +38,7 @@ public class MyPreloader extends Preloader {
         }
         
         
-        Label lblVersion = new Label("Ver. "+ version);
+        Label lblVersion = new Label("Version  "+ version);
         lblVersion.setPadding(new Insets(0, 0, 5, 0));
         Label title = new Label("Loading, please wait...");
         title.setTextAlignment(TextAlignment.CENTER);
