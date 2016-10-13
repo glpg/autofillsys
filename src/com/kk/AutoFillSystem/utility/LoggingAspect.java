@@ -72,12 +72,17 @@ public class LoggingAspect {
 
         StackTraceElement[] elements = e.getStackTrace();
         for (StackTraceElement element : elements) {
-
-            addMessage("Package.Class: " + element.getClassName());
-            addMessage("Method: " + element.getMethodName());
-            addMessage("Line: " + element.getLineNumber());
+            if(element.getClassName().startsWith("com.kk.")) {
+                addMessage("Package.Class: " + element.getClassName());
+                addMessage("Method: " + element.getMethodName());
+                addMessage("Line: " + element.getLineNumber());
+                
+            }
+            
             
         }
+        
+      
     }
     
 }

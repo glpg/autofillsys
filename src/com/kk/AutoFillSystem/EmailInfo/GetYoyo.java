@@ -54,16 +54,36 @@ public class GetYoyo extends GetStore {
         //also, accumulate same item
         
         ArrayList<Product> products = new ArrayList();
-        int start = text.indexOf("Qty Description");
-        Pattern prods = Pattern.compile("([0-9]{1,2}) ([^\\$]*) \\$[0-9.]+ \\$[0-9.]+ \\$[0-9.]+");
-        Matcher m1 = prods.matcher(text.substring(start));
-        while(m1.find()) {
-            Product temp = new Product();
-            temp.name = m1.group(2);
-            temp.count = Integer.parseInt(m1.group(1));
-            products.add(temp);
+        
+        String[] itemsText = text.split("Qty Description Item Price");
+        
+        for(int i = 1; i < itemsText.length; i++) {
+            String current = itemsText[i];
+            Pattern prods = Pattern.compile("([0-9]{1,2}) ([^\\$]*) \\$[0-9.]+ \\$[0-9.]+ \\$[0-9.]+");
+            Matcher m1 = prods.matcher(current);
+            while(m1.find()) {
+                Product temp = new Product();
+                temp.name = m1.group(2);
+                temp.count = Integer.parseInt(m1.group(1));
+                products.add(temp);
             
+            }
+       
         }
+        
+        
+        
+        
+//        int start = text.indexOf("Qty Description");
+//        Pattern prods = Pattern.compile("([0-9]{1,2}) ([^\\$]*) \\$[0-9.]+ \\$[0-9.]+ \\$[0-9.]+");
+//        Matcher m1 = prods.matcher(text.substring(start));
+//        while(m1.find()) {
+//            Product temp = new Product();
+//            temp.name = m1.group(2);
+//            temp.count = Integer.parseInt(m1.group(1));
+//            products.add(temp);
+//            
+//        }
         order.products = products;
         return order;
     }

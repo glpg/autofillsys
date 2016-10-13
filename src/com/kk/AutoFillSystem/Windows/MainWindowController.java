@@ -1522,8 +1522,9 @@ public class MainWindowController implements Initializable {
                 String dbPass = "1111";
 
                 /*NOTE: Used to create a cmd command*/
-                String executeCmd = "mysqldump -u" + dbUser + " -p" + dbPass + " --database " + dbName + " -r " + file.getAbsolutePath();
-
+                String executeCmd = "mysqldump -u" + dbUser + " -p" + dbPass + " --databases " + dbName + " -r " + "\""+file.getAbsolutePath() + "\"";
+                
+                System.out.println(executeCmd);
                 /*NOTE: Executing the command here*/
                 Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
                 int processComplete = runtimeProcess.waitFor();
