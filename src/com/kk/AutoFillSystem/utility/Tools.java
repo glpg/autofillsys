@@ -132,7 +132,7 @@ public class Tools {
                 
                 String[] parts = sCurrentLine.split("\\|\\|");
                 
-                map.put(parts[1], parts[0]);
+                map.put(parts[1].trim(), parts[0]);
                 
             }
 

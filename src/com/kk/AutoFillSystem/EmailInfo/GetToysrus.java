@@ -64,7 +64,7 @@ public class GetToysrus extends GetStore{
             
             boolean found = false;
    
-            String name = m2.group(1);
+            String name = m2.group(1).trim();
             int count = Integer.parseInt(m2.group(2));
             
             for (Product prod : products) {
@@ -97,6 +97,7 @@ public class GetToysrus extends GetStore{
         if(m.find()){
             if (m.group(1).contains("US Postal Service")) shipment.carrier = "USPS";
             if (m.group(1).contains("FedEx")) shipment.carrier = "FedEx";
+            if (m.group(1).contains("Standard Shipping")) shipment.carrier = "OnTrac";
             shipment.trackingNum = m.group(2);
         }
         
