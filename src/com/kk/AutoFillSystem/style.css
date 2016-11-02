@@ -86,6 +86,9 @@
 }
 
 
+#menuItemUploadZZ> .label {
+    -fx-graphic: url("Resources/upload.png");
+}
 
 
 

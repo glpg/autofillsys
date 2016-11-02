@@ -222,7 +222,7 @@ public class SyncWindowController implements Initializable {
 
                         }
 
-                        if (email.getSubject().contains(query.getShipSubject())) {
+                        if (email.getSubject().toLowerCase().contains(query.getShipSubject())) {
 
                             //revise using extractshipments
                             ArrayList<Shipment> found = query.extractShipments(email);

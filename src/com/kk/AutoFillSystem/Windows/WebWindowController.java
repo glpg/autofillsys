@@ -6,6 +6,8 @@
 package com.kk.AutoFillSystem.Windows;
 
 import com.kk.AutoFillSystem.AutoFillSystem;
+import com.kk.AutoFillSystem.Database.Entities.Trklines;
+import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
@@ -15,6 +17,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.beans.value.ChangeListener;
@@ -48,14 +52,15 @@ import org.jsoup.select.Elements;
  */
 public class WebWindowController implements Initializable {
     private MainWindowController mainWindow;
-    
-    
+    private Mode mode;
+    private ArrayList<JoinRecord> uploads; 
+    private int index = 0; 
     @FXML
     private WebView webView;
     @FXML
     private TextField textFieldUrl;
     @FXML
-    private Button buttonExtractZZ;
+    private Button buttonZZ;
     @FXML
     private Button buttonCancel;
     @FXML
@@ -73,7 +78,17 @@ public class WebWindowController implements Initializable {
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        buttonExtractZZ.setOnAction(e->{extractZZ();});
+        if (mode == Mode.EXTRACT) {
+            buttonZZ.setText("ExtractZZ");
+            buttonZZ.setOnAction(e->{extractZZ();});
+        }
+        else {
+            //if upload mode, then change the button text, and initialize uploads list
+            buttonZZ.setText("UploadZZ");
+            buttonZZ.setOnAction(e->{uploadZZ();});
+        }
+        
+        
         textFieldUrl.setOnKeyPressed((e) -> {goToPage(e);});
         buttonCancel.setOnAction(e->{closeWindow(e);});
         
@@ -123,6 +138,76 @@ public class WebWindowController implements Initializable {
 
         history.go(entryList.size() > 1 && currentIndex < entryList.size() - 1? 1: 0); 
         
+    }
+    
+    
+    private void uploadZZ() {
+        
+        if (index >= uploads.size()) {
+            showAlert("Warning", "All uploaded :" , "You uploaded all records, total " + index + " !", AlertType.WARNING);
+            return;
+        }
+        
+        
+        WebEngine webEngine = webView.getEngine();
+        //set parameters
+        
+        JoinRecord currentRecord = uploads.get(index);
+        
+        Ustrkings ustrk = currentRecord.getUsTrk();
+        
+        String trkNum = ustrk.getTrkingNum();
+        
+        int carrierIndex ; 
+        int carrier = ustrk.getCarrierId().getId();
+        switch (carrier) {
+            case 1 : { //ups
+                carrierIndex = 1;
+                break;
+            }
+            case 2 : {//fedex
+                carrierIndex = 4;
+                break;
+            }
+            case 3 : {//usps
+                carrierIndex = 3;
+                break;
+                
+            }
+            case 9 : { //ontrac
+                carrierIndex = 8;
+                break;
+            }
+            default : {
+                carrierIndex = 9;
+            }
+        }
+        
+        int count = 0; 
+        for(Trklines temp : ustrk.getTrklinesCollection()) {
+            count += temp.getQuantity();
+        }
+        
+        String setTrkNum =  "document.getElementById('inbound_express_tracking_number').value='" + trkNum + "';";
+        String setCarrier = "document.getElementsByClassName('select express_select')[0].value = '" + carrierIndex + "';";
+        String setName = "document.getElementById('inbound_name').value = \"儿童塑料无电机拼图玩具\";";
+        String setDesc = "document.getElementsByClassName('textbox item_name')[0].value = \"儿童塑料无电机拼图玩具\";";
+        //String setCategory = "document.getElementsByClassName('select parent_category')[0].value =13;";
+        //String setSubCategory = "document.getElementsByClassName('select category')[0].value =125;";
+        String setBrand = "document.getElementsByClassName('textbox item_brand')[0].value = \"lego\";";
+        //String setSize ="document.getElementsByClassName('select item_model_select')[0].value = \"30厘米\";";
+        String setQuantity = "document.getElementsByClassName('textbox item_amount')[0].value = '"+ count + "';";
+        String setUnitPrice = "document.getElementsByClassName('textbox item_unit_price')[0].value = 15;";
+        webEngine.executeScript(setTrkNum);
+        webEngine.executeScript(setCarrier);
+        webEngine.executeScript(setName);
+        webEngine.executeScript(setDesc);
+        webEngine.executeScript(setBrand);
+        webEngine.executeScript(setQuantity);
+        webEngine.executeScript(setUnitPrice);
+        
+        index ++; 
+                
     }
     
     
@@ -223,5 +308,24 @@ public class WebWindowController implements Initializable {
     public void setMainWindow(MainWindowController mainWindow) {
         this.mainWindow = mainWindow;
     }
+
+    public Mode getMode() {
+        return mode;
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
+    public ArrayList<JoinRecord> getUploads() {
+        return uploads;
+    }
+
+    public void setUploads(ArrayList<JoinRecord> uploads) {
+        this.uploads = uploads;
+    }
+    
+    
+    
    
 }

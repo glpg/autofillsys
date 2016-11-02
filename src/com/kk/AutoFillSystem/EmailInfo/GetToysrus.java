@@ -37,7 +37,7 @@ public class GetToysrus extends GetStore{
         emailSenders.add("ToysRUs");
                 
         orderSubject = "Babies R Us Order Confirmation";
-        shipSubject = "Babiesrus.com Shipment Confirmation";
+        shipSubject = "shipment confirmation";
         storeName = "Toysrus";
     }
     

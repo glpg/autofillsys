@@ -120,7 +120,7 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemNewCnTrk;
     @FXML
     private MenuItem menuItemNewProduct;
-     @FXML
+    @FXML
     private MenuItem menuItemNewStore;
     @FXML
     private MenuItem menuItemNewAddr;
@@ -142,6 +142,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemSyncHDB;
     @FXML
     private MenuItem menuItemOpenWebpage;
+    @FXML
+    private MenuItem menuItemUploadZZ;
     @FXML
     private MenuItem menuItemQuit;
     @FXML
@@ -526,6 +528,7 @@ public class MainWindowController implements Initializable {
         
         
         menuItemOpenWebpage.setOnAction(e->{showWebWindow();});
+        menuItemUploadZZ.setOnAction(e->{uploadZZ();});
         menuItemQuit.setOnAction(e->{systemQuit(e);});
         
         menuItemConfirmDelivery.setOnAction(e->{confirmDelivery();});
@@ -626,6 +629,40 @@ public class MainWindowController implements Initializable {
         Platform.exit();
     }
     
+    private void uploadZZ(){
+        ObservableList<JoinRecord> selectedRows = orderTable.getSelectionModel().getSelectedItems();
+        if (selectedRows.size() == 0) {
+            showAlert("Warning", "No records selected :" , "You did not select any record for uploading !", AlertType.WARNING);
+            return;
+        }
+        
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/WebWindow.fxml"));
+            
+            WebWindowController webController = new WebWindowController();
+            webController.setMainWindow(instance);
+            webController.setMode(Mode.UPLOAD);
+            webController.setUploads(new ArrayList<>(selectedRows));
+            
+            loader.setController(webController);
+            AnchorPane webWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(webWindow));
+            stage.setTitle("Web browser");
+//            stage.initModality(Modality.WINDOW_MODAL);
+//            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+            stage.toFront();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
+        
+    }
     private void showWebWindow() {
         try {
             Stage stage = new Stage();
@@ -634,7 +671,7 @@ public class MainWindowController implements Initializable {
             
             WebWindowController webController = new WebWindowController();
             webController.setMainWindow(instance);
-            
+            webController.setMode(Mode.EXTRACT);
             loader.setController(webController);
             AnchorPane webWindow = (AnchorPane) loader.load();
             

@@ -104,6 +104,7 @@
                 <MenuItem fx:id="menuItemSyncEmails" mnemonicParsing="false" text="Sync Data From Emails" />
                   <MenuItem fx:id="menuItemSyncHDB" mnemonicParsing="false" text="Sync HDB From File" />
                   <MenuItem fx:id="menuItemOpenWebpage" mnemonicParsing="false" text="Sync ZZ From Web" />
+                  <MenuItem fx:id="menuItemUploadZZ" mnemonicParsing="false" text="Upload ZZ" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemStat" mnemonicParsing="false" text="Show Statistics" />
                   <SeparatorMenuItem mnemonicParsing="false" />

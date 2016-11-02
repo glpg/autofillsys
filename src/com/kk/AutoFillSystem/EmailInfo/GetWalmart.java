@@ -32,7 +32,7 @@ public class GetWalmart extends GetStore {
         emailSenders = new ArrayList();
         emailSenders.add("help@walmart.com");
         orderSubject = "Order received";
-        shipSubject = "Shipped";
+        shipSubject = "shipped";
         storeName = "Walmart";
     }
     
