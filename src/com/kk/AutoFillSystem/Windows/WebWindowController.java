@@ -189,23 +189,58 @@ public class WebWindowController implements Initializable {
         }
         
         String setTrkNum =  "document.getElementById('inbound_express_tracking_number').value='" + trkNum + "';";
-        String setCarrier = "document.getElementsByClassName('select express_select')[0].value = '" + carrierIndex + "';";
+        
         String setName = "document.getElementById('inbound_name').value = \"儿童塑料无电机拼图玩具\";";
         String setDesc = "document.getElementsByClassName('textbox item_name')[0].value = \"儿童塑料无电机拼图玩具\";";
-        //String setCategory = "document.getElementsByClassName('select parent_category')[0].value =13;";
-        //String setSubCategory = "document.getElementsByClassName('select category')[0].value =125;";
+        
         String setBrand = "document.getElementsByClassName('textbox item_brand')[0].value = \"lego\";";
-        //String setSize ="document.getElementsByClassName('select item_model_select')[0].value = \"30厘米\";";
+        
         String setQuantity = "document.getElementsByClassName('textbox item_amount')[0].value = '"+ count + "';";
         String setUnitPrice = "document.getElementsByClassName('textbox item_unit_price')[0].value = 15;";
+        
+        //carrier
+        String shipcarrier = "sele = document.getElementsByClassName('select express_select')[0];";
+        String chooseCarrier = "sele.value = \"" + carrierIndex + "\"; ";
+        
+        
+        
+        //category
+        String mainCategory = "sele = document.getElementsByClassName('select parent_category')[0];" ;
+        String chooseCategory =  "sele.value = 13; ";
+        String trigger = "sele.dispatchEvent(new Event('change'))";
+        
+        //subcategory
+        String subCategory = "sele = document.getElementsByClassName('select category')[0];" ;
+        String chooseSubcategory =  "sele.value = 125; ";
+        
+        //size 
+        String size ="sele = document.getElementsByClassName('select item_model_select')[0];";
+        String chooseSize = "sele.value =\"30厘米\"; ";
+        
+        
         webEngine.executeScript(setTrkNum);
-        webEngine.executeScript(setCarrier);
+        //set carrier
+        webEngine.executeScript(shipcarrier);
+        webEngine.executeScript(chooseCarrier);
+        webEngine.executeScript(trigger);
+        
         webEngine.executeScript(setName);
         webEngine.executeScript(setDesc);
         webEngine.executeScript(setBrand);
         webEngine.executeScript(setQuantity);
         webEngine.executeScript(setUnitPrice);
-        
+        //set parent category
+        webEngine.executeScript(mainCategory);
+        webEngine.executeScript(chooseCategory);
+        webEngine.executeScript(trigger);
+        //set sub category
+        webEngine.executeScript(subCategory);
+        webEngine.executeScript(chooseSubcategory);
+        webEngine.executeScript(trigger);
+        //set size 
+        webEngine.executeScript(size);
+        webEngine.executeScript(chooseSize);
+        webEngine.executeScript(trigger);
         index ++; 
                 
     }
