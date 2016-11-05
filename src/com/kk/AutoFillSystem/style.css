@@ -90,7 +90,9 @@
     -fx-graphic: url("Resources/upload.png");
 }
 
-
+#menuItemViewSet>.label {
+    -fx-graphic: url("Resources/view.png");
+}
 
 
 
@@ -115,4 +117,3 @@
    -fx-text-fill: #A9A9A9;
    
 }
-

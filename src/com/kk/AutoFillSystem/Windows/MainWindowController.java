@@ -152,6 +152,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemAbout;
     @FXML
     private MenuItem menuItemStat;
+    @FXML
+    private MenuItem menuItemViewSet;
     
     
     
@@ -534,6 +536,8 @@ public class MainWindowController implements Initializable {
         menuItemConfirmDelivery.setOnAction(e->{confirmDelivery();});
         
         menuItemStat.setOnAction(e->{showStat();});
+        
+        menuItemViewSet.setOnAction(e->{showViewSetWindow();});
        
     }
     
@@ -663,6 +667,39 @@ public class MainWindowController implements Initializable {
         
         
     }
+    
+    
+    private void showViewSetWindow() {
+        
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/ViewSetWindow.fxml"));
+            
+            ViewSetWindowController viewsetController = new ViewSetWindowController();
+            viewsetController.setMainWindow(instance);
+            
+            loader.setController(viewsetController);
+            AnchorPane viewsetWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(viewsetWindow));
+            stage.setTitle("View Lego Set");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+            stage.toFront();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
+        
+        
+        
+        
+    }
+    
     private void showWebWindow() {
         try {
             Stage stage = new Stage();
@@ -1188,7 +1225,8 @@ public class MainWindowController implements Initializable {
     
     private void setupTable()
     {
-         orderTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        
+        orderTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
          
         
         //set up cellvalue factory

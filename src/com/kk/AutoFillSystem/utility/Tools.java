@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -256,5 +258,24 @@ public class Tools {
         
     }
     
+    
+    public static ObservableList<LegoAttrib> createLegoInfo(ArrayList<String> info) {
+        //total 11 attributes used
+        ArrayList<LegoAttrib> data = new ArrayList();
+        data.add(new LegoAttrib("Set Number", info.get(0)));
+        data.add(new LegoAttrib("Set Name", info.get(1)));
+        data.add(new LegoAttrib("Year", info.get(2)));
+        data.add(new LegoAttrib("Pieces", info.get(3)));
+        data.add(new LegoAttrib("Minfigures", info.get(4)));
+        data.add(new LegoAttrib("Ratings", info.get(5)));
+        data.add(new LegoAttrib("US Release Date", info.get(6)));
+        data.add(new LegoAttrib("US Retire Date", info.get(7)));
+        data.add(new LegoAttrib("US Price", info.get(8)));
+        data.add(new LegoAttrib("UK Price", info.get(9)));
+        data.add(new LegoAttrib("EU Price", info.get(10)));
+        
+        return FXCollections.observableArrayList(data);
+        
+    }
 
 }

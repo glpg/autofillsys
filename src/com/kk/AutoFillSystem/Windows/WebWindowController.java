@@ -32,6 +32,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -55,6 +56,7 @@ public class WebWindowController implements Initializable {
     private Mode mode;
     private ArrayList<JoinRecord> uploads; 
     private int index = 0; 
+    
     @FXML
     private WebView webView;
     @FXML
@@ -69,6 +71,8 @@ public class WebWindowController implements Initializable {
     private Button buttonForward; 
     @FXML
     private ImageView imageView;
+    @FXML
+    private Label labelCnt;
 
     /**
      * Initializes the controller class.
@@ -81,11 +85,14 @@ public class WebWindowController implements Initializable {
         if (mode == Mode.EXTRACT) {
             buttonZZ.setText("ExtractZZ");
             buttonZZ.setOnAction(e->{extractZZ();});
+            labelCnt.setVisible(false);
         }
         else {
             //if upload mode, then change the button text, and initialize uploads list
             buttonZZ.setText("UploadZZ");
             buttonZZ.setOnAction(e->{uploadZZ();});
+            labelCnt.setVisible(true);
+            labelCnt.setText(index + " / " + uploads.size());
         }
         
         
@@ -242,7 +249,8 @@ public class WebWindowController implements Initializable {
         webEngine.executeScript(chooseSize);
         webEngine.executeScript(trigger);
         index ++; 
-                
+        
+        labelCnt.setText(index + " / " + uploads.size());
     }
     
     

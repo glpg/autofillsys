@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="14.0" layoutY="6.0" text="Choose Set" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="6.0">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <ListView fx:id="listViewSet" layoutX="14.0" layoutY="14.0" prefHeight="238.0" prefWidth="133.0" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="22.0" />
+      <TableView fx:id="tableViewSet" layoutX="158.0" layoutY="22.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="458.0" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="22.0">
+        <columns>
+          <TableColumn fx:id="attrib" editable="false" prefWidth="110.0" sortable="false" text="Attributes" />
+          <TableColumn fx:id="value" editable="false" prefWidth="167.0" sortable="false" text="Value" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <Pane layoutX="12.0" layoutY="273.0" prefHeight="115.0" prefWidth="133.0" style="-fx-border-color: black; -fx-background-color: white;" AnchorPane.leftAnchor="12.0">
+         <children>
+            <ImageView fx:id="imageViewSet" fitHeight="110.0" fitWidth="125.0" layoutY="-16.0" pickOnBounds="true" preserveRatio="true" x="4.0" y="20.0">
+               <viewport>
+                  <Rectangle2D />
+               </viewport>
+               <image>
+                  <Image url="@../Resources/lego.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
