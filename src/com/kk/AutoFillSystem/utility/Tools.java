@@ -273,9 +273,14 @@ public class Tools {
         data.add(new LegoAttrib("US Price", info.get(8)));
         data.add(new LegoAttrib("UK Price", info.get(9)));
         data.add(new LegoAttrib("EU Price", info.get(10)));
+        data.add(new LegoAttrib("Weight (g)", info.get(11)));
+        data.add(new LegoAttrib("Dimensions (cm)", info.get(12)));
         
         return FXCollections.observableArrayList(data);
         
     }
+    
+    
+    
 
 }

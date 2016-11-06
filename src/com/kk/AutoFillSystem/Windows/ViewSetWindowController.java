@@ -5,31 +5,56 @@
  */
 package com.kk.AutoFillSystem.Windows;
 
+import com.kk.AutoFillSystem.AutoFillSystem;
+import static com.kk.AutoFillSystem.AutoFillSystem.primaryStage;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.utility.LegoAttrib;
 import com.kk.AutoFillSystem.utility.LoggingAspect;
+import static com.kk.AutoFillSystem.utility.LoggingAspect.supportFilePath;
 import static com.kk.AutoFillSystem.utility.Tools.createLegoInfo;
+import static com.kk.AutoFillSystem.utility.Tools.showAlert;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * FXML Controller class
@@ -40,10 +65,12 @@ public class ViewSetWindowController implements Initializable {
     
     private MainWindowController mainWindow;
     private ObservableList<LegoAttrib> data; 
+    private Map<String, ArrayList<String>> sets;
     private String apiKey = "VQDb-QFVh-NM7r";
     private String baseUrl = "http://brickset.com/api/v2.asmx/getSets?apiKey=mykey&"
             + "userHash=&setNumber=prdnum&query=&theme=&subtheme=&year=&owned=&wanted=&orderby=&pagesize=&pagenumber=&username=";
     
+    private String imageUrl;
     
     @FXML
     private ListView<String> listViewSet;
@@ -55,17 +82,42 @@ public class ViewSetWindowController implements Initializable {
     private TableColumn<LegoAttrib, String> attrib;
     @FXML
     private TableColumn<LegoAttrib, String> value;
+    @FXML
+    private TextField textFieldSetNum;
     
     
     public ViewSetWindowController(){
-        //initialize data
-        //populate table with empty values
-        ArrayList<String> values = new ArrayList();
-        for(int i = 0; i < 11; i++) {
-            values.add("");
+        try {
+            sets = new HashMap();
+//        InputStream input = AutoFillSystem.class.getResourceAsStream("Resources/Sets.xml");
+//        String result = new BufferedReader(new InputStreamReader(input))
+//                .lines().collect(Collectors.joining("\n"));
+//        Document localDoc = Jsoup.parse(result);
+            
+            //load local file
+            String dir = supportFilePath();
+            File setFile = new File(dir + "Sets.xml");
+            Document localDoc =Jsoup.parse(setFile, "utf-8");
+            Elements items = localDoc.select("ITEM");
+            for(Element item : items) {
+                String key = item.select("ITEMID").first().text().split("-")[0];
+                ArrayList<String> value = new ArrayList();
+                value.add(item.select("ITEMWEIGHT").text());
+                value.add(item.select("ITEMDIMX").text());
+                value.add(item.select("ITEMDIMY").text());
+                value.add(item.select("ITEMDIMZ").text());
+                sets.put(key, value);
+            }
+            ArrayList<String> values = new ArrayList();
+            for(int i = 0; i < 13; i++) {
+                values.add("");
+            }
+            data = createLegoInfo(values);
+        } catch (IOException ex) {
+            LoggingAspect.addException(ex);
         }
         
-        data = createLegoInfo(values);
+        
     }
 
     /**
@@ -73,13 +125,17 @@ public class ViewSetWindowController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
         // populate listview
+        
         ObservableList<String> legoList = FXCollections.observableArrayList();
         for(Products prd: mainWindow.getProducts()) {
             String prodNum = prd.getProdNum();
             if (prodNum.matches("[0-9]+") && !prodNum.equals("00000"))
                 legoList.add(prd.getProdNum());
         }
+        
+        legoList.sort(String::compareToIgnoreCase);
         
         listViewSet.setItems(legoList);
         
@@ -90,10 +146,14 @@ public class ViewSetWindowController implements Initializable {
             public void handle(MouseEvent click) {
 
                 if (click.getClickCount() == 2) {
+                    
                     //Use ListView's getSelected Item
                     String selection = listViewSet.getSelectionModel()
                             .getSelectedItem();
+                    //change textfield
+                    textFieldSetNum.setText(selection);
                     fetchInfo(selection);
+                    
                 }
             }
         });
@@ -101,9 +161,97 @@ public class ViewSetWindowController implements Initializable {
         //populate table
         setUpTable();
         
-        
-        
+        //set up input 
+        //set up enter event for search text
+        textFieldSetNum.setOnKeyPressed((e) -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                int index = 0;
+                int size = listViewSet.getItems().size();
+                String prodNum = textFieldSetNum.getText().trim();
+                //highlight in listview if exist
+                for(; index < size; index ++) {
+                    if (listViewSet.getItems().get(index).contains(prodNum)) {
+                        listViewSet.scrollTo(index);
+                        listViewSet.getSelectionModel().select(index);
+                        break;
+                    }
+                }
+                // if not found ,then clear selection
+                if (index == size) listViewSet.getSelectionModel().clearSelection();
+                
+                fetchInfo(prodNum);
+                
+            }
+                
+        });
+        //set up context menu for image view
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem save = new MenuItem("Save to file");
+        contextMenu.getItems().addAll(save);
+        save.setOnAction(e->saveImage());
+       
+        imageViewSet.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.isSecondaryButtonDown()) {
+                    contextMenu.show(imageViewSet, event.getScreenX(), event.getScreenY());
+                }
+            }
+        });
     }    
+    
+    private void saveImage() {
+        
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            
+            showAlert("Warning", "No Image :" , "No image to save !", Alert.AlertType.WARNING);
+            return;
+        }
+        try {
+            //get image
+            
+            URL url = new URL(imageUrl);
+            String[] parts = imageUrl.split("/");
+            //get filename and extension
+            String filename = parts[parts.length - 1].trim();
+            
+            String[] exts = filename.split("\\.");
+            
+            String extension = exts[exts.length -1].trim();
+            
+            InputStream in = new BufferedInputStream(url.openStream());
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            int n = 0;
+            while (-1 != (n = in.read(buf))) {
+                out.write(buf, 0, n);
+            }
+            out.close();
+            in.close();
+            byte[] response = out.toByteArray();
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Image");
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            //set filter
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image", "*." + extension);
+            fileChooser.getExtensionFilters().add(extFilter);
+            //set initial name
+            fileChooser.setInitialFileName(filename);
+
+            File file = fileChooser.showSaveDialog(primaryStage);
+            if (file != null) {
+                FileOutputStream fileOuputStream = new FileOutputStream(file);
+                fileOuputStream.write(response);
+                fileOuputStream.close();
+            }
+        } catch (MalformedURLException ex) {
+            LoggingAspect.addException(ex);
+        } catch (IOException ex) {
+            LoggingAspect.addException(ex);
+        }
+        
+    }
     
     //fetch info using brickset api
     private void fetchInfo(String prodNum) {
@@ -131,27 +279,34 @@ public class ViewSetWindowController implements Initializable {
             String usprice = doc.select("USRetailPrice").first().text();
             data.get(8).setValue(usprice);
             String ukprice = doc.select("UKRetailPrice").first().text();
-            data.get(9).setValue(usprice);
+            data.get(9).setValue(ukprice);
             String euprice = doc.select("EURetailPrice").first().text();
-            data.get(10).setValue(usprice);
-            
-            ArrayList<String> values = new ArrayList();
-            values.add(setNum);
-            values.add(name);
-            values.add(year);
-            values.add(piece);
-            values.add(minifig);
-            values.add(ratings);
-            values.add(release);
-            values.add(retire);
-            values.add(usprice);
-            values.add(ukprice);
-            values.add(euprice);
-            
-            tableViewSet.setItems(createLegoInfo(values));
+            data.get(10).setValue(euprice);
             
             
-            String imageUrl = doc.select("imageURL").first().text();
+            //now get dimensions and weight
+            ArrayList<String> value = sets.get(setNum);
+            if (value != null) {
+                data.get(11).setValue(value.get(0));
+                String dx = value.get(1);
+                String dy = value.get(2);
+                String dz = value.get(3);
+                
+                if (dx != null && !dx.isEmpty()) {
+                    String dimension = dx +" x " + dy + " x " + dz;
+                    data.get(12).setValue(dimension);
+                }
+                
+            }
+            
+           
+            
+            //tableview refresh
+            tableViewSet.getColumns().get(0).setVisible(false);
+            tableViewSet.getColumns().get(0).setVisible(true);
+            
+            //set image 
+            imageUrl = doc.select("imageURL").first().text();
             imageViewSet.setImage(new Image(imageUrl));
             
         } catch (IOException ex) {
