@@ -5,39 +5,36 @@
  */
 package com.kk.AutoFillSystem.Windows;
 
-import com.kk.AutoFillSystem.AutoFillSystem;
 import static com.kk.AutoFillSystem.AutoFillSystem.primaryStage;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.utility.LegoAttrib;
 import com.kk.AutoFillSystem.utility.LoggingAspect;
 import static com.kk.AutoFillSystem.utility.LoggingAspect.supportFilePath;
+import com.kk.AutoFillSystem.utility.PriceEstimation;
 import static com.kk.AutoFillSystem.utility.Tools.createLegoInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
@@ -49,8 +46,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import javax.imageio.ImageIO;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -72,6 +69,7 @@ public class ViewSetWindowController implements Initializable {
     
     private String imageUrl;
     
+    
     @FXML
     private ListView<String> listViewSet;
     @FXML
@@ -84,7 +82,13 @@ public class ViewSetWindowController implements Initializable {
     private TableColumn<LegoAttrib, String> value;
     @FXML
     private TextField textFieldSetNum;
-    
+    @FXML
+    private TextField textFieldPrice;
+    @FXML
+    private Button btnCalculateCost;
+    @FXML
+    private Label labelCost;
+   
     
     public ViewSetWindowController(){
         try {
@@ -161,6 +165,9 @@ public class ViewSetWindowController implements Initializable {
         //populate table
         setUpTable();
         
+        //set up btns
+        btnCalculateCost.setOnAction(e->calculate());
+      
         //set up input 
         //set up enter event for search text
         textFieldSetNum.setOnKeyPressed((e) -> {
@@ -199,6 +206,34 @@ public class ViewSetWindowController implements Initializable {
             }
         });
     }    
+    
+    
+    
+    private void calculate(){
+        int weight;
+        //get weight
+        try {
+            weight = Integer.parseInt(data.get(11).getValue());
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Invalid Weight :" , "No valid weight available for estimation !", Alert.AlertType.ERROR);
+            return;
+        }
+        
+        double usdPrice; 
+        try {
+            usdPrice = Double.parseDouble(textFieldPrice.getText());
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Invalid Price :" , "No valid price available for estimation !", Alert.AlertType.ERROR);
+            return;
+        }
+        
+        PriceEstimation pe = PriceEstimation.getInstance();
+       
+        double result = pe.calculate(usdPrice, weight);
+        DecimalFormat twoDForm = new DecimalFormat("#.00");
+        labelCost.setText("" + twoDForm.format(result));
+        
+    }
     
     private void saveImage() {
         

@@ -69,6 +69,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -154,6 +155,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemStat;
     @FXML
     private MenuItem menuItemViewSet;
+    @FXML
+    private MenuItem menuItemSetTemplate;
     
     
     
@@ -538,6 +541,7 @@ public class MainWindowController implements Initializable {
         menuItemStat.setOnAction(e->{showStat();});
         
         menuItemViewSet.setOnAction(e->{showViewSetWindow();});
+        menuItemSetTemplate.setOnAction(e->showSetTemplateWindow());
        
     }
     
@@ -668,6 +672,34 @@ public class MainWindowController implements Initializable {
         
     }
     
+    private void showSetTemplateWindow(){
+        
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/SetCostTemplateWindow.fxml"));
+            
+            SetCostTemplateWindowController setTemplateController = new SetCostTemplateWindowController();
+            setTemplateController.setMainWindow(instance);
+            
+            loader.setController(setTemplateController);
+            AnchorPane setTemplateWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(setTemplateWindow));
+            stage.setTitle("Set Price Estimation Template");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+            stage.toFront();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            LoggingAspect.addException(ex);
+        }
+
+        
+    }
+    
     
     private void showViewSetWindow() {
         
@@ -680,7 +712,7 @@ public class MainWindowController implements Initializable {
             viewsetController.setMainWindow(instance);
             
             loader.setController(viewsetController);
-            AnchorPane viewsetWindow = (AnchorPane) loader.load();
+            VBox viewsetWindow = (VBox) loader.load();
             
 
             stage.setScene(new Scene(viewsetWindow));

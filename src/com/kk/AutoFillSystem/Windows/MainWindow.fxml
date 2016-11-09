@@ -114,6 +114,7 @@
             <Menu mnemonicParsing="false" text="View">
               <items>
                 <MenuItem fx:id="menuItemViewSet" mnemonicParsing="false" text="View Lego Set" />
+                  <MenuItem fx:id="menuItemSetTemplate" mnemonicParsing="false" text="Set Cost Template" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

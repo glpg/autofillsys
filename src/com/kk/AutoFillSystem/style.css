@@ -94,7 +94,9 @@
     -fx-graphic: url("Resources/view.png");
 }
 
-
+#menuItemSetTemplate>.label {
+    -fx-graphic: url("Resources/template.png");
+}
 
 
 
