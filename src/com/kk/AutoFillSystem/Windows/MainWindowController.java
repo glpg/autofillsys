@@ -24,6 +24,7 @@ import com.kk.AutoFillSystem.utility.TableFilter;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.readFileLines;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
+import static com.kk.AutoFillSystem.utility.Tools.copyToClipboard;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -85,6 +86,7 @@ public class MainWindowController implements Initializable {
     private DataController dataCenter;
     private TableFilter filter;
     private MainWindowController instance;
+    private Stage viewSetStage;
     
     
     //get data from db
@@ -688,8 +690,8 @@ public class MainWindowController implements Initializable {
 
             stage.setScene(new Scene(setTemplateWindow));
             stage.setTitle("Set Price Estimation Template");
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(AutoFillSystem.primaryStage);
+//            stage.initModality(Modality.WINDOW_MODAL);
+//            stage.initOwner(AutoFillSystem.primaryStage);
             stage.show();
             stage.toFront();
         } catch (IOException ex) {
@@ -702,9 +704,13 @@ public class MainWindowController implements Initializable {
     
     
     private void showViewSetWindow() {
+        if (viewSetStage != null) {
+            viewSetStage.toFront();
+            return;
+        }
         
         try {
-            Stage stage = new Stage();
+            viewSetStage = new Stage();
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(AutoFillSystem.class.getResource("Windows/ViewSetWindow.fxml"));
             
@@ -712,15 +718,15 @@ public class MainWindowController implements Initializable {
             viewsetController.setMainWindow(instance);
             
             loader.setController(viewsetController);
-            VBox viewsetWindow = (VBox) loader.load();
+            AnchorPane viewsetWindow = (AnchorPane) loader.load();
             
 
-            stage.setScene(new Scene(viewsetWindow));
-            stage.setTitle("View Lego Set");
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(AutoFillSystem.primaryStage);
-            stage.show();
-            stage.toFront();
+            viewSetStage.setScene(new Scene(viewsetWindow));
+            viewSetStage.setTitle("View Lego Set");
+//            stage.initModality(Modality.WINDOW_MODAL);
+//            stage.initOwner(AutoFillSystem.primaryStage);
+            viewSetStage.show();
+            viewSetStage.toFront();
         } catch (IOException ex) {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1536,12 +1542,7 @@ public class MainWindowController implements Initializable {
         Clipboard.getSystemClipboard().setContent(content);
     }
     
-    private void copyToClipboard(String value){
-        
-        ClipboardContent content = new ClipboardContent();
-        content.putString(value);
-        Clipboard.getSystemClipboard().setContent(content);
-    }
+    
     
     private void copyIntlTrk() {
         JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();

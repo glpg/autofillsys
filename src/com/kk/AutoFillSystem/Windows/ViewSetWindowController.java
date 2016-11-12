@@ -13,6 +13,7 @@ import static com.kk.AutoFillSystem.utility.LoggingAspect.supportFilePath;
 import com.kk.AutoFillSystem.utility.PriceEstimation;
 import static com.kk.AutoFillSystem.utility.Tools.createLegoInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
+import static com.kk.AutoFillSystem.utility.Tools.copyToClipboard;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -39,6 +41,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -48,6 +52,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -342,7 +347,8 @@ public class ViewSetWindowController implements Initializable {
             
             //set image 
             imageUrl = doc.select("imageURL").first().text();
-            imageViewSet.setImage(new Image(imageUrl));
+            Platform.runLater(() -> imageViewSet.setImage(new Image(imageUrl)));
+           
             
         } catch (IOException ex) {
             LoggingAspect.addException(ex);
@@ -374,6 +380,30 @@ public class ViewSetWindowController implements Initializable {
                 };
            
         });
+        
+        
+        tableViewSet.setRowFactory(new Callback<TableView<LegoAttrib>, TableRow<LegoAttrib>>() {
+            @Override
+            public TableRow<LegoAttrib> call(TableView<LegoAttrib> tableView) {
+                final TableRow<LegoAttrib> row = new TableRow<>();
+                row.setOnMouseClicked(event -> {
+                    if (event.getClickCount() == 2) {
+
+                        TablePosition pos = tableViewSet.getSelectionModel().getSelectedCells().get(0);
+                        int rowIndex = pos.getRow();
+                        LegoAttrib item = tableViewSet.getItems().get(rowIndex);
+                        TableColumn col = pos.getTableColumn();
+                        String data = col.getCellObservableValue(item).getValue().toString();
+                        copyToClipboard(data);
+
+                    }
+
+                });
+
+                return row;
+            }
+        });
+
         
         
         tableViewSet.setItems(data);
