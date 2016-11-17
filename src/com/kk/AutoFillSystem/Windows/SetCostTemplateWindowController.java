@@ -165,7 +165,7 @@ public class SetCostTemplateWindowController implements Initializable {
         pe.setInitalShipFee(initfee);
         pe.setVipDiscount(vipDiscount);
         showAlert("Success", "New Settings Saved :", "The new set of parameters has been save successfully !", Alert.AlertType.INFORMATION);
-        closeWindow(e);
+        
     }
     
     //getters and setters

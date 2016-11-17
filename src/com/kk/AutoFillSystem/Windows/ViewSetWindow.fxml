@@ -8,8 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label layoutX="14.0" layoutY="6.0" text="Choose Set" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="6.0">
          <font>
@@ -44,13 +43,14 @@
       </Pane>
       <Pane layoutX="160.0" layoutY="383.0" prefHeight="25.0" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="12.0">
          <children>
-            <Button fx:id="btnCalculateCost" layoutX="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="74.0" text="Estimate" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="278.0" />
-            <Label fx:id="labelCost" layoutX="215.0" layoutY="4.0" prefHeight="17.0" prefWidth="63.0" textFill="#147800" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="12.0">
+            <Button fx:id="btnCalculateCost" layoutX="139.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="63.0" text="Estimate" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="139.0" />
+            <Label fx:id="labelCost" layoutX="215.0" layoutY="4.0" prefHeight="17.0" prefWidth="112.0" textFill="#147800" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="12.0">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="textFieldPrice" prefHeight="25.0" prefWidth="109.0" promptText="price in US$" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="160.0" />
+            <TextField fx:id="textFieldPrice" prefHeight="25.0" prefWidth="60.0" promptText="US Price" />
+            <TextField fx:id="textFieldTBPrice" layoutX="67.0" prefHeight="25.0" prefWidth="60.0" promptText="TB Price" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="82.0" />
          </children>
       </Pane>
    </children>

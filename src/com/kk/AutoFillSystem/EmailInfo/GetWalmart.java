@@ -121,7 +121,7 @@ public class GetWalmart extends GetStore {
         Shipment shipment = new Shipment();
         
         //tracking
-        Pattern track = Pattern.compile("[0-9]+ ([a-zA-Z ]*) tracking number:\\s.{1}?([a-zA-Z0-9]*)");
+        Pattern track = Pattern.compile("[0-9]+ ([-a-zA-Z ]*) tracking number:\\s.{1}?([a-zA-Z0-9]*)");
         Matcher m = track.matcher(text);
         if(m.find()) {
             shipment.carrier = m.group(1);

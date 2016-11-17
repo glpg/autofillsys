@@ -9,11 +9,14 @@ import com.kk.AutoFillSystem.Windows.MainWindowController;
 import com.sun.javafx.application.LauncherImpl;
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -56,7 +59,17 @@ public class AutoFillSystem extends Application {
         primaryStage.getIcons().add(
                 new Image(getClass().getResourceAsStream("Resources/app.png")));
         
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                Platform.exit();
+            }
+        });
+        
 	primaryStage.show();
+        
+        
+        
 		
     }
     

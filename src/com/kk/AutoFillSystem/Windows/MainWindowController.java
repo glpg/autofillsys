@@ -48,6 +48,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -74,6 +75,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 /**
@@ -711,6 +713,14 @@ public class MainWindowController implements Initializable {
         
         try {
             viewSetStage = new Stage();
+            viewSetStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent t) {
+                    viewSetStage.close();
+                    viewSetStage = null;
+                    
+                }
+            });
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(AutoFillSystem.class.getResource("Windows/ViewSetWindow.fxml"));
             

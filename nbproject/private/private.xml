@@ -5,9 +5,12 @@
         <group>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Database/Operations/TrackOp.java</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/build.xml</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/AutoFillSystem.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Windows/SetCostTemplateWindow.fxml</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Windows/ViewSetWindowController.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/META-INF/persistence.xml</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/utility/PriceEstimation.java</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/utility/Tools.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Windows/NewAddressWindowController.java</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/style.css</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Windows/MainWindowController.java</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/AutoFillSystem/src/com/kk/AutoFillSystem/Windows/SetCostTemplateWindowController.java</file>

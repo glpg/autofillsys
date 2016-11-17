@@ -35,9 +35,9 @@ public class PriceEstimation {
       return instance;
    }
 
-   public double calculate(double usdPrice, int weight){
+   public double calculate(double usdPrice, double weight){
        double cnyCost = usdPrice * discount * currencyRatio;
-       int extraCnt = (weight*count + extraBoxWeight - 500) / 100 + 1;
+       int extraCnt = (int)(weight*count + extraBoxWeight - 500) / 100 + 1;
        double shipCost = (49 + 7* extraCnt)*vipDiscount / count; 
        return cnyCost + shipCost;
    }

@@ -90,6 +90,8 @@ public class ViewSetWindowController implements Initializable {
     @FXML
     private TextField textFieldPrice;
     @FXML
+    private TextField textFieldTBPrice;
+    @FXML
     private Button btnCalculateCost;
     @FXML
     private Label labelCost;
@@ -215,10 +217,10 @@ public class ViewSetWindowController implements Initializable {
     
     
     private void calculate(){
-        int weight;
+        double weight;
         //get weight
         try {
-            weight = Integer.parseInt(data.get(11).getValue());
+            weight = Double.parseDouble(data.get(11).getValue());
         } catch (NumberFormatException e) {
             showAlert("Error", "Invalid Weight :" , "No valid weight available for estimation !", Alert.AlertType.ERROR);
             return;
@@ -236,7 +238,25 @@ public class ViewSetWindowController implements Initializable {
        
         double result = pe.calculate(usdPrice, weight);
         DecimalFormat twoDForm = new DecimalFormat("#.00");
-        labelCost.setText("" + twoDForm.format(result));
+        String percentage = "";
+        //check if tbprice is provided
+        if (textFieldTBPrice.getText() != null && !textFieldTBPrice.getText().isEmpty()) {
+            
+            try {
+                double tbPrice = Double.parseDouble(textFieldTBPrice.getText());
+                double perc = tbPrice  / result;
+                percentage = " " + twoDForm.format(perc);
+                
+            } catch (NumberFormatException e) {
+                showAlert("Error", "Invalid Price :", "No valid TB price available for estimation !", Alert.AlertType.ERROR);
+                return;
+            }
+        }
+        
+        
+        
+        
+        labelCost.setText("" + twoDForm.format(result) + " " + percentage);
         
     }
     
