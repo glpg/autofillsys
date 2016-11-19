@@ -161,6 +161,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemViewSet;
     @FXML
     private MenuItem menuItemSetTemplate;
+    @FXML
+    private MenuItem menuItemSyncDelieverd;
     
     
     
@@ -540,12 +542,14 @@ public class MainWindowController implements Initializable {
         menuItemUploadZZ.setOnAction(e->{uploadZZ();});
         menuItemQuit.setOnAction(e->{systemQuit(e);});
         
-        menuItemConfirmDelivery.setOnAction(e->{confirmDelivery();});
+        menuItemConfirmDelivery.setOnAction(e->{confirmDeliveryInTable();});
         
         menuItemStat.setOnAction(e->{showStat();});
         
         menuItemViewSet.setOnAction(e->{showViewSetWindow();});
         menuItemSetTemplate.setOnAction(e->showSetTemplateWindow());
+        
+        menuItemSyncDelieverd.setOnAction(e->showSyncDeliveries());
        
     }
     
@@ -599,46 +603,71 @@ public class MainWindowController implements Initializable {
         
     }
     
+    //using tablerows to search, tablerow initialized to include all records
+    public JoinRecord findRecordWithCnTrk(String cnTrk) {
+        for(JoinRecord record : tableRows) {
+            if (record.getCnTrk()!= null && record.getCnTrkNum().equals(cnTrk)) {
+                return record;
+            }
+        }
+        return null;
+        
+    }
     
-    private void confirmDelivery() {
+    //here, record must have cntrk info
+    public boolean confirmDelivery(JoinRecord record) {
+        try {
+            Cntrkings cntrk = record.getCnTrk();
+            if (!cntrk.getDelivered()) {
+                cntrk.setDelivered(true);
+                dataCenter.updateDelivery(cntrk);
+                expandInfo(record);
+                
+
+            }
+            
+            return true;
+        }
+        catch(Exception ex) {
+                
+            ex.printStackTrace();
+            LoggingAspect.addException(ex);
+            return false;
+            
+        }
+        
+    
+    }
+    
+    private void confirmDeliveryInTable() {
         ObservableList<JoinRecord> selectedRows = orderTable.getSelectionModel().getSelectedItems();
         if (selectedRows == null || selectedRows.size() == 0) return;
         else {
-            Set<String> trkNums = new HashSet();
+            
+            
             for(JoinRecord tmp : selectedRows) {
                 if (tmp.getCnTrk() == null) continue;
                 else {
-                    if (trkNums.contains(tmp.getCnTrk().getTrkingNum())) {
-                        expandInfo(tmp);
-                    }
-                    else {
-                        Cntrkings cntrk = tmp.getCnTrk();
-                        if (!cntrk.getDelivered()) {
-                            cntrk.setDelivered(true);
-                            dataCenter.updateDelivery(cntrk);
-                            expandInfo(tmp);
-                            trkNums.add(cntrk.getTrkingNum());
-                        }
-                        else {
-                            if (! tmp.getDelivered()) tmp.setDelivered(true);
-                        }
-                        
-                        
-                    }
+                    if (!confirmDelivery(tmp)){
+                        String cntrk = tmp.getCnTrkNum();
+                        showAlert("Error", "Failed to confirm delivery:" , "Cntrk : " + cntrk + " cannot be confirmed for delivery", AlertType.ERROR);
+                    };
                 }
             }
             
-            //force table reloading
-            //forcing refreshing table
-            orderTable.getColumns().get(0).setVisible(false);
-            orderTable.getColumns().get(0).setVisible(true);
         }
         
+        orderTable.getColumns().get(0).setVisible(false);
+        orderTable.getColumns().get(0).setVisible(true);
+        
     }
+    
+    
     
     private void systemQuit(ActionEvent e) {
         
         Platform.exit();
+        System.exit(0);
     }
     
     private void uploadZZ(){
@@ -673,6 +702,35 @@ public class MainWindowController implements Initializable {
         }
 
         
+        
+    }
+    
+    private void showSyncDeliveries() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/SyncDeliveryInfo.fxml"));
+            
+            SyncDeliveryInfoController controller = new SyncDeliveryInfoController();
+            controller.setMainWindow(instance);
+            
+            loader.setController(controller);
+            AnchorPane syncDeliveryWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(syncDeliveryWindow));
+            stage.setTitle("Sync Delivery Data");
+            
+            
+            
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+            stage.toFront();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            LoggingAspect.addException(ex);
+        }
         
     }
     
@@ -1498,7 +1556,7 @@ public class MainWindowController implements Initializable {
         SeparatorMenuItem line3 = new SeparatorMenuItem();
         MenuItem confirmD = new MenuItem("Confirm delivery");
         confirmD.setOnAction(e -> {
-            confirmDelivery();
+            confirmDeliveryInTable();
         });
         
         menu.getItems().addAll(addUsTrk, addIntlTrk, addCnTrk, line, editOrder, editUsTrk, line2, copyIntlTrk, pasteIntlTrk

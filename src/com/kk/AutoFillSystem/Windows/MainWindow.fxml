@@ -97,6 +97,7 @@
                   <MenuItem fx:id="menuItemEditUsTrk" mnemonicParsing="false" text="Edit US tracking" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemConfirmDelivery" mnemonicParsing="false" text="Confirm Delivery" />
+                  <MenuItem fx:id="menuItemSyncDelieverd" mnemonicParsing="false" text="Batch Confirm Delivery" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Tools">

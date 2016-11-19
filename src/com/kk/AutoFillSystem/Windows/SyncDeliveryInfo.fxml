@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="380.0" prefWidth="450.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextArea fx:id="textAreaSyncData" layoutX="14.0" layoutY="14.0" prefHeight="298.0" prefWidth="167.0" promptText="Paste your deliveries here" AnchorPane.bottomAnchor="47.0" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="35.0" />
+      <TextArea fx:id="textAreaUpdateInfo" editable="false" layoutX="175.0" layoutY="14.0" prefHeight="289.0" prefWidth="154.0" AnchorPane.bottomAnchor="47.0" AnchorPane.leftAnchor="190.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="35.0" />
+      <Button fx:id="btnConfirm" layoutX="126.0" layoutY="341.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="128.0" text="Confirm Delivery" AnchorPane.bottomAnchor="14.0" />
+      <Label layoutX="14.0" layoutY="23.0" text="Deliveries" AnchorPane.topAnchor="15.0" />
+      <Label layoutX="190.0" layoutY="15.0" text="Status" AnchorPane.topAnchor="15.0" />
+   </children>
+</AnchorPane>
