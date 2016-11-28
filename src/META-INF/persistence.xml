@@ -13,6 +13,8 @@
     <class>com.kk.AutoFillSystem.Database.Entities.Trklines</class>
     <class>com.kk.AutoFillSystem.Database.Entities.Ustocntrkings</class>
     <class>com.kk.AutoFillSystem.Database.Entities.Addresses</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Transactionlines</class>
+    <class>com.kk.AutoFillSystem.Database.Entities.Transactions</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/track?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

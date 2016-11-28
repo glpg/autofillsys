@@ -12,6 +12,7 @@ import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
+import com.kk.AutoFillSystem.Database.Entities.Transactions;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
@@ -31,6 +32,8 @@ import static com.kk.AutoFillSystem.Database.Operations.TrackOp.findIntlTrking;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.relateUsandIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateCnDelivery;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateUsTrk;
+import static com.kk.AutoFillSystem.Database.Operations.TransactionOp.createNewTransaction;
+import static com.kk.AutoFillSystem.Database.Operations.TransactionOp.createNewTransactionFromEntity;
 import com.kk.AutoFillSystem.Database.Services.AddressService;
 import com.kk.AutoFillSystem.Database.Services.CarrierService;
 import com.kk.AutoFillSystem.Database.Services.CntrackingService;
@@ -42,12 +45,10 @@ import com.kk.AutoFillSystem.Database.Services.UStrackingService;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Shipment;
 import java.util.List;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javax.mail.Store;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 /**
  *
@@ -121,8 +122,7 @@ public class DataController {
         return ps.findAll();
     }
     
-    
-    
+
     public List<Ustocntrkings> getIntlTrkings() {
         IntltrackingService is = new IntltrackingService(em, Ustocntrkings.class);
         return is.findAll();
@@ -151,6 +151,14 @@ public class DataController {
     
     public boolean createOrderline(Orderlines orderline) {
         return createNewOrderline(em, orderline);
+    }
+    
+    public Transactions createTransaction(Transactions transaction) {
+        return createNewTransactionFromEntity(em, transaction);
+    }
+    
+    public Transactions createTransaction(Order info) {
+        return createNewTransaction(em, info);
     }
     
     public Ustrkings createUsTrking(Shipment shipInfo) {
@@ -210,8 +218,7 @@ public class DataController {
         em.close();
         em = emf.createEntityManager();
     }
-    
-    
+
     /**
      * Getters and Setters
      * @return 
@@ -224,14 +231,15 @@ public class DataController {
     public static EntityManager getEm() {
         return em;
     }
+    
+    
+    public Object querySoldSum(String prdNum) {
+        String sql = "SELECT SUM(t.quantity) FROM Transactionlines t , Products p WHERE t.prodId.id = p.id AND p.prodNum = :prodNum" ;
+        Query q = em.createQuery(sql);
+        q.setParameter("prodNum", prdNum);
+        Object result = (Object) q.getSingleResult();
+        return result;
 
- 
+    }
 
-    
-    
-    
-    
-    
-    
-    
 }

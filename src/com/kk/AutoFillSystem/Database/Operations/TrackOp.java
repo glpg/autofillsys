@@ -45,6 +45,7 @@ public class TrackOp {
     public static Ustrkings createUsTrk(EntityManager em, Shipment shipmentInfo){ 
         // Create new todo
         
+        if (shipmentInfo.trackingNum == null) return null;
         Ustrkings ustrking = null;
         
         OrderService orderService = new OrderService(em, Orders.class);

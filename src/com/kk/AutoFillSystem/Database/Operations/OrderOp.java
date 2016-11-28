@@ -33,6 +33,7 @@ public class OrderOp {
     public static Orders createNewOrder(EntityManager em, Order orderInfo){ 
         // Create new todo
         
+        if (orderInfo.orderNum == null) return null;
         
         OrderService orderService = new OrderService(em, Orders.class);
         StoreService storeService = new StoreService(em, Stores.class);

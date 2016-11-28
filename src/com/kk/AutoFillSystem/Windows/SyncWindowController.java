@@ -210,7 +210,7 @@ public class SyncWindowController implements Initializable {
                     //extract order info from emails
                     for (Message email : emails) {
 
-                        if (email.getSubject().contains(query.getOrderSubject())) {
+                        if (email.getSubject().toLowerCase().contains(query.getOrderSubject())) {
                             
 
                             Order order = query.extractOrder(email);
@@ -282,7 +282,7 @@ public class SyncWindowController implements Initializable {
         };
          
         textAreaInfo.textProperty().bind(task.messageProperty());
-        new Thread(task).start();
+        
         
 
         

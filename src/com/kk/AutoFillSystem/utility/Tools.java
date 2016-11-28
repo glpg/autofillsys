@@ -5,19 +5,38 @@
  */
 package com.kk.AutoFillSystem.utility;
 
+import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Orderlines;
+import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import static java.lang.System.out;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -289,6 +308,127 @@ public class Tools {
         Clipboard.getSystemClipboard().setContent(content);
     }
     
+    
+    public static void main(String[] args) throws UnsupportedEncodingException, FileNotFoundException, IOException, ParseException {
+        
+        DataController dt = new DataController();
+        
+        Object result = dt.querySoldSum("76039");
+        System.out.println(result);
+
+//        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(new File("c:\\users\\yi\\desktop\\orders.csv")), "GB2312"));      
+//
+//        Map<String, Order> data = new HashMap();
+//
+//        String line;
+//        //10 status, 17 time, 0 orderNum
+//        while ((line = in.readLine()) != null) {
+//
+//            String[] fields = line.replaceAll("\"", "").split(",");
+//
+//            Order tmp = new Order();
+//
+//            String tran_num = fields[0].replace("=", "");
+//            String status = fields[10];
+//            String date = fields[17];
+//
+//            if (status.contains("等待买家付款") || status.contains("交易关闭")) {
+//                continue;
+//            }
+//
+//            if (!fields[19].contains("乐高")) {
+//                continue;
+//            }
+//
+//            tmp.orderNum = tran_num;
+//
+//            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//            Date orderDate = (Date) formatter.parse(date.split("\\s")[0]);
+//            tmp.orderDate = orderDate;
+//            data.put(tran_num, tmp);
+//
+//                //System.out.println(tran_num + " " + status + " " + date.split("\\s")[0]);
+//        }
+////        
+//        in.close();
+//
+//        //details file
+//        BufferedReader inDetails = new BufferedReader(new InputStreamReader(new FileInputStream(new File("c:\\users\\yi\\desktop\\details.csv")), "GB2312"));
+//
+//        String lineD;
+//
+//        Pattern prodNumP = Pattern.compile("(\\d{7}|\\d{5})");
+//
+//        //0 transnum, 3 quantity, 1 title 5 property
+//        while ((lineD = inDetails.readLine()) != null) {
+//
+//            
+//            String[] fields = lineD.replaceAll("\"", "").split(",");
+//            String tran_num = fields[0].replace("=", "");
+//
+//            Matcher m1 = prodNumP.matcher(fields[5]);
+//            String prodNum = "00000";
+//
+//            if (fields[3].contains("购买数量")) {
+//                continue;
+//            }
+//            int quantity = Integer.parseInt(fields[3]);
+//            if (m1.find()) {
+//                prodNum = m1.group(1);
+//
+//            } else {
+//                m1 = prodNumP.matcher(fields[1]);
+//                if (m1.find()) {
+//                    prodNum = m1.group(1);
+//                }
+//
+//            }
+//
+//            //if the item is not lego, skip and continue to next record
+//            if (prodNum.equals("00000")) {
+//                
+//                continue;
+//            }
+//
+//            Order tmp = data.get(tran_num);
+//            if (tmp == null) {
+//                continue;
+//            }
+//
+//            //Product prd = new Product(prodNum, quantity);    
+//            if (tmp.products == null) {
+//                tmp.products = new ArrayList();
+//            }
+//
+//            boolean found = false;
+//            for (Product prd : tmp.products) {
+//                if (prodNum.equals(prd.name)) {
+//                    prd.count += quantity;
+//                    
+//                    found = true;
+//                    break;
+//                }
+//
+//            }
+//
+//            if (!found) {
+//                tmp.products.add(new Product(prodNum, quantity));
+//                
+//            }
+//
+//        }
+//
+//        inDetails.close();
+//        
+//        //start to persist table
+//        for(Order info : data.values()) {
+//            
+//            dt.createTransaction(info);
+//        }
+
+        
+        
+    }
     
 
 }

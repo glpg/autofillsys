@@ -107,15 +107,17 @@
                   <MenuItem fx:id="menuItemOpenWebpage" mnemonicParsing="false" text="Sync ZZ From Web" />
                   <MenuItem fx:id="menuItemUploadZZ" mnemonicParsing="false" text="Upload ZZ" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="menuItemStat" mnemonicParsing="false" text="Show Statistics" />
+                  <MenuItem fx:id="menuItemImportTB" mnemonicParsing="false" text="Import Taobao Transactions" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemReloadTable" mnemonicParsing="false" text="Reload Table" />
               </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="View">
+            <Menu mnemonicParsing="false" text="Query">
               <items>
                 <MenuItem fx:id="menuItemViewSet" mnemonicParsing="false" text="View Lego Set" />
                   <MenuItem fx:id="menuItemSetTemplate" mnemonicParsing="false" text="Set Cost Template" />
+                  <MenuItem fx:id="menuItemStat" mnemonicParsing="false" text="Show Statistics" />
+                  <MenuItem fx:id="menuItemQuerySoldQuantity" mnemonicParsing="false" text="Query Sold Quantity" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

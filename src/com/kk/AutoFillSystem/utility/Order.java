@@ -20,7 +20,7 @@ public class Order {
     public String storeName;
     
     public Order(){
-        
+       
     }
     
     @Override
@@ -28,9 +28,14 @@ public class Order {
         StringBuilder sb = new StringBuilder();
         sb.append("OrderNumber : ").append(orderNum).append("\n");
         sb.append("OrderDate : ").append(orderDate.toString()).append("\n");
-        products.stream().forEach((prd) -> {
-            sb.append(prd.name).append(" ").append(prd.count).append("\n");
-        });
+        
+        if (products != null) {
+            products.stream().forEach((prd) -> {
+                sb.append(prd.name).append(" ").append(prd.count).append("\n");
+            });
+
+        }
+
         return sb.toString();
     }
 }

@@ -98,8 +98,17 @@
     -fx-graphic: url("Resources/template.png");
 }
 
+#menuItemImportTB>.label {
+    -fx-graphic: url("Resources/tb.png");
+}
 
+#menuItemSyncDelieverd>.label{
+    -fx-graphic: url("Resources/batch.png");
+}
 
+#menuItemQuerySoldQuantity>.label{
+    -fx-graphic: url("Resources/batch.png");
+}
 
 .button {
 

@@ -34,6 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Products.findByProdName", query = "SELECT p FROM Products p WHERE p.prodName = :prodName"),
     @NamedQuery(name = "Products.findByProdNum", query = "SELECT p FROM Products p WHERE p.prodNum = :prodNum")})
 public class Products implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "prodId")
+    private Collection<Transactionlines> transactionlinesCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -127,6 +129,15 @@ public class Products implements Serializable {
     @Override
     public String toString() {
         return "com.kk.AutoFillSystem.Database.Entities.Products[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Transactionlines> getTransactionlinesCollection() {
+        return transactionlinesCollection;
+    }
+
+    public void setTransactionlinesCollection(Collection<Transactionlines> transactionlinesCollection) {
+        this.transactionlinesCollection = transactionlinesCollection;
     }
     
 }

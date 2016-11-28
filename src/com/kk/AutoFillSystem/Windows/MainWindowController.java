@@ -89,7 +89,8 @@ public class MainWindowController implements Initializable {
     private TableFilter filter;
     private MainWindowController instance;
     private Stage viewSetStage;
-    
+    private Stage batchConfirmStage;
+    private Stage querySoldQuantityStage;
     
     //get data from db
     private List<Orders> orders;
@@ -163,6 +164,10 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemSetTemplate;
     @FXML
     private MenuItem menuItemSyncDelieverd;
+    @FXML
+    private MenuItem menuItemImportTB;
+    @FXML
+    private MenuItem menuItemQuerySoldQuantity;
     
     
     
@@ -550,8 +555,12 @@ public class MainWindowController implements Initializable {
         menuItemSetTemplate.setOnAction(e->showSetTemplateWindow());
         
         menuItemSyncDelieverd.setOnAction(e->showSyncDeliveries());
+        menuItemImportTB.setOnAction(e->showTaoBaoImport());
+        menuItemQuerySoldQuantity.setOnAction(e->showQueryQuantity());
        
     }
+    
+    
     
     private void showStat(){
         if (comboBoxProduct.getValue() == null ||comboBoxProduct.getValue().isEmpty()) {
@@ -705,9 +714,75 @@ public class MainWindowController implements Initializable {
         
     }
     
-    private void showSyncDeliveries() {
+    
+    private void showQueryQuantity(){
+        
+        if (querySoldQuantityStage != null) {
+            querySoldQuantityStage.toFront();
+            return;
+        }
+        
+        
+        try {
+            querySoldQuantityStage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/QueryWindow.fxml"));
+            
+            QueryWindowController controller = new QueryWindowController();
+            
+            
+            loader.setController(controller);
+            AnchorPane window = (AnchorPane) loader.load();
+            
+            querySoldQuantityStage.setScene(new Scene(window));
+            querySoldQuantityStage.setTitle("Query Sold Quantities");
+            querySoldQuantityStage.setResizable(false);
+            querySoldQuantityStage.show();
+            querySoldQuantityStage.toFront();
+        } catch (IOException ex) {
+            LoggingAspect.addException(ex);
+        }
+        
+    }
+    
+    private void showTaoBaoImport(){
+        
         try {
             Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/TBimportWindow.fxml"));
+            
+            TBimportWindowController controller = new TBimportWindowController();
+            
+            
+            loader.setController(controller);
+            AnchorPane window = (AnchorPane) loader.load();
+            
+            stage.setScene(new Scene(window));
+            stage.setTitle("Import TaoBao Transactions");
+            stage.setResizable(false);
+            stage.show();
+            stage.toFront();
+        } catch (IOException ex) {
+            LoggingAspect.addException(ex);
+        }
+        
+        
+        
+    }
+    
+    
+    private void showSyncDeliveries() {
+        
+        if (batchConfirmStage != null) {
+            batchConfirmStage.toFront();
+            return;
+        }
+        
+       
+        
+        try {
+            Stage batchConfirmStage = new Stage();
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(AutoFillSystem.class.getResource("Windows/SyncDeliveryInfo.fxml"));
             
@@ -718,15 +793,12 @@ public class MainWindowController implements Initializable {
             AnchorPane syncDeliveryWindow = (AnchorPane) loader.load();
             
 
-            stage.setScene(new Scene(syncDeliveryWindow));
-            stage.setTitle("Sync Delivery Data");
+            batchConfirmStage.setScene(new Scene(syncDeliveryWindow));
+            batchConfirmStage.setTitle("Sync Delivery Data");
             
             
-            
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(AutoFillSystem.primaryStage);
-            stage.show();
-            stage.toFront();
+            batchConfirmStage.show();
+            batchConfirmStage.toFront();
         } catch (IOException ex) {
             ex.printStackTrace();
             LoggingAspect.addException(ex);

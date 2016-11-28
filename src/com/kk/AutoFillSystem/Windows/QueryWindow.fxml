@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="160.0" prefWidth="300.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="14.0" layoutY="35.0" text="LEGO # :">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtFieldPnum" layoutX="68.0" layoutY="31.0" />
+      <Label layoutX="103.0" layoutY="70.0" text="Sold Quantity :" />
+      <Button fx:id="btnQuery" layoutX="235.0" layoutY="31.0" mnemonicParsing="false" text="Query" />
+      <Label fx:id="labelQuantity" alignment="CENTER" contentDisplay="CENTER" layoutX="136.0" layoutY="100.0" textFill="#c91a0a" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

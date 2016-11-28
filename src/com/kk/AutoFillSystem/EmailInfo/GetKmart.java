@@ -47,7 +47,7 @@ public class GetKmart extends GetStore {
         Order order = new Order();
         //get order number
         
-        Pattern orderNum = Pattern.compile("Order #([0-9]+)");
+        Pattern orderNum = Pattern.compile(" #([0-9]+)");
         Matcher m = orderNum.matcher(text);
         if(m.find()) {
             order.orderNum = m.group(1);

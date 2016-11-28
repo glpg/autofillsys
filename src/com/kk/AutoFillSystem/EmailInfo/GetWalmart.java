@@ -31,7 +31,7 @@ public class GetWalmart extends GetStore {
         this.pwd = pwd;
         emailSenders = new ArrayList();
         emailSenders.add("help@walmart.com");
-        orderSubject = "Order received";
+        orderSubject = "order received";
         shipSubject = "shipped";
         storeName = "Walmart";
     }
