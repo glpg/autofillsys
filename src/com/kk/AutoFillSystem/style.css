@@ -110,6 +110,10 @@
     -fx-graphic: url("Resources/batch.png");
 }
 
+#menuItemLoadMore>.label{
+    -fx-graphic: url("Resources/loadmore.png");
+}
+
 .button {
 
     -fx-background-color: 

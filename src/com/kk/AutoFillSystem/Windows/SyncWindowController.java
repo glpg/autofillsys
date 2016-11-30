@@ -283,7 +283,7 @@ public class SyncWindowController implements Initializable {
          
         textAreaInfo.textProperty().bind(task.messageProperty());
         
-        
+        new Thread(task).start();
 
         
         

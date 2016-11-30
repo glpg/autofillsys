@@ -7,6 +7,7 @@ package com.kk.AutoFillSystem.utility;
 
 import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Orderlines;
+import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import java.io.BufferedReader;
@@ -312,48 +313,59 @@ public class Tools {
     public static void main(String[] args) throws UnsupportedEncodingException, FileNotFoundException, IOException, ParseException {
         
         DataController dt = new DataController();
+        List<Orders> q = dt.getLastNOrders(10, 0);
         
-        Object result = dt.querySoldSum("76039");
-        System.out.println(result);
-
-//        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(new File("c:\\users\\yi\\desktop\\orders.csv")), "GB2312"));      
-//
-//        Map<String, Order> data = new HashMap();
-//
-//        String line;
-//        //10 status, 17 time, 0 orderNum
-//        while ((line = in.readLine()) != null) {
-//
-//            String[] fields = line.replaceAll("\"", "").split(",");
-//
-//            Order tmp = new Order();
-//
-//            String tran_num = fields[0].replace("=", "");
-//            String status = fields[10];
-//            String date = fields[17];
-//
-//            if (status.contains("等待买家付款") || status.contains("交易关闭")) {
-//                continue;
-//            }
-//
-//            if (!fields[19].contains("乐高")) {
-//                continue;
-//            }
-//
-//            tmp.orderNum = tran_num;
-//
-//            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-//            Date orderDate = (Date) formatter.parse(date.split("\\s")[0]);
-//            tmp.orderDate = orderDate;
-//            data.put(tran_num, tmp);
-//
-//                //System.out.println(tran_num + " " + status + " " + date.split("\\s")[0]);
+        for(Orders ord : q) {
+            System.out.println(ord.getOrderDate());
+        }
+        
+//        List<Products> prds = dt.getProducts();
+//        Set<String> uniquePd = new HashSet();
+//        Set<String> newPd = new HashSet();
+//        
+//        for(Products pd: prds) {
+//            uniquePd.add(pd.getProdNum());
 //        }
-////        
-//        in.close();
+//        
 //
-//        //details file
-//        BufferedReader inDetails = new BufferedReader(new InputStreamReader(new FileInputStream(new File("c:\\users\\yi\\desktop\\details.csv")), "GB2312"));
+////        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(new File("c:\\users\\yi\\desktop\\orders.csv")), "GB2312"));      
+////
+////        Map<String, Order> data = new HashMap();
+////
+////        String line;
+////        //10 status, 17 time, 0 orderNum
+////        while ((line = in.readLine()) != null) {
+////
+////            String[] fields = line.replaceAll("\"", "").split(",");
+////
+////            Order tmp = new Order();
+////
+////            String tran_num = fields[0].replace("=", "");
+////            String status = fields[10];
+////            String date = fields[17];
+////
+////            if (status.contains("等待买家付款") || status.contains("交易关闭")) {
+////                continue;
+////            }
+////
+////            if (!fields[19].contains("乐高")) {
+////                continue;
+////            }
+////
+////            tmp.orderNum = tran_num;
+////
+////            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+////            Date orderDate = (Date) formatter.parse(date.split("\\s")[0]);
+////            tmp.orderDate = orderDate;
+////            data.put(tran_num, tmp);
+////
+////                //System.out.println(tran_num + " " + status + " " + date.split("\\s")[0]);
+////        }
+//////        
+////        in.close();
+////
+////        //details file
+//        BufferedReader inDetails = new BufferedReader(new InputStreamReader(new FileInputStream(new File("c:\\users\\yi\\desktop\\newdetails.csv")), "GB2312"));
 //
 //        String lineD;
 //
@@ -389,41 +401,23 @@ public class Tools {
 //                
 //                continue;
 //            }
-//
-//            Order tmp = data.get(tran_num);
-//            if (tmp == null) {
-//                continue;
+//            
+//            
+//            if(!uniquePd.contains(prodNum)) {
+//                newPd.add(prodNum);
 //            }
 //
-//            //Product prd = new Product(prodNum, quantity);    
-//            if (tmp.products == null) {
-//                tmp.products = new ArrayList();
-//            }
-//
-//            boolean found = false;
-//            for (Product prd : tmp.products) {
-//                if (prodNum.equals(prd.name)) {
-//                    prd.count += quantity;
-//                    
-//                    found = true;
-//                    break;
-//                }
-//
-//            }
-//
-//            if (!found) {
-//                tmp.products.add(new Product(prodNum, quantity));
-//                
-//            }
-//
+//            
 //        }
 //
 //        inDetails.close();
-//        
-//        //start to persist table
-//        for(Order info : data.values()) {
+// 
+//////        //start to persist table
+//        for(String tmp : newPd) {
 //            
-//            dt.createTransaction(info);
+//            Products pd = new Products();
+//            pd.setProdNum(tmp);
+//            dt.createProduct(pd);
 //        }
 
         

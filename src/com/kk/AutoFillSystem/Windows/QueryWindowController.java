@@ -29,9 +29,12 @@ public class QueryWindowController implements Initializable {
     @FXML
     private TextField txtFieldPnum;
     @FXML
-    private Button btnQuery;
+    private Label labelBought;
     @FXML
-    private Label labelQuantity;
+    private Label labelShipped;
+  
+    @FXML
+    private Label labelSold;
 
     
     public QueryWindowController(){
@@ -42,7 +45,7 @@ public class QueryWindowController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        btnQuery.setOnAction(e->query());
+        
         
         txtFieldPnum.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.ENTER) {
@@ -60,9 +63,18 @@ public class QueryWindowController implements Initializable {
             return;
         }
         
+        Object bought = dt.queryBoughtSum(prdNum);
+        if (bought == null) bought = "null";
+        labelBought.setText(bought.toString());
+        
+        Object shipped = dt.queryShippedSum(prdNum);
+        if (shipped == null) shipped = "null";
+        labelShipped.setText(shipped.toString());
+        
+        
         Object result = dt.querySoldSum(prdNum);
         if (result == null) result = "null";
-        labelQuantity.setText(result.toString());
+        labelSold.setText(result.toString());
     }
     
 }

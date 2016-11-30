@@ -92,6 +92,15 @@ public class DataController {
         return os.findAll();
     }
     
+    public List<Orders> getLastNOrders(int count, int offset) {
+        String sql = "SELECT o FROM Orders o ORDER BY o.id DESC" ;
+        Query q = em.createQuery(sql, Orders.class);
+        q.setFirstResult(offset); 
+        q.setMaxResults(count);
+        List<Orders> result = q.getResultList();
+        return result;   
+    }
+    
     public List<Ustrkings> getUstrkings() {
         UStrackingService us = new UStrackingService(em, Ustrkings.class);
         return us.findAll();
@@ -235,6 +244,24 @@ public class DataController {
     
     public Object querySoldSum(String prdNum) {
         String sql = "SELECT SUM(t.quantity) FROM Transactionlines t , Products p WHERE t.prodId.id = p.id AND p.prodNum = :prodNum" ;
+        Query q = em.createQuery(sql);
+        q.setParameter("prodNum", prdNum);
+        Object result = (Object) q.getSingleResult();
+        return result;
+
+    }
+    
+    public Object queryBoughtSum(String prdNum) {
+        String sql = "SELECT SUM(t.quantity) FROM Orderlines t , Products p WHERE t.productId.id = p.id AND p.prodNum = :prodNum" ;
+        Query q = em.createQuery(sql);
+        q.setParameter("prodNum", prdNum);
+        Object result = (Object) q.getSingleResult();
+        return result;
+
+    }
+    
+    public Object queryShippedSum(String prdNum) {
+        String sql = "SELECT SUM(t.quantity) FROM Trklines t , Products p WHERE t.productId.id = p.id AND p.prodNum = :prodNum" ;
         Query q = em.createQuery(sql);
         q.setParameter("prodNum", prdNum);
         Object result = (Object) q.getSingleResult();

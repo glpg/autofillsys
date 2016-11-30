@@ -83,7 +83,7 @@ public class ImportTBTask extends Task{
         
         //reading in details file
         
-        BufferedReader inDetails = new BufferedReader(new InputStreamReader(new FileInputStream(new File("c:\\users\\yi\\desktop\\details.csv")), "GB2312"));
+        BufferedReader inDetails = new BufferedReader(new InputStreamReader(new FileInputStream(detailFile), "GB2312"));
 
         String lineD;
 

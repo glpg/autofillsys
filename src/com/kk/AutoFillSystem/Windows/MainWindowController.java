@@ -91,6 +91,7 @@ public class MainWindowController implements Initializable {
     private Stage viewSetStage;
     private Stage batchConfirmStage;
     private Stage querySoldQuantityStage;
+    private int offset;
     
     //get data from db
     private List<Orders> orders;
@@ -168,6 +169,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemImportTB;
     @FXML
     private MenuItem menuItemQuerySoldQuantity;
+    @FXML
+    private MenuItem menuItemLoadMore;
     
     
     
@@ -239,15 +242,22 @@ public class MainWindowController implements Initializable {
     //constructor
     public MainWindowController() {
         dataCenter = DataController.getInstance();
-
-        loadData();
+        
+        //init offset
+        offset = 0;
+        //init records;
+        records = new ArrayList();
+        //start to load 500 orders
+        loadData(500);
+        
         instance = this;
     }
     
     
-    private void loadData() {
+    private void loadData(int count) {
         
-        orders = dataCenter.getOrders();
+        orders = dataCenter.getLastNOrders(count, offset);
+        offset += count;
         
         //get stores, products , carriers, and addresses
         stores = dataCenter.getStores();
@@ -262,9 +272,6 @@ public class MainWindowController implements Initializable {
                 warehouses.add(addr);
             }
         }
-        
-        //initialize JoinRecord
-        records = new ArrayList();
         
         //populate JoinRecord
         for(Orders ord : orders) {
@@ -284,7 +291,9 @@ public class MainWindowController implements Initializable {
     
     public void reloadTable() {
         dataCenter.clearCache();
-        loadData();
+        offset = 0;
+        records.clear();
+        loadData(500);
         orderTable.setItems(tableRows);
     }
     
@@ -557,10 +566,16 @@ public class MainWindowController implements Initializable {
         menuItemSyncDelieverd.setOnAction(e->showSyncDeliveries());
         menuItemImportTB.setOnAction(e->showTaoBaoImport());
         menuItemQuerySoldQuantity.setOnAction(e->showQueryQuantity());
+        menuItemLoadMore.setOnAction(e->loadMore());
        
     }
     
-    
+    private void loadMore(){
+        
+        loadData(200);
+        orderTable.setItems(tableRows);
+        
+    }
     
     private void showStat(){
         if (comboBoxProduct.getValue() == null ||comboBoxProduct.getValue().isEmpty()) {
@@ -725,6 +740,15 @@ public class MainWindowController implements Initializable {
         
         try {
             querySoldQuantityStage = new Stage();
+            
+            querySoldQuantityStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent t) {
+                    querySoldQuantityStage.close();
+                    querySoldQuantityStage = null;
+                    
+                }
+            });
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(AutoFillSystem.class.getResource("Windows/QueryWindow.fxml"));
             
