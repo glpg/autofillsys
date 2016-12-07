@@ -10,6 +10,7 @@ import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
+import com.kk.AutoFillSystem.utility.ComboBoxListener;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import java.net.URL;
@@ -45,7 +46,6 @@ public class OrderWindowController implements Initializable {
     private Orders order;
     private ArrayList<Orderlines> orderlines;
     
-   
     
     @FXML
     private DatePicker datePicker;
@@ -106,10 +106,11 @@ public class OrderWindowController implements Initializable {
         FXCollections.sort(productList);
         comboBoxItem.setItems(productList);
         
-        
-        
-        
-    }    
+        comboBoxItem.getEditor().textProperty().addListener(new ComboBoxListener(comboBoxItem));
+            
+    }  
+    
+    
     
     
     private void addItem() {

@@ -17,10 +17,8 @@ import static com.kk.AutoFillSystem.utility.LoggingAspect.addMessage;
 import static com.kk.AutoFillSystem.utility.LoggingAspect.addMessageWithDate;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 
 /**

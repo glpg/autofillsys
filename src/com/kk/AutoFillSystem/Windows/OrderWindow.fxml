@@ -58,7 +58,7 @@
                </font>
             </Label>
             <TextField fx:id="textFieldQuantity" prefHeight="25.0" prefWidth="153.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <ComboBox fx:id="comboBoxItem" prefHeight="25.0" prefWidth="190.0" GridPane.columnIndex="4" />
+            <ComboBox fx:id="comboBoxItem" editable="true" prefHeight="25.0" prefWidth="190.0" GridPane.columnIndex="4" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="4" GridPane.rowIndex="2">
                <children>
                   <Button fx:id="buttonAdd" mnemonicParsing="false" prefHeight="25.0" prefWidth="54.0" text="Add" />

@@ -11,18 +11,22 @@ import com.kk.AutoFillSystem.Database.Entities.Carriers;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
+import com.kk.AutoFillSystem.utility.ComboBoxListener;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.Product;
 import com.kk.AutoFillSystem.utility.Shipment;
 import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
+import com.sun.javafx.scene.control.skin.ComboBoxListViewSkin;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -33,6 +37,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -115,6 +120,8 @@ public class UsTrkWindowController implements Initializable {
         }
         FXCollections.sort(productList);
         comboBoxItem.setItems(productList);
+        comboBoxItem.getEditor().textProperty().addListener(new ComboBoxListener(comboBoxItem));
+        
         
         ObservableList<String> addrList = FXCollections.observableArrayList();
         for(Addresses addr: mainWindow.getWarehouses()) {

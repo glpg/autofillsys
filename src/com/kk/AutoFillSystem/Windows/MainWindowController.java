@@ -17,6 +17,7 @@ import com.kk.AutoFillSystem.Database.Entities.Stores;
 import com.kk.AutoFillSystem.Database.Entities.Usanduscntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
+import com.kk.AutoFillSystem.utility.ComboBoxListener;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.LoggingAspect;
 import static com.kk.AutoFillSystem.utility.LoggingAspect.addMessage;
@@ -408,6 +409,7 @@ public class MainWindowController implements Initializable {
         }
         FXCollections.sort(productList);
         comboBoxProduct.setItems(productList);
+        comboBoxProduct.getEditor().textProperty().addListener(new ComboBoxListener(comboBoxProduct));
         
         ObservableList<String> warehouseList = FXCollections.observableArrayList();
         for(Addresses warehouse: warehouses) {

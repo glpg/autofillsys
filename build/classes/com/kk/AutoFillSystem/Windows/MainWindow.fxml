@@ -23,7 +23,7 @@
                <HBox.margin>
                   <Insets top="10.0" />
                </HBox.margin></ComboBox>
-            <ComboBox fx:id="comboBoxProduct" prefHeight="25.0" prefWidth="105.0" promptText="Product">
+            <ComboBox fx:id="comboBoxProduct" editable="true" prefHeight="25.0" prefWidth="105.0" promptText="Product">
                <HBox.margin>
                   <Insets top="10.0" />
                </HBox.margin></ComboBox>

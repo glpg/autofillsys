@@ -99,7 +99,7 @@ public class GetKmart extends GetStore {
         }
         
         //tracking
-        Pattern track = Pattern.compile("Tracking number: ([a-zA-Z0-9]+)");
+        Pattern track = Pattern.compile("Tracking Number: ([a-zA-Z0-9]+) ");
         Matcher m1 = track.matcher(text);
         if(m1.find()) {
             

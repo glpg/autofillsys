@@ -29,8 +29,8 @@ public class GetYoyo extends GetStore {
         this.pwd = pwd;
         emailSenders = new ArrayList();
         emailSenders.add("customercare@yoyo.com");
-        orderSubject = "Your order at YoYo.com";
-        shipSubject = "Your order from YoYo.com has shipped";
+        orderSubject = "your order at yoyo.com";
+        shipSubject = "your order from yoyo.com has shipped";
         storeName = "Yoyo";
     }
     
