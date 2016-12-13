@@ -11,9 +11,11 @@ import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
 import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
+import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
+import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Usanduscntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
@@ -172,6 +174,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemQuerySoldQuantity;
     @FXML
     private MenuItem menuItemLoadMore;
+    @FXML
+    private MenuItem menuItemCheckCancel;
     
     
     
@@ -569,7 +573,44 @@ public class MainWindowController implements Initializable {
         menuItemImportTB.setOnAction(e->showTaoBaoImport());
         menuItemQuerySoldQuantity.setOnAction(e->showQueryQuantity());
         menuItemLoadMore.setOnAction(e->loadMore());
+        menuItemCheckCancel.setOnAction(e->checkCancel());
        
+    }
+    
+    private void checkCancel(){
+        
+        Set<Orders> cancel = new HashSet();
+        for(JoinRecord record : tableRows) {
+            
+            Orders tmp = record.getOrder();
+            if (cancel.contains(tmp)) {
+                orderTable.getSelectionModel().select(record);
+                continue;
+            }
+            
+            //if no us tracking ,ignore
+            if (tmp.getUstrkingsCollection().size()==0) continue;
+            
+            //count ordered things
+            int orderCnt = 0; 
+            for(Orderlines ordl : tmp.getOrderlinesCollection()){
+                orderCnt += ordl.getQuantity();
+            }
+            
+            //count shipped things
+            int shipCnt = 0;
+            for(Ustrkings ustrk : tmp.getUstrkingsCollection()) {
+                for(Trklines trkl : ustrk.getTrklinesCollection()) {
+                    shipCnt += trkl.getQuantity();
+                }
+            }
+            
+            if (orderCnt > shipCnt) {
+                orderTable.getSelectionModel().select(record);
+                cancel.add(tmp);
+            }
+        }
+        
     }
     
     private void loadMore(){

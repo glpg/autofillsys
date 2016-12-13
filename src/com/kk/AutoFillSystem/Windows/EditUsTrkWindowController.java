@@ -11,6 +11,7 @@ import com.kk.AutoFillSystem.Database.Entities.Carriers;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
+import com.kk.AutoFillSystem.utility.ComboBoxListener;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.Product;
 import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
@@ -112,6 +113,8 @@ public class EditUsTrkWindowController implements Initializable{
         }
         FXCollections.sort(productList);
         comboBoxItem.setItems(productList);
+        
+        comboBoxItem.getEditor().textProperty().addListener(new ComboBoxListener(comboBoxItem));
         
         ObservableList<String> addrList = FXCollections.observableArrayList();
         for(Addresses addr: mainWindow.getWarehouses()) {

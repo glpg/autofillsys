@@ -114,6 +114,9 @@
     -fx-graphic: url("Resources/loadmore.png");
 }
 
+#menuItemCheckCancel>.label{
+    -fx-graphic: url("Resources/checkcancel.png");
+}
 .button {
 
     -fx-background-color: 

@@ -351,9 +351,15 @@ public class ViewSetWindowController implements Initializable {
                 String dy = value.get(2);
                 String dz = value.get(3);
                 
+                
+                
                 if (dx != null && !dx.isEmpty()) {
                     String dimension = dx +" x " + dy + " x " + dz;
                     data.get(12).setValue(dimension);
+                }
+                
+                else {
+                    data.get(12).setValue("");
                 }
                 
             }

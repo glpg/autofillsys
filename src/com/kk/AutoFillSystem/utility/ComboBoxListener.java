@@ -18,7 +18,7 @@ import javafx.scene.control.ListView;
  */
 public class ComboBoxListener implements ChangeListener<String> {
     
-    private ComboBox comboBox;
+    private final ComboBox comboBox;
     
     public ComboBoxListener(ComboBox box){
         this.comboBox = box;
@@ -28,9 +28,20 @@ public class ComboBoxListener implements ChangeListener<String> {
     @Override
     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         //scroll to ith lines
-        ListView lv = ((ComboBoxListViewSkin) comboBox.getSkin()).getListView();
-        lv.scrollTo(startIndex(newValue));
-        comboBox.show();
+        if (newValue != null && !newValue.isEmpty()) {
+            ListView lv = ((ComboBoxListViewSkin) comboBox.getSkin()).getListView();
+            int i = startIndex(newValue);
+            if (i == -1) {
+                comboBox.getEditor().setText(oldValue);
+            } else {
+                lv.scrollTo(i);
+
+            }
+
+            comboBox.show();
+
+        }
+
     }
     
     private int startIndex(String prd) {
@@ -44,7 +55,7 @@ public class ComboBoxListener implements ChangeListener<String> {
         }
         
         
-        return i;
+        return -1;
     }
     
 }

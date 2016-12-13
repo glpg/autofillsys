@@ -187,8 +187,8 @@ public class UsTrkWindowController implements Initializable {
         
         
         //check if trking already exsited
-        for(Ustrkings ustrk : record.getOrder().getUstrkingsCollection()) {
-            if (ustrk.getTrkingNum().toLowerCase().equals(ustrk.getTrkingNum().toLowerCase())) {
+        for(Ustrkings tmp : record.getOrder().getUstrkingsCollection()) {
+            if (ustrk.getTrkingNum().toLowerCase().equals(tmp.getTrkingNum().toLowerCase())) {
                 showAlert("Error", "Trk Number Error :" , "Tracking number already exists!", AlertType.ERROR);
                 return;
             }

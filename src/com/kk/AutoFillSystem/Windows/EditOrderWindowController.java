@@ -10,6 +10,7 @@ import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
+import com.kk.AutoFillSystem.utility.ComboBoxListener;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
@@ -112,6 +113,8 @@ public class EditOrderWindowController implements Initializable {
         }
         FXCollections.sort(productList);
         comboBoxItem.setItems(productList);
+        
+        comboBoxItem.getEditor().textProperty().addListener(new ComboBoxListener(comboBoxItem));
         
         //get currrent order
         Orders order = record.getOrder();
