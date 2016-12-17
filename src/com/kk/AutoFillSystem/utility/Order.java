@@ -20,6 +20,7 @@ public class Order {
     public String storeName;
     
     public Order(){
+        products = new ArrayList();
        
     }
     

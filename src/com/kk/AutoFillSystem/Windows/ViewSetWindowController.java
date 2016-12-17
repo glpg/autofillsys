@@ -124,6 +124,7 @@ public class ViewSetWindowController implements Initializable {
             }
             data = createLegoInfo(values);
         } catch (IOException ex) {
+            ex.printStackTrace();
             LoggingAspect.addException(ex);
         }
         
