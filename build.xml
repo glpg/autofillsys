@@ -73,7 +73,7 @@
     
     
     <property name="creation-date" value="2016-12-13"/>
-    <property name="version" value="2.2.1b"/>
+    <property name="version" value="2.2.1c"/>
     
      
     <property name="jarname" value="TrackSystem-${version}"/>

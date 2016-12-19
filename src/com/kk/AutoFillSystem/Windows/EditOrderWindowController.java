@@ -12,18 +12,14 @@ import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Stores;
 import com.kk.AutoFillSystem.utility.ComboBoxListener;
 import com.kk.AutoFillSystem.utility.JoinRecord;
-import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Product;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
-import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -190,6 +186,7 @@ public class EditOrderWindowController implements Initializable {
     
     private void editOrder(ActionEvent e){
         
+        //add new products
         for(Product prod  : prods) {
             for(Products entry : mainWindow.getProducts()) {
                 if (prod.name.equals(entry.getProdNum())) {
@@ -201,15 +198,36 @@ public class EditOrderWindowController implements Initializable {
                     dataCenter.createOrderline(temp);
                     record.getOrder().getOrderlinesCollection().add(temp);
                     //need to expand info from the newly added orderlines
-                    for(JoinRecord tblRecord : mainWindow.getTableRows()) {
-                        if (tblRecord.getOrderNum().equals(record.getOrderNum())) {
-                            expandInfo(tblRecord);
-                        }
-                    }
-                    
+                             
                 }
             }
             
+        }
+        
+        //delete all 00000
+        Orders order = record.getOrder();
+        ArrayList<Orderlines> toDelete = new ArrayList();
+        if(order.getOrderlinesCollection() != null && order.getOrderlinesCollection().size() > 0) {
+            for(Orderlines item : order.getOrderlinesCollection()) {
+                if (item.getProductId().getProdNum().equals("00000")){
+                    
+                    toDelete.add(item);
+                }
+            }
+        }
+        
+        order.getOrderlinesCollection().removeAll(toDelete);
+        
+        for(Orderlines ordl : toDelete) {
+            dataCenter.deleteOrderline(ordl);
+        }
+        
+        
+
+        for (JoinRecord tblRecord : mainWindow.getTableRows()) {
+            if (tblRecord.getOrderNum().equals(record.getOrderNum())) {
+                expandInfo(tblRecord);
+            }
         }
         
         showAlert("Success", "New Orderlines Created :" , "New orderlines are created successfully !");

@@ -217,12 +217,29 @@ public class EditUsTrkWindowController implements Initializable{
                     dataCenter.createTrkline(temp);
                     record.getUsTrk().getTrklinesCollection().add(temp);
                     
-                    expandInfo(record);
                 }
             }
             
         }
         
+        //delete all 00000
+        Ustrkings ustrk = record.getUsTrk();
+        ArrayList<Trklines> toDelete = new ArrayList();
+        if(ustrk.getTrklinesCollection() != null && ustrk.getTrklinesCollection().size() > 0) {
+            for(Trklines item : ustrk.getTrklinesCollection()) {
+                if (item.getProductId().getProdNum().equals("00000")){
+                    
+                    toDelete.add(item);
+                }
+            }
+        }
+        
+        ustrk.getTrklinesCollection().removeAll(toDelete);
+        for(Trklines trkl : toDelete){
+            dataCenter.deleteTrkline(trkl);
+        }
+        
+        expandInfo(record);
         
         showAlert("Success", "Record Updated :" , "Us shipment is updated successfully !", AlertType.INFORMATION);
         //forcing refreshing table
