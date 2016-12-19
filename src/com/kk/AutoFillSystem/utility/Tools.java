@@ -176,7 +176,7 @@ public class Tools {
             return warehouse;
         }
         
-        if (text.toLowerCase().contains("yi xue")) {
+        if (text.toLowerCase().contains("yi xue") || text.toLowerCase().contains("xue kang")) {
             warehouse = "Yi Xue";
             
         }

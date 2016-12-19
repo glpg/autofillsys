@@ -106,6 +106,7 @@
                   <MenuItem fx:id="menuItemSyncHDB" mnemonicParsing="false" text="Sync HDB From File" />
                   <MenuItem fx:id="menuItemOpenWebpage" mnemonicParsing="false" text="Sync ZZ From Web" />
                   <MenuItem fx:id="menuItemUploadZZ" mnemonicParsing="false" text="Upload ZZ" />
+                  <MenuItem fx:id="menuItemSyncAmazon" mnemonicParsing="false" text="Sync Amazon Orders" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemImportTB" mnemonicParsing="false" text="Import Taobao Transactions" />
                   <SeparatorMenuItem mnemonicParsing="false" />

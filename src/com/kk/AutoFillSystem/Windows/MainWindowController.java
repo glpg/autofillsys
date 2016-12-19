@@ -176,7 +176,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemLoadMore;
     @FXML
     private MenuItem menuItemCheckCancel;
-    
+    @FXML
+    private MenuItem menuItemSyncAmazon;
     
     
     
@@ -574,6 +575,8 @@ public class MainWindowController implements Initializable {
         menuItemQuerySoldQuantity.setOnAction(e->showQueryQuantity());
         menuItemLoadMore.setOnAction(e->loadMore());
         menuItemCheckCancel.setOnAction(e->checkCancel());
+        
+        menuItemSyncAmazon.setOnAction(e->showSyncAmazonWindow());
        
     }
     
@@ -935,6 +938,7 @@ public class MainWindowController implements Initializable {
             viewSetStage.show();
             viewSetStage.toFront();
         } catch (IOException ex) {
+           
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -1093,6 +1097,33 @@ public class MainWindowController implements Initializable {
         }
 
        
+    }
+    
+    private void showSyncAmazonWindow() {
+         try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/SyncAmazonWindow.fxml"));
+            
+            SyncAmazonWindowController syncController = new SyncAmazonWindowController();
+            syncController.setMainWindow(instance);
+            
+            loader.setController(syncController);
+            AnchorPane syncWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(syncWindow));
+            stage.setTitle("Sync Amazon Orders");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
+        
+        
     }
     
     

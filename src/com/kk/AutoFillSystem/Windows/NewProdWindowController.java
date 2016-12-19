@@ -81,8 +81,10 @@ public class NewProdWindowController implements Initializable {
         mainWindow.getProducts().add(prod);
         mainWindow.getComboBoxProduct().getItems().add(prod.getProdNum());
         
+        //clear input field
+        textFieldProdNum.clear();
+        textFieldProdName.clear();
         
-        closeWindow(e);
         
     }
     
