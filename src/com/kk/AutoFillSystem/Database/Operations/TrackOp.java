@@ -231,6 +231,15 @@ public class TrackOp {
         em.getTransaction().commit();    
     }
     
+    public static void delTrkline(EntityManager em, Trklines trkline) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.remove(trkline);
+        
+        em.getTransaction().commit();    
+        addMessageWithDate("Trkline : " + trkline.getProductId().getProdNum() +  " for Us trking " + trkline.getUstrkingId().getTrkingNum()+ " is removed.");
+        
+    }
     
     public static boolean createNewUsTrkFromEntity(EntityManager em, Ustrkings ustrk) {
         em.getTransaction().begin();

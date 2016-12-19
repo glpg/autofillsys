@@ -21,6 +21,7 @@ import static com.kk.AutoFillSystem.Database.Operations.CarrierOp.createNewCarri
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrderFromEntity;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrderline;
+import static com.kk.AutoFillSystem.Database.Operations.OrderOp.delOrderline;
 import static com.kk.AutoFillSystem.Database.Operations.ProductOp.createNewProduct;
 import static com.kk.AutoFillSystem.Database.Operations.StoreOp.createNewStore;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createCnTrk;
@@ -28,6 +29,7 @@ import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewTrkline;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewUsTrkFromEntity;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.delTrkline;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.findIntlTrking;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.relateUsandIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateCnDelivery;
@@ -162,6 +164,11 @@ public class DataController {
         return createNewOrderline(em, orderline);
     }
     
+    public void deleteOrderline(Orderlines orderline){
+        
+        delOrderline(em, orderline);
+    }
+    
     public Transactions createTransaction(Transactions transaction) {
         return createNewTransactionFromEntity(em, transaction);
     }
@@ -184,6 +191,10 @@ public class DataController {
     
     public void createTrkline(Trklines trkline) {
         createNewTrkline(em, trkline);
+    }
+    
+    public void deleteTrkline(Trklines trkline){
+        delTrkline(em,trkline);
     }
     
     public void createIntlTrking(Ustocntrkings intlTrk, Ustrkings usTrk) {

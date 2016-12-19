@@ -113,6 +113,17 @@ public class OrderOp {
         
     }
     
+    public static void delOrderline(EntityManager em, Orderlines orderline) {
+        
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.remove(orderline);
+        
+        em.getTransaction().commit();  
+        addMessageWithDate("Orderline : " + orderline.getProductId().getProdNum() +  " for order " + orderline.getOrderId().getOrderNum()+ " is removed.");
+      
+    }
+    
     public static boolean createNewOrderFromEntity(EntityManager em, Orders order) {
         em.getTransaction().begin();
         //persist new intl trk
