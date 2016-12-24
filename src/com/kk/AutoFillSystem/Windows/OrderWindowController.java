@@ -31,7 +31,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -62,7 +63,7 @@ public class OrderWindowController implements Initializable {
     @FXML
     private Button buttonClear;
     @FXML
-    private TextArea textAreaOrderlines;
+    private ListView listViewOrderlines;
     @FXML
     private Button buttonCreateOrder;
     @FXML
@@ -74,6 +75,7 @@ public class OrderWindowController implements Initializable {
         dataCenter = DataController.getInstance();
         order = new Orders();
         orderlines = new ArrayList();
+        
     }
 
     /**
@@ -107,7 +109,21 @@ public class OrderWindowController implements Initializable {
         comboBoxItem.setItems(productList);
         
         comboBoxItem.getEditor().textProperty().addListener(new ComboBoxListener(comboBoxItem));
-            
+        
+        listViewOrderlines.setCellFactory(param -> new ListCell<Orderlines>() {
+            @Override
+            protected void updateItem(Orderlines item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getProductId().getProdNum() + " : " + item.getQuantity());
+                }
+            }
+        });
+        
+        
     }  
     
     
@@ -123,7 +139,7 @@ public class OrderWindowController implements Initializable {
             } 
             
             int count = Integer.parseInt(textFieldQuantity.getText());
-            textAreaOrderlines.appendText(prodNum + " : " + count + "\n");
+           
             
             //new order line
             Orderlines newOl = new Orderlines();
@@ -136,6 +152,11 @@ public class OrderWindowController implements Initializable {
             }
             
             orderlines.add(newOl);
+            listViewOrderlines.getItems().add(newOl);
+            
+            comboBoxItem.setValue(null);
+            textFieldQuantity.clear();
+            
         }
         catch (NumberFormatException e) {
             showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !");
@@ -149,7 +170,7 @@ public class OrderWindowController implements Initializable {
         //clear nodes
         comboBoxItem.setValue(null);
         textFieldQuantity.clear();
-        textAreaOrderlines.clear();
+        listViewOrderlines.getItems().clear();
         //clear saved products
         orderlines.clear();
     }

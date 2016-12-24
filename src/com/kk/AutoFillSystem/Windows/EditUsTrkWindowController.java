@@ -5,9 +5,11 @@
  */
 package com.kk.AutoFillSystem.Windows;
 
+import com.kk.AutoFillSystem.AutoFillSystem;
 import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
+import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Products;
 import com.kk.AutoFillSystem.Database.Entities.Trklines;
 import com.kk.AutoFillSystem.Database.Entities.Ustrkings;
@@ -17,6 +19,7 @@ import com.kk.AutoFillSystem.utility.Product;
 import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
+import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -24,19 +27,31 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  *
@@ -48,6 +63,8 @@ public class EditUsTrkWindowController implements Initializable{
     
     private ArrayList<Product> prods;
     private JoinRecord record;
+    private ArrayList<Trklines> trklines;
+    private EditUsTrkWindowController instance;
     
     @FXML
     private Label labelOrderNum;
@@ -69,7 +86,7 @@ public class EditUsTrkWindowController implements Initializable{
     @FXML
     private Button buttonClear;
     @FXML
-    private TextArea textAreaShipLines;
+    private ListView listViewTrklines;
     @FXML
     private Button buttonCreate;
     @FXML
@@ -79,7 +96,9 @@ public class EditUsTrkWindowController implements Initializable{
     public EditUsTrkWindowController(JoinRecord record) {
         dataCenter = DataController.getInstance();
         prods = new ArrayList();
+        trklines = new ArrayList();
         this.record = record;
+        instance = this;
     
     }
     /**
@@ -137,11 +156,61 @@ public class EditUsTrkWindowController implements Initializable{
             comboBoxShipto.setValue(record.getWarehouse());
             comboBoxShipto.setDisable(true);
         }
+        
+        
         if(record.getUsTrk().getTrklinesCollection() != null && record.getUsTrk().getTrklinesCollection().size() > 0) {
-            for(Trklines item : record.getUsTrk().getTrklinesCollection()) {
-                textAreaShipLines.appendText(item.getProductId().getProdNum() + " : " + item.getQuantity() + "\n");
-            }
+            
+            listViewTrklines.getItems().addAll(record.getUsTrk().getTrklinesCollection());
+            
         }
+        
+        listViewTrklines.setCellFactory(param -> new ListCell<Trklines>() {
+            @Override
+            protected void updateItem(Trklines item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getProductId().getProdNum() + " : " + item.getQuantity());
+                }
+            }
+        });
+        
+        listViewTrklines.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2)
+                {
+                    Trklines select = (Trklines) listViewTrklines.getSelectionModel().getSelectedItem();
+                    
+                    Stage stage = new Stage();
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(AutoFillSystem.class.getResource("Windows/EditOrderlineWindow.fxml"));
+            
+                    EditTrklineWindowController controller = new EditTrklineWindowController(select, instance);
+            
+                    loader.setController(controller);
+                    AnchorPane window;
+                    try {
+                        window = (AnchorPane) loader.load();
+                        stage.setScene(new Scene(window));
+                        stage.setTitle("Edit trackline");
+                        stage.initModality(Modality.WINDOW_MODAL);
+                        stage.initOwner(((Node)event.getSource()).getScene().getWindow());
+                        stage.show();
+                    } catch (IOException ex) {
+                        Logger.getLogger(EditOrderWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                    
+         
+                }
+            }
+        });
+        
+        
+       
         
         //set disable
         datePicker.setDisable(true);
@@ -164,8 +233,25 @@ public class EditUsTrkWindowController implements Initializable{
                 return;
             } 
             int count = Integer.parseInt(textFieldQuantity.getText());
-            textAreaShipLines.appendText(prodNum + " : " + count +"\n");
-            prods.add(new Product(prodNum, count));
+            
+            //new order line
+            Trklines newTl = new Trklines();
+            newTl.setQuantity(count);
+            for(Products prd : mainWindow.getProducts()) {
+                if (prd.getProdNum().equals(prodNum)) {
+                    newTl.setProductId(prd);
+                    break;
+                }
+            }
+            
+            trklines.add(newTl);
+            
+            listViewTrklines.getItems().add(newTl);
+            
+            comboBoxItem.setValue(null);
+            textFieldQuantity.clear();
+            
+            
         }
         catch (NumberFormatException e) {
             showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !", AlertType.ERROR);
@@ -179,9 +265,9 @@ public class EditUsTrkWindowController implements Initializable{
         //clear nodes
         comboBoxItem.setValue(null);
         textFieldQuantity.clear();
-        textAreaShipLines.clear();
+        listViewTrklines.getItems().clear();
         //clear saved products
-        prods.clear();
+        trklines.clear();
     }
     
     
@@ -261,6 +347,10 @@ public class EditUsTrkWindowController implements Initializable{
 
     public void setMainWindow(MainWindowController mainWindow) {
         this.mainWindow = mainWindow;
+    }
+
+    public ListView getListViewTrklines() {
+        return listViewTrklines;
     }
     
     

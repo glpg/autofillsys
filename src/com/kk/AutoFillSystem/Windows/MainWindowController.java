@@ -588,7 +588,7 @@ public class MainWindowController implements Initializable {
             
             Orders tmp = record.getOrder();
             if (cancel.contains(tmp)) {
-                orderTable.getSelectionModel().select(record);
+                cancelRows.add(record);
                 continue;
             }
             

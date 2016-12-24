@@ -22,6 +22,7 @@ import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrder;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrderFromEntity;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.createNewOrderline;
 import static com.kk.AutoFillSystem.Database.Operations.OrderOp.delOrderline;
+import static com.kk.AutoFillSystem.Database.Operations.OrderOp.updateOl;
 import static com.kk.AutoFillSystem.Database.Operations.ProductOp.createNewProduct;
 import static com.kk.AutoFillSystem.Database.Operations.StoreOp.createNewStore;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createCnTrk;
@@ -33,6 +34,7 @@ import static com.kk.AutoFillSystem.Database.Operations.TrackOp.delTrkline;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.findIntlTrking;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.relateUsandIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateCnDelivery;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateTl;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateUsTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TransactionOp.createNewTransaction;
 import static com.kk.AutoFillSystem.Database.Operations.TransactionOp.createNewTransactionFromEntity;
@@ -47,10 +49,12 @@ import com.kk.AutoFillSystem.Database.Services.UStrackingService;
 import com.kk.AutoFillSystem.utility.Order;
 import com.kk.AutoFillSystem.utility.Shipment;
 import java.util.List;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -148,7 +152,25 @@ public class DataController {
         return cs.findAll();
     }
     
+    public Products getProduct(String prdNum) {
+        TypedQuery<Products> query = em.createNamedQuery("Products.findByProdNum", Products.class).setParameter("prodNum", prdNum);
+        List<Products> results = query.getResultList();
+        if (results != null && results.size() > 0) return results.get(0);
+        return null;
+    }
     
+    
+    public boolean isManaged(Orderlines ol) {
+
+        return em.contains(ol);
+
+    }
+    
+    public boolean isManaged(Trklines tl) {
+
+        return em.contains(tl);
+
+    }
     
     
     
@@ -167,6 +189,10 @@ public class DataController {
     public void deleteOrderline(Orderlines orderline){
         
         delOrderline(em, orderline);
+    }
+    
+    public void updateOrderline(Orderlines ol) {
+        updateOl(em, ol);
     }
     
     public Transactions createTransaction(Transactions transaction) {
@@ -195,6 +221,10 @@ public class DataController {
     
     public void deleteTrkline(Trklines trkline){
         delTrkline(em,trkline);
+    }
+    
+    public void updateTrkline(Trklines tl) {
+        updateTl(em, tl);
     }
     
     public void createIntlTrking(Ustocntrkings intlTrk, Ustrkings usTrk) {

@@ -124,6 +124,17 @@ public class OrderOp {
       
     }
     
+    public static void updateOl(EntityManager em, Orderlines ol) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.merge(ol);
+        
+        em.getTransaction().commit();  
+        addMessageWithDate("Orderline : " + ol.getProductId().getProdNum() +  " for order " + ol.getOrderId().getOrderNum()+ " is updated.");
+        
+       
+    }
+    
     public static boolean createNewOrderFromEntity(EntityManager em, Orders order) {
         em.getTransaction().begin();
         //persist new intl trk

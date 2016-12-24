@@ -190,6 +190,8 @@ public class TrackOp {
         
     }
     
+    
+    
      public static void createIntlTrk(EntityManager em, Ustocntrkings intlTrk){
         em.getTransaction().begin();
         //persist new intl trk
@@ -239,6 +241,18 @@ public class TrackOp {
         em.getTransaction().commit();    
         addMessageWithDate("Trkline : " + trkline.getProductId().getProdNum() +  " for Us trking " + trkline.getUstrkingId().getTrkingNum()+ " is removed.");
         
+    }
+    
+    
+    public static void updateTl(EntityManager em, Trklines tl) {
+        em.getTransaction().begin();
+        //persist new intl trk
+        em.merge(tl);
+        
+        em.getTransaction().commit();  
+        addMessageWithDate("Trkline : " + tl.getProductId().getProdNum() +  " for Us trking " + tl.getUstrkingId().getTrkingNum()+ " is updated.");
+        
+       
     }
     
     public static boolean createNewUsTrkFromEntity(EntityManager em, Ustrkings ustrk) {

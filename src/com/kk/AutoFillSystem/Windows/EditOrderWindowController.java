@@ -5,6 +5,7 @@
  */
 package com.kk.AutoFillSystem.Windows;
 
+import com.kk.AutoFillSystem.AutoFillSystem;
 import com.kk.AutoFillSystem.DataCenter.DataController;
 import com.kk.AutoFillSystem.Database.Entities.Orderlines;
 import com.kk.AutoFillSystem.Database.Entities.Orders;
@@ -14,6 +15,7 @@ import com.kk.AutoFillSystem.utility.ComboBoxListener;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import com.kk.AutoFillSystem.utility.Product;
 import static com.kk.AutoFillSystem.utility.Tools.expandInfo;
+import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,20 +23,36 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -45,8 +63,11 @@ import javafx.stage.Stage;
 public class EditOrderWindowController implements Initializable {
     private DataController dataCenter;
     private MainWindowController mainWindow;
-    private ArrayList<Product> prods;
+    
     private JoinRecord record;
+    private ArrayList<Orderlines> orderlines;
+    
+    private EditOrderWindowController instance;
     
    
     
@@ -65,7 +86,7 @@ public class EditOrderWindowController implements Initializable {
     @FXML
     private Button buttonClear;
     @FXML
-    private TextArea textAreaOrderlines;
+    private ListView listViewOrderlines;
     @FXML
     private Button buttonCreateOrder;
     @FXML
@@ -75,8 +96,10 @@ public class EditOrderWindowController implements Initializable {
     //constructor
     public EditOrderWindowController(JoinRecord record){
         dataCenter = DataController.getInstance();
-        prods = new ArrayList();
+        
+        orderlines = new ArrayList();
         this.record = record;
+        instance = this;
     }
 
     /**
@@ -126,10 +149,57 @@ public class EditOrderWindowController implements Initializable {
         textFieldOrderNum.setText(order.getOrderNum());
         comboBoxStore.setValue(order.getStoreId().getName());
         if(order.getOrderlinesCollection() != null && order.getOrderlinesCollection().size() > 0) {
-            for(Orderlines item : order.getOrderlinesCollection()) {
-                textAreaOrderlines.appendText(item.getProductId().getProdNum() + " : " + item.getQuantity() + "\n");
-            }
+            
+            listViewOrderlines.getItems().addAll(order.getOrderlinesCollection());
+            
         }
+        
+        listViewOrderlines.setCellFactory(param -> new ListCell<Orderlines>() {
+            @Override
+            protected void updateItem(Orderlines item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getProductId().getProdNum() + " : " + item.getQuantity());
+                }
+            }
+        });
+        
+        listViewOrderlines.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2)
+                {
+                    Orderlines select = (Orderlines) listViewOrderlines.getSelectionModel().getSelectedItem();
+                    
+                    Stage stage = new Stage();
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(AutoFillSystem.class.getResource("Windows/EditOrderlineWindow.fxml"));
+            
+                    EditOrderlineWindowController controller = new EditOrderlineWindowController(select, instance);
+            
+                    loader.setController(controller);
+                    AnchorPane window;
+                    try {
+                        window = (AnchorPane) loader.load();
+                        stage.setScene(new Scene(window));
+                        stage.setTitle("Edit orderline");
+                        stage.initModality(Modality.WINDOW_MODAL);
+                        stage.initOwner(((Node)event.getSource()).getScene().getWindow());
+                        stage.show();
+                    } catch (IOException ex) {
+                        Logger.getLogger(EditOrderWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                    
+         
+                }
+            }
+        });
+            
+        
         
         //set disable
         datePicker.setDisable(true);
@@ -143,6 +213,7 @@ public class EditOrderWindowController implements Initializable {
         
     }    
     
+   
     
     private void addItem() {
         
@@ -153,8 +224,20 @@ public class EditOrderWindowController implements Initializable {
                 return;
             } 
             int count = Integer.parseInt(textFieldQuantity.getText());
-            textAreaOrderlines.appendText(prodNum + " : " + count + "\n");
-            prods.add(new Product(prodNum, count));
+            
+            //new order line
+            Orderlines newOl = new Orderlines();
+            newOl.setQuantity(count);
+            for(Products prd : mainWindow.getProducts()) {
+                if (prd.getProdNum().equals(prodNum)) {
+                    newOl.setProductId(prd);
+                    break;
+                }
+            }
+            
+            orderlines.add(newOl);
+            listViewOrderlines.getItems().add(newOl);
+            
         }
         catch (NumberFormatException e) {
             showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !");
@@ -168,9 +251,9 @@ public class EditOrderWindowController implements Initializable {
         //clear nodes
         comboBoxItem.setValue(null);
         textFieldQuantity.clear();
-        textAreaOrderlines.clear();
+        listViewOrderlines.getItems().removeAll(orderlines);
         //clear saved products
-        prods.clear();
+        orderlines.clear();
     }
 
     private void showAlert(String title, String header, String content) {
@@ -186,42 +269,12 @@ public class EditOrderWindowController implements Initializable {
     
     private void editOrder(ActionEvent e){
         
-        //add new products
-        for(Product prod  : prods) {
-            for(Products entry : mainWindow.getProducts()) {
-                if (prod.name.equals(entry.getProdNum())) {
-                    Orderlines temp = new Orderlines();
-                    temp.setProductId(entry);
-                    temp.setOrderId(record.getOrder());
-                    temp.setQuantity(prod.count);
-                    
-                    dataCenter.createOrderline(temp);
-                    record.getOrder().getOrderlinesCollection().add(temp);
-                    //need to expand info from the newly added orderlines
-                             
-                }
-            }
-            
+        //add new orderlines
+        for(Orderlines temp : orderlines) {
+            temp.setOrderId(record.getOrder());
+            dataCenter.createOrderline(temp);
+            record.getOrder().getOrderlinesCollection().add(temp);
         }
-        
-        //delete all 00000
-        Orders order = record.getOrder();
-        ArrayList<Orderlines> toDelete = new ArrayList();
-        if(order.getOrderlinesCollection() != null && order.getOrderlinesCollection().size() > 0) {
-            for(Orderlines item : order.getOrderlinesCollection()) {
-                if (item.getProductId().getProdNum().equals("00000")){
-                    
-                    toDelete.add(item);
-                }
-            }
-        }
-        
-        order.getOrderlinesCollection().removeAll(toDelete);
-        
-        for(Orderlines ordl : toDelete) {
-            dataCenter.deleteOrderline(ordl);
-        }
-        
         
 
         for (JoinRecord tblRecord : mainWindow.getTableRows()) {
@@ -230,7 +283,7 @@ public class EditOrderWindowController implements Initializable {
             }
         }
         
-        showAlert("Success", "New Orderlines Created :" , "New orderlines are created successfully !");
+        showAlert("Success", "Order is updated :" , "Order is updated successfully !");
         //forcing refreshing table
         mainWindow.getOrderTable().getColumns().get(0).setVisible(false);
         mainWindow.getOrderTable().getColumns().get(0).setVisible(true);
@@ -252,6 +305,10 @@ public class EditOrderWindowController implements Initializable {
 
     public void setMainWindow(MainWindowController mainWindow) {
         this.mainWindow = mainWindow;
+    }
+
+    public ListView getListViewOrderlines() {
+        return listViewOrderlines;
     }
     
     

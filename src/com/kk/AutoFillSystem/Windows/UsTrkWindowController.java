@@ -32,6 +32,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -69,7 +71,7 @@ public class UsTrkWindowController implements Initializable {
     @FXML
     private Button buttonClear;
     @FXML
-    private TextArea textAreaShipLines;
+    private ListView listViewTrklines;
     @FXML
     private Button buttonCreate;
     @FXML
@@ -124,6 +126,21 @@ public class UsTrkWindowController implements Initializable {
         
         FXCollections.sort(addrList);
         comboBoxShipto.setItems(addrList);
+        
+        listViewTrklines.setCellFactory(param -> new ListCell<Trklines>() {
+            @Override
+            protected void updateItem(Trklines item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getProductId().getProdNum() + " : " + item.getQuantity());
+                }
+            }
+        });
+        
+        
     }    
     
     
@@ -137,7 +154,7 @@ public class UsTrkWindowController implements Initializable {
                 return;
             } 
             int count = Integer.parseInt(textFieldQuantity.getText());
-            textAreaShipLines.appendText(prodNum + " : " + count +"\n");
+            
             
             //new order line
             Trklines newTl = new Trklines();
@@ -150,6 +167,11 @@ public class UsTrkWindowController implements Initializable {
             }
             
             trklines.add(newTl);
+            
+            listViewTrklines.getItems().add(newTl);
+            
+            comboBoxItem.setValue(null);
+            textFieldQuantity.clear();
         }
         catch (NumberFormatException e) {
             showAlert("Error", "Quantity Error :" , "Quantity has to be number greater than 0 !", AlertType.ERROR);
@@ -163,7 +185,7 @@ public class UsTrkWindowController implements Initializable {
         //clear nodes
         comboBoxItem.setValue(null);
         textFieldQuantity.clear();
-        textAreaShipLines.clear();
+        listViewTrklines.getItems().clear();
         //clear saved products
         trklines.clear();
     }
