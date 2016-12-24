@@ -583,6 +583,7 @@ public class MainWindowController implements Initializable {
     private void checkCancel(){
         
         Set<Orders> cancel = new HashSet();
+        ArrayList<JoinRecord> cancelRows = new ArrayList();
         for(JoinRecord record : tableRows) {
             
             Orders tmp = record.getOrder();
@@ -609,10 +610,14 @@ public class MainWindowController implements Initializable {
             }
             
             if (orderCnt > shipCnt) {
-                orderTable.getSelectionModel().select(record);
+                //orderTable.getSelectionModel().select(record);
+                cancelRows.add(record);
                 cancel.add(tmp);
             }
         }
+        
+        ObservableList<JoinRecord> tRows = FXCollections.observableArrayList(cancelRows);
+        orderTable.setItems(tRows);
         
     }
     
