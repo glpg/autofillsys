@@ -61,7 +61,7 @@ public class EditUsTrkWindowController implements Initializable{
     private DataController dataCenter;
     private MainWindowController mainWindow;
     
-    private ArrayList<Product> prods;
+    
     private JoinRecord record;
     private ArrayList<Trklines> trklines;
     private EditUsTrkWindowController instance;
@@ -95,7 +95,7 @@ public class EditUsTrkWindowController implements Initializable{
     
     public EditUsTrkWindowController(JoinRecord record) {
         dataCenter = DataController.getInstance();
-        prods = new ArrayList();
+        
         trklines = new ArrayList();
         this.record = record;
         instance = this;
@@ -292,38 +292,13 @@ public class EditUsTrkWindowController implements Initializable{
         }
         
         
-        for(Product prod  : prods) {
-            for(Products entry : mainWindow.getProducts()) {
-                if (prod.name.equals(entry.getProdNum())) {
-                    Trklines temp = new Trklines();
-                    temp.setProductId(entry);
-                    temp.setUstrkingId(record.getUsTrk());
-                    temp.setQuantity(prod.count);
-                    
-                    dataCenter.createTrkline(temp);
-                    record.getUsTrk().getTrklinesCollection().add(temp);
-                    
-                }
-            }
+        for(Trklines temp : trklines) {
+            temp.setUstrkingId(record.getUsTrk());
+            dataCenter.createTrkline(temp);
+            record.getUsTrk().getTrklinesCollection().add(temp);
             
         }
         
-        //delete all 00000
-        Ustrkings ustrk = record.getUsTrk();
-        ArrayList<Trklines> toDelete = new ArrayList();
-        if(ustrk.getTrklinesCollection() != null && ustrk.getTrklinesCollection().size() > 0) {
-            for(Trklines item : ustrk.getTrklinesCollection()) {
-                if (item.getProductId().getProdNum().equals("00000")){
-                    
-                    toDelete.add(item);
-                }
-            }
-        }
-        
-        ustrk.getTrklinesCollection().removeAll(toDelete);
-        for(Trklines trkl : toDelete){
-            dataCenter.deleteTrkline(trkl);
-        }
         
         expandInfo(record);
         
