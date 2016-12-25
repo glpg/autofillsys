@@ -86,7 +86,8 @@ public class EditTrklineWindowController implements Initializable {
         }
         
         //update viewlist
-        parent.getListViewTrklines().refresh();
+        parent.getListViewTrklines().getItems().remove(tl);
+        parent.getListViewTrklines().getItems().add(tl);
         
         closeWindow(e);
     }

@@ -87,7 +87,8 @@ public class EditOrderlineWindowController implements Initializable {
         }
         
         //update viewlist
-        parent.getListViewOrderlines().refresh();
+        parent.getListViewOrderlines().getItems().remove(ol);
+        parent.getListViewOrderlines().getItems().add(ol);
         
         closeWindow(e);
     }
