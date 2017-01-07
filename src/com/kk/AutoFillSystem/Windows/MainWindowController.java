@@ -155,6 +155,10 @@ public class MainWindowController implements Initializable {
     @FXML
     private MenuItem menuItemUploadZZ;
     @FXML
+    private MenuItem menuItemSyncZH;
+    @FXML
+    private MenuItem menuItemUploadZH;
+    @FXML
     private MenuItem menuItemQuit;
     @FXML
     private MenuItem menuItemConfirmDelivery;
@@ -561,6 +565,10 @@ public class MainWindowController implements Initializable {
         
         menuItemOpenWebpage.setOnAction(e->{showWebWindow();});
         menuItemUploadZZ.setOnAction(e->{uploadZZ();});
+        
+        menuItemSyncZH.setOnAction(e->{syncZH();});
+        menuItemUploadZH.setOnAction(e->{uploadZH();});
+        
         menuItemQuit.setOnAction(e->{systemQuit(e);});
         
         menuItemConfirmDelivery.setOnAction(e->{confirmDeliveryInTable();});
@@ -743,6 +751,41 @@ public class MainWindowController implements Initializable {
         
         Platform.exit();
         System.exit(0);
+    }
+    
+    
+    private void uploadZH(){
+        ObservableList<JoinRecord> selectedRows = orderTable.getSelectionModel().getSelectedItems();
+        if (selectedRows.size() == 0) {
+            showAlert("Warning", "No records selected :" , "You did not select any record for uploading !", AlertType.WARNING);
+            return;
+        }
+        
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/WebWindow.fxml"));
+            
+            WebWindowZHController webController = new WebWindowZHController();
+            webController.setMainWindow(instance);
+            webController.setMode(Mode.UPLOAD);
+            webController.setUploads(new ArrayList<>(selectedRows));
+            
+            loader.setController(webController);
+            AnchorPane webWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(webWindow));
+            stage.setTitle("Web browser");
+//            stage.initModality(Modality.WINDOW_MODAL);
+//            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+            stage.toFront();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
     }
     
     private void uploadZZ(){
@@ -950,6 +993,33 @@ public class MainWindowController implements Initializable {
         
         
         
+        
+        
+    }
+    
+    private void syncZH(){
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/WebWindow.fxml"));
+            
+            WebWindowZHController webController = new WebWindowZHController();
+            webController.setMainWindow(instance);
+            webController.setMode(Mode.EXTRACT);
+            loader.setController(webController);
+            AnchorPane webWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(webWindow));
+            stage.setTitle("Web browser");
+//            stage.initModality(Modality.WINDOW_MODAL);
+//            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+            stage.toFront();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         
         
     }

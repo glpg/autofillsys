@@ -13,20 +13,21 @@ import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Worker.State;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -43,11 +44,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
- * FXML Controller class
  *
  * @author Yi
  */
-public class WebWindowController implements Initializable {
+public class WebWindowZHController implements Initializable{
+    
     private MainWindowController mainWindow;
     private Mode mode;
     private ArrayList<JoinRecord> uploads; 
@@ -75,18 +76,17 @@ public class WebWindowController implements Initializable {
      */
     
     
-  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         if (mode == Mode.EXTRACT) {
-            buttonZZ.setText("ExtractZZ");
-            buttonZZ.setOnAction(e->{extractZZ();});
+            buttonZZ.setText("ExtractZH");
+            buttonZZ.setOnAction(e->{extractZH();});
             labelCnt.setVisible(false);
         }
         else {
             //if upload mode, then change the button text, and initialize uploads list
-            buttonZZ.setText("UploadZZ");
-            buttonZZ.setOnAction(e->{uploadZZ();});
+            buttonZZ.setText("UploadZH");
+            buttonZZ.setOnAction(e->{uploadZH();});
             labelCnt.setVisible(true);
             labelCnt.setText(index + " / " + uploads.size());
         }
@@ -106,9 +106,9 @@ public class WebWindowController implements Initializable {
         
         //set up webviewer
         webView.getEngine().getLoadWorker().stateProperty().addListener(
-                new ChangeListener<State>() {
-                    public void changed(ObservableValue ov, State oldState, State newState) {
-                        if (newState == State.SUCCEEDED) {
+                new ChangeListener<Worker.State>() {
+                    public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
+                        if (newState == Worker.State.SUCCEEDED) {
                             imageView.setVisible(false);
 
                         }
@@ -116,8 +116,8 @@ public class WebWindowController implements Initializable {
                     }
                 });
         
-        textFieldUrl.setText("https://www.uszcn.com");
-        webView.getEngine().load("https://www.uszcn.com");
+        textFieldUrl.setText("http://www.zhonghuanus.com/authorization/dologin.action");
+        webView.getEngine().load("http://www.zhonghuanus.com/authorization/dologin.action");
         imageView.setVisible(true);
                 
     }   
@@ -144,10 +144,10 @@ public class WebWindowController implements Initializable {
     }
     
     
-    private void uploadZZ() {
+    private void uploadZH() {
         
         if (index >= uploads.size()) {
-            showAlert("Warning", "All uploaded :" , "You uploaded all records, total " + index + " !", AlertType.WARNING);
+            showAlert("Warning", "All uploaded :" , "You uploaded all records, total " + index + " !", Alert.AlertType.WARNING);
             return;
         }
         
@@ -161,28 +161,28 @@ public class WebWindowController implements Initializable {
         
         String trkNum = ustrk.getTrkingNum();
         
-        int carrierIndex ; 
+        String carrierName ; 
         int carrier = ustrk.getCarrierId().getId();
         switch (carrier) {
             case 1 : { //ups
-                carrierIndex = 1;
+                carrierName = "UPS-美国联合包裹";
                 break;
             }
             case 2 : {//fedex
-                carrierIndex = 4;
+                carrierName = "Fedex-联邦快递";
                 break;
             }
             case 3 : {//usps
-                carrierIndex = 3;
+                carrierName = "USPS-美国邮局";
                 break;
                 
             }
             case 9 : { //ontrac
-                carrierIndex = 8;
+                carrierName = "ONTRAC";
                 break;
             }
             default : {
-                carrierIndex = 9;
+                carrierName = "其他快递公司";
             }
         }
         
@@ -191,141 +191,119 @@ public class WebWindowController implements Initializable {
             count += temp.getQuantity();
         }
         
-        String setTrkNum =  "document.getElementById('inbound_express_tracking_number').value='" + trkNum + "';";
+        String setTrkNum =  "document.getElementById('postalparceladdexpressNo').value='" + trkNum + "';";
+        
+        String setInsurance = "document.getElementsByName('postalParcel.safeAmount')[0].value = \"0\";";
         
         String setName = "document.getElementById('inbound_name').value = \"儿童塑料无电机拼图玩具\";";
-        String setDesc = "document.getElementsByClassName('textbox item_name')[0].value = \"儿童塑料无电机拼图玩具\";";
+        String setDesc = "document.getElementById('goods').value = \"儿童塑料无电机拼图玩具\";";
         
-        String setBrand = "document.getElementsByClassName('textbox item_brand')[0].value = \"lego\";";
+        String setBrand = "document.getElementsByClassName('item_brand input_search')[0].value = \"lego\";";
         
-        String setQuantity = "document.getElementsByClassName('textbox item_amount')[0].value = '"+ count + "';";
-        String setUnitPrice = "document.getElementsByClassName('textbox item_unit_price')[0].value = 15;";
+        String setQuantity = "document.getElementsByClassName('item_amount input_search')[0].value = '"+ count + "';";
+        String setUnitPrice = "document.getElementsByClassName('item_unit_price input_search')[0].value = 15;";
         
         //carrier
-        String shipcarrier = "sele = document.getElementsByClassName('select express_select')[0];";
-        String chooseCarrier = "sele.value = \"" + carrierIndex + "\"; ";
+        String shipcarrier = "sele = document.getElementsByClassName('input_kdusa')[0];";
+        String chooseCarrier = "sele.value = '" + carrierName + "';";
         
         
         
         //category
-        String mainCategory = "sele = document.getElementsByClassName('select parent_category')[0];" ;
-        String chooseCategory =  "sele.value = 13; ";
+        String mainCategory = "sele = document.getElementsByClassName(' parent_category input_search')[0];" ;
+        //String chooseCategory =  "sele.value = 40; ";
         String trigger = "sele.dispatchEvent(new Event('change'))";
+        String chooseCategory = "sele.selectedIndex = 3";
         
-        //subcategory
-        String subCategory = "sele = document.getElementsByClassName('select category')[0];" ;
-        String chooseSubcategory =  "sele.value = 125; ";
+        //subcategory 
+        /*here is a trigger ajax event, js cannot trigger the event, turn around is to manually change the option, then choose it*/
+        String subCategory = "sele = document.getElementsByClassName('category input_search')[0];" ;
+        //String chooseSubcategory =  "sele.value = 42; ";
+        String newOp = "newop = document.createElement(\"option\")";
+        String newOpSetAttr = "newop.setAttribute(\"value\",\"42\")";
+        String newOpSetText = "newop.text = \"儿童玩具\"";
+        String addToMenu = "sele.add(newop)";
+        String chooseSubcategory = "sele.selectedIndex = 1";
         
-        //size 
+        /* size is not needed for zh 
         String size ="sele = document.getElementsByClassName('select item_model_select')[0];";
         String chooseSize = "sele.value =\"30厘米\"; ";
         
-        
+        */
         webEngine.executeScript(setTrkNum);
         //set carrier
         webEngine.executeScript(shipcarrier);
         webEngine.executeScript(chooseCarrier);
         webEngine.executeScript(trigger);
         
+        
+        
+        
+        //set insurance
+        webEngine.executeScript(setInsurance);
+        
         webEngine.executeScript(setName);
         webEngine.executeScript(setDesc);
         webEngine.executeScript(setBrand);
         webEngine.executeScript(setQuantity);
         webEngine.executeScript(setUnitPrice);
+        
         //set parent category
         webEngine.executeScript(mainCategory);
         webEngine.executeScript(chooseCategory);
-        webEngine.executeScript(trigger);
+        
         //set sub category
         webEngine.executeScript(subCategory);
+        webEngine.executeScript(newOp);
+        webEngine.executeScript(newOpSetAttr);
+        webEngine.executeScript(newOpSetText);
+        webEngine.executeScript(addToMenu);
         webEngine.executeScript(chooseSubcategory);
-        webEngine.executeScript(trigger);
-        //set size 
-        webEngine.executeScript(size);
-        webEngine.executeScript(chooseSize);
-        webEngine.executeScript(trigger);
+//        //set size 
+//        webEngine.executeScript(size);
+//        webEngine.executeScript(chooseSize);
+//        webEngine.executeScript(trigger);
         index ++; 
         
         labelCnt.setText(index + " / " + uploads.size());
     }
     
     
-    private void extractZZ(){
+    private void extractZH(){
         WebEngine webEngine = webView.getEngine();
         String html =(String)(webEngine.executeScript("document.documentElement.outerHTML"));
         
         //parse html
         Document doc = Jsoup.parse(html);
-        
-        Elements values = doc.select(".value");
-        
-        //get intl trkNum and weight and fee
-        String intlTrkNum = values.get(1).text();
-        int weight = 0;
-        double fee = 0.0;
-        Pattern doubleP = Pattern.compile("([0-9.]+)");
-        Matcher mWeight = doubleP.matcher(values.get(5).text());
-        Matcher mFee = doubleP.matcher(values.get(6).text());
-        if(mWeight.find()) {
-            weight = (int)(Double.parseDouble(mWeight.group(1)) * 1000.0);
-        }
-        if(mFee.find()) {
-            fee = Double.parseDouble(mFee.group(1));
-        }
-        
-        //get us trking
-        ArrayList<String> ustrkNums = new ArrayList();
-        Element ustrkTable = doc.select("tbody").get(1);
-        
-        Elements ustrks = ustrkTable.select("tr");
-        
-        for(Element ustrk : ustrks){
+        Element table = doc.select("table.uk-table").first();
+        Elements entries = table.select("tbody>tr");
+        int count = entries.size();
+        int index = 1;
+        for(Element entry : entries) {
+            Elements tds = entry.select("td");
+            String intlTrkNum = tds.get(0).text();
+            String ustrkNum = tds.get(1).text();
+            int weight = (int)(Double.parseDouble(tds.get(5).text()) * 1000.0);
+            double fee = Double.parseDouble(tds.get(6).text());
             
-            String line = ustrk.select("td").first().text().trim();
-            ustrkNums.add(line.split("\\s+")[1]);
-           
-        }
-        
-//        Set<String> ustrkset = new HashSet();
-//        for(JoinRecord record : mainWindow.getTableRows()) {
-//            ustrkset.add(record.getUsTrkNum());
-//            
-//        }
-//        
-//        
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append("Intl trk: ").append(intlTrkNum).append("\n").append("Weight(g) :").append(weight).
-                append("\n").append("Fee : ").append(fee).append("\n").append("Us trkings : \n");
-        
-        for(String ustrk: ustrkNums) {
-            sb.append(ustrk).append("\n ");
             
-        }
-        
-        
-        //dialog
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Check Info Dialog");
-        alert.setHeaderText("Please Inspect Retreived Info :");
-        alert.setContentText(sb.toString());
-        
-        ButtonType buttonConfirm = new ButtonType("Confirm");
-        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-
-        alert.getButtonTypes().setAll(buttonConfirm, buttonTypeCancel);
-
-        
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonConfirm) {
-            if (mainWindow.addIntlTrk(ustrkNums, intlTrkNum, weight, fee, "ZZ")) {
-                showAlert("Success", "Update Finished :" , "ZZ tracking " + intlTrkNum + " is updated successfully !", AlertType.INFORMATION);
+            //now start to write the intl trk
+            
+            ArrayList<String> ustrkNums = new ArrayList();
+            ustrkNums.add(ustrkNum);
+            
+            if (mainWindow.addIntlTrk(ustrkNums, intlTrkNum, weight, fee, "ZH")) {
+                showAlert("Success", index + " / " + count + " : ", "ZZ tracking " + intlTrkNum + " is updated successfully !", Alert.AlertType.INFORMATION);
+            } else {
+                showAlert("Warning", index + " / " + count + " : ", "ZZ tracking " + intlTrkNum + " already existed !", Alert.AlertType.WARNING);
             }
-            else
-                showAlert("Warning", "Update Warning :" , "ZZ tracking " + intlTrkNum + " already existed !", AlertType.WARNING);
             
-    
-        } 
+            
+            index++;
+        }
+        
+        
+//      
     }
     
     
@@ -366,5 +344,4 @@ public class WebWindowController implements Initializable {
     
     
     
-   
 }

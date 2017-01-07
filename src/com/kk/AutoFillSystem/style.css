@@ -14,7 +14,9 @@
 #menuItemOpenWebpage > .label {
     -fx-graphic: url("Resources/web.png");
 }
-
+#menuItemSyncZH > .label {
+    -fx-graphic: url("Resources/web.png");
+}
 
 #menuItemReloadTable > .label {
     -fx-graphic: url("Resources/reload.png");
@@ -87,6 +89,10 @@
 
 
 #menuItemUploadZZ> .label {
+    -fx-graphic: url("Resources/upload.png");
+}
+
+#menuItemUploadZH> .label {
     -fx-graphic: url("Resources/upload.png");
 }
 
