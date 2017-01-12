@@ -212,6 +212,10 @@ public class ViewSetWindowController implements Initializable {
                 }
             }
         });
+        
+        //tableview column width;
+        attrib.prefWidthProperty().bind(tableViewSet.widthProperty().multiply(0.35));
+        value.prefWidthProperty().bind(tableViewSet.widthProperty().multiply(0.65));
     }    
     
     
@@ -320,7 +324,11 @@ public class ViewSetWindowController implements Initializable {
             
             Document doc = Jsoup.connect(queryUrl).get();
             
+            if (doc.select("number").first() == null) return;
+            
             String setNum = doc.select("number").first().text();
+            
+            
             data.get(0).setValue(setNum);
             String name = doc.select("name").first().text();
             data.get(1).setValue(name);

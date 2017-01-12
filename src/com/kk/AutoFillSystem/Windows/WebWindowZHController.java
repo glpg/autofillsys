@@ -248,17 +248,17 @@ public class WebWindowZHController implements Initializable{
         webEngine.executeScript(setQuantity);
         webEngine.executeScript(setUnitPrice);
         
-        //set parent category
-        webEngine.executeScript(mainCategory);
-        webEngine.executeScript(chooseCategory);
-        
-        //set sub category
-        webEngine.executeScript(subCategory);
-        webEngine.executeScript(newOp);
-        webEngine.executeScript(newOpSetAttr);
-        webEngine.executeScript(newOpSetText);
-        webEngine.executeScript(addToMenu);
-        webEngine.executeScript(chooseSubcategory);
+//        //set parent category
+//        webEngine.executeScript(mainCategory);
+//        webEngine.executeScript(chooseCategory);
+//        
+//        //set sub category
+//        webEngine.executeScript(subCategory);
+//        webEngine.executeScript(newOp);
+//        webEngine.executeScript(newOpSetAttr);
+//        webEngine.executeScript(newOpSetText);
+//        webEngine.executeScript(addToMenu);
+//        webEngine.executeScript(chooseSubcategory);
 //        //set size 
 //        webEngine.executeScript(size);
 //        webEngine.executeScript(chooseSize);

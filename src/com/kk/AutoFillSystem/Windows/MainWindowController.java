@@ -1547,12 +1547,13 @@ public class MainWindowController implements Initializable {
                 
                 writer.flush();
                 writer.close();
+                showAlert("Success", "Table Exported :" , "Table data is exported successfully !", AlertType.INFORMATION);
             } catch (Exception ex) {
                 ex.printStackTrace();
             } 
         }
         
-        showAlert("Success", "Table Exported :" , "Table data is exported successfully !", AlertType.INFORMATION);
+        
         
         
     }
