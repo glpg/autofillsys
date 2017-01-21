@@ -1121,14 +1121,20 @@ public class MainWindowController implements Initializable {
             newIntlShipments.add(intlTrkNum);
 
             for (String ustrkNum : ustrks) {
-                for (JoinRecord record : tableRows) {
-                    if (record.getUsTrk() != null && record.getUsTrkNum().equalsIgnoreCase(ustrkNum) && record.getIntlTrk() == null) {
-                        
-                        dataCenter.createUsAndIntlRelation(intlTrk, record.getUsTrk());
-                        record.setIntlTrk(intlTrk);
-                        expandInfo(record);
+                
+                //if existed in db, then add the entry in relation table
+                if (dataCenter.getUsTrking(ustrkNum)!= null) {
+                    dataCenter.createUsAndIntlRelation(intlTrk, dataCenter.getUsTrking(ustrkNum).get(0));
+                    //if ustrk in table, then update tableview
+                    for (JoinRecord record : tableRows) {
+                        if (record.getUsTrk() != null && record.getUsTrkNum().equalsIgnoreCase(ustrkNum) && record.getIntlTrk() == null) {
+                            record.setIntlTrk(intlTrk);
+                            expandInfo(record);
+                        }
                     }
+                    
                 }
+                
             }
             
             return true;

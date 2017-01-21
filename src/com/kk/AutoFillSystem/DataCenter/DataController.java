@@ -32,6 +32,7 @@ import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createNewUsTrkFr
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.createUsTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.delTrkline;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.findIntlTrking;
+import static com.kk.AutoFillSystem.Database.Operations.TrackOp.findUsTrking;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.relateUsandIntlTrk;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateCnDelivery;
 import static com.kk.AutoFillSystem.Database.Operations.TrackOp.updateTl;
@@ -145,6 +146,10 @@ public class DataController {
     
     public List<Ustocntrkings> getIntlTrking(String trkNum) {
         return findIntlTrking(em, trkNum);
+    }
+    
+    public List<Ustrkings> getUsTrking(String trkNum) {
+        return findUsTrking(em, trkNum);
     }
     
     public List<Cntrkings> getCnTrkings() {

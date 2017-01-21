@@ -41,6 +41,13 @@ public class TrackOp {
         
     }
     
+    public static List<Ustrkings> findUsTrking(EntityManager em, String trkNum) {
+        TypedQuery<Ustrkings> trkQuery = em.createNamedQuery("Ustrkings.findByTrkingNum", Ustrkings.class).setParameter("trkingNum", trkNum);
+        return trkQuery.getResultList();
+        
+    }
+    
+    
     //create new order  and orderlines
     public static Ustrkings createUsTrk(EntityManager em, Shipment shipmentInfo){ 
         // Create new todo

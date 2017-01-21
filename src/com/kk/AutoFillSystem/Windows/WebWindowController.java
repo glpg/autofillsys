@@ -282,7 +282,7 @@ public class WebWindowController implements Initializable {
         for(Element ustrk : ustrks){
             
             String line = ustrk.select("td").first().text().trim();
-            ustrkNums.add(line.split("\\s+")[1]);
+            ustrkNums.add(line.split("\\s+")[1].trim());
            
         }
         
