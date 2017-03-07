@@ -73,6 +73,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -444,30 +445,39 @@ public class MainWindowController implements Initializable {
         btnApplyFilter.setOnAction(e->{applyFilter();});
         btnClearFilter.setOnAction(e->{clearFilter();});
         
-        buttonSearch.setOnAction(e->{search();});
+        buttonSearch.setOnAction(e->{
+            if(textFieldSearchNum.getText() == null || textFieldSearchNum.getText().isEmpty() ) {
+            showAlert("Error", "Search field Error: ", "You did not input a number for search !", AlertType.ERROR);
+            return;
+            }
+            search(textFieldSearchNum.getText(), comboBoxSearch.getValue());
+        });
         buttonReset.setOnAction(e->{reset();});
         
         //set up enter event for search text
         textFieldSearchNum.setOnKeyPressed((e) -> {
-            if (e.getCode() == KeyCode.ENTER)
-                search();
+            if (e.getCode() == KeyCode.ENTER) {
+                if (textFieldSearchNum.getText() == null || textFieldSearchNum.getText().isEmpty()) {
+                    showAlert("Error", "Search field Error: ", "You did not input a number for search !", AlertType.ERROR);
+                    return;
+                }
+            }
+            search(textFieldSearchNum.getText(), comboBoxSearch.getValue());
         });
-        
+
     }
     
-    private void search(){
-        if(textFieldSearchNum.getText() == null || textFieldSearchNum.getText().isEmpty() ) {
-            showAlert("Error", "Search field Error: ", "You did not input a number for search !", AlertType.ERROR);
-            return;
-        }
+    private void search(String searchStr, String category){
+        
         ObservableList<JoinRecord> results = FXCollections.observableArrayList();
         for (JoinRecord record: tableRows) {
             String recordValue ;
-            switch (comboBoxSearch.getValue()) {
+            switch (category) {
                 case "US Track" : {
                     recordValue = record.getUsTrkNum();
                     break;
                 }
+                
                 case "Order" :{
                     recordValue = record.getOrderNum();
                     break;
@@ -485,18 +495,17 @@ public class MainWindowController implements Initializable {
             }
             
             
-            if (recordValue != null && recordValue.contains(textFieldSearchNum.getText())) {
+            if (recordValue != null && recordValue.contains(searchStr)) {
                 results.add(record);
             }
 
         }
         orderTable.setItems(results);
 
-        
-        
+    
     }
     
-   
+    
     
     private void reset(){
         orderTable.setItems(tableRows);
@@ -631,7 +640,7 @@ public class MainWindowController implements Initializable {
     
     private void loadMore(){
         
-        loadData(200);
+        loadData(500);
         orderTable.setItems(tableRows);
         
     }
@@ -1820,6 +1829,28 @@ public class MainWindowController implements Initializable {
                 final TableRow<JoinRecord> row = new TableRow<>();
                 row.setContextMenu(menu);
                 row.setOnMouseClicked(event -> {
+                    
+                    if (event.isAltDown() &&  event.getClickCount() == 1) {
+                        TablePosition pos = orderTable.getSelectionModel().getSelectedCells().get(0);
+                        int rowIndex = pos.getRow();
+                        JoinRecord item = orderTable.getItems().get(rowIndex);
+                        TableColumn col = pos.getTableColumn();
+                        //int colIndex = orderTable.getColumns().indexOf(col);
+                        String data = col.getCellObservableValue(item).getValue().toString();
+                        
+                        switch(col.getId()) {
+                            case "usTrkNum" : {   
+                                search(data, "US Track");
+                                break;
+                            } 
+                            case "orderNum" : search(data, "Order"); break;
+                            case "intlTrkNum" : search(data, "Intl Track"); break;
+                            case "cnTrkNum" : search(data, "CN Track"); break;
+                            default: break;
+                        }
+                        
+                    }
+                    
                     if (event.getClickCount() == 2) {
                         
                         TablePosition pos = orderTable.getSelectionModel().getSelectedCells().get(0);
@@ -1830,6 +1861,7 @@ public class MainWindowController implements Initializable {
                         copyToClipboard(data);
    
                     }
+                    
                     
                 });
 
@@ -1851,6 +1883,8 @@ public class MainWindowController implements Initializable {
         
    
     }
+    
+    
     
     
     private void copyUsTrkToClipboard(){

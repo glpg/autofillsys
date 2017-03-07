@@ -112,7 +112,7 @@
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemImportTB" mnemonicParsing="false" text="Import Taobao Transactions" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="menuItemLoadMore" mnemonicParsing="false" text="Load Next 200 Orders" />
+                  <MenuItem fx:id="menuItemLoadMore" mnemonicParsing="false" text="Load Next 500 Orders" />
                   <MenuItem fx:id="menuItemReloadTable" mnemonicParsing="false" text="Reload Table" />
               </items>
             </Menu>
