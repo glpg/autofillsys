@@ -73,9 +73,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -109,6 +107,7 @@ public class MainWindowController implements Initializable {
     private Set<String> newOrders = new HashSet();
     private Set<String> newShipments = new HashSet();
     private Set<String> newIntlShipments = new HashSet();
+    private Set<String> newCnShipments = new HashSet();
     
     
     //records combining orders and trkings
@@ -183,6 +182,11 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemCheckCancel;
     @FXML
     private MenuItem menuItemSyncAmazon;
+    @FXML
+    private MenuItem menuItemSyncZZcntrk;
+    @FXML
+    private MenuItem menuItemSyncZHcntrk;
+    
     
     
     
@@ -242,7 +246,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private TableColumn<?, ?> cnCarrier;
     @FXML
-    private TableColumn<?, ?> cnTrkNum;
+    private TableColumn<JoinRecord, String> cnTrkNum;
     @FXML
     private TableColumn<?, ?> address;
     @FXML
@@ -594,6 +598,9 @@ public class MainWindowController implements Initializable {
         menuItemCheckCancel.setOnAction(e->checkCancel());
         
         menuItemSyncAmazon.setOnAction(e->showSyncAmazonWindow());
+        
+        
+        menuItemSyncZZcntrk.setOnAction(e->showSyncZZcntrkWindow());
        
     }
     
@@ -1189,6 +1196,31 @@ public class MainWindowController implements Initializable {
        
     }
     
+    
+    private void showSyncZZcntrkWindow(){
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/SyncCntrkingsWindow.fxml"));
+            
+            SyncZZcntrkController syncController = new SyncZZcntrkController();
+            syncController.setMainWindow(instance);
+            
+            loader.setController(syncController);
+            AnchorPane syncWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(syncWindow));
+            stage.setTitle("Sync ZZ Cn Trkings");
+            
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     private void showSyncAmazonWindow() {
          try {
             Stage stage = new Stage();
@@ -1696,6 +1728,30 @@ public class MainWindowController implements Initializable {
             };
         });
         
+        cnTrkNum.setCellFactory(column -> {
+            return new TableCell<JoinRecord, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || item.isEmpty())
+                        setText(null);
+                    else {
+                        if (newCnShipments.contains(item)){
+                            setStyle("-fx-text-fill: purple; -fx-font-weight:bold;");
+                            System.out.println("new intl trk :" + item);
+                        }
+                        else
+                            setStyle("-fx-text-fill: black");
+                            
+                        
+                        setText(item);
+                    }
+                   
+
+                }
+            };
+        });
+        
         
         usTrkNum.setCellFactory(column -> {
             return new TableCell<JoinRecord, String>() {
@@ -2105,6 +2161,12 @@ public class MainWindowController implements Initializable {
     public void setNewShipments(Set<String> newShipments) {
         this.newShipments = newShipments;
     }
+
+    public Set<String> getNewCnShipments() {
+        return newCnShipments;
+    }
+    
+    
 
 
  

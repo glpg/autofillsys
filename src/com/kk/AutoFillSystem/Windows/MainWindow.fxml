@@ -105,9 +105,14 @@
                 <MenuItem fx:id="menuItemSyncEmails" mnemonicParsing="false" text="Sync Data From Emails" />
                   <MenuItem fx:id="menuItemSyncHDB" mnemonicParsing="false" text="Sync HDB From File" />
                   <MenuItem fx:id="menuItemOpenWebpage" mnemonicParsing="false" text="Sync ZZ From Web" />
-                  <MenuItem fx:id="menuItemUploadZZ" mnemonicParsing="false" text="Upload ZZ To Web" />
                   <MenuItem fx:id="menuItemSyncZH" mnemonicParsing="false" text="Sync ZH From Web" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="menuItemUploadZZ" mnemonicParsing="false" text="Upload ZZ To Web" />
                   <MenuItem fx:id="menuItemUploadZH" mnemonicParsing="false" text="Upload ZH To Web" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="menuItemSyncZZcntrk" mnemonicParsing="false" text="Sync ZZ CN trkings" />
+                  <MenuItem fx:id="menuItemSyncZHcntrk" mnemonicParsing="false" text="Sync ZH CN trkings" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemSyncAmazon" mnemonicParsing="false" text="Sync Amazon Orders" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemImportTB" mnemonicParsing="false" text="Import Taobao Transactions" />

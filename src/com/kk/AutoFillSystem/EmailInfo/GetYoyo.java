@@ -172,7 +172,7 @@ public class GetYoyo extends GetStore {
             Shipment shipment = extractShipment(content);
             shipment.shipDate = email.getReceivedDate();
             //ship to
-            shipment.warehouse = "HDB";
+            shipment.warehouse = "ZH";
             found.add(shipment);
             
         } catch (MessagingException ex) {

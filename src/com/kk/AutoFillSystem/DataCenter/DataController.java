@@ -244,8 +244,8 @@ public class DataController {
         createIntlTrk(em,intlTrk);
     }
     
-    public void createCnTrking(Cntrkings cnTrk) {
-        createCnTrk(em, cnTrk);
+    public boolean createCnTrking(Cntrkings cnTrk) {
+        return createCnTrk(em, cnTrk);
     }
     
     public void createProduct(Products prd) {

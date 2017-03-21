@@ -209,7 +209,7 @@ public class TrackOp {
         
     }
     
-    public static void createCnTrk(EntityManager em, Cntrkings cnTrk){
+    public static boolean createCnTrk(EntityManager em, Cntrkings cnTrk){
         em.getTransaction().begin();
         //persist new intl trk
         em.persist(cnTrk);
@@ -218,6 +218,8 @@ public class TrackOp {
         cnTrk.getUstocntrkingId().getCntrkingsCollection().add(cnTrk);
         
         em.getTransaction().commit();
+        
+        return em.contains(cnTrk);
         
     }
     
