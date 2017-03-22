@@ -601,6 +601,7 @@ public class MainWindowController implements Initializable {
         
         
         menuItemSyncZZcntrk.setOnAction(e->showSyncZZcntrkWindow());
+        menuItemSyncZHcntrk.setOnAction(e->showSyncZHcntrkWindow());
        
     }
     
@@ -706,6 +707,17 @@ public class MainWindowController implements Initializable {
     public JoinRecord findRecordWithCnTrk(String cnTrk) {
         for(JoinRecord record : tableRows) {
             if (record.getCnTrk()!= null && record.getCnTrkNum().equals(cnTrk)) {
+                return record;
+            }
+        }
+        return null;
+        
+    }
+    
+    //using tablerows to search, tablerow initialized to include all records
+    public JoinRecord findRecordWithIntlTrk(String intlTrk) {
+        for(JoinRecord record : tableRows) {
+            if (record.getCnTrk()!= null && record.getIntlTrkNum().equals(intlTrk)) {
                 return record;
             }
         }
@@ -1196,7 +1208,28 @@ public class MainWindowController implements Initializable {
        
     }
     
-    
+    private void showSyncZHcntrkWindow(){
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/SyncCntrkingsWindow.fxml"));
+            
+            SyncZHcntrkController syncController = new SyncZHcntrkController();
+            syncController.setMainWindow(instance);
+            
+            loader.setController(syncController);
+            AnchorPane syncWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(syncWindow));
+            stage.setTitle("Sync ZH Cn Trkings");
+
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
     private void showSyncZZcntrkWindow(){
         try {
             Stage stage = new Stage();
@@ -1213,8 +1246,7 @@ public class MainWindowController implements Initializable {
             stage.setScene(new Scene(syncWindow));
             stage.setTitle("Sync ZZ Cn Trkings");
             
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(AutoFillSystem.primaryStage);
+            
             stage.show();
         } catch (IOException ex) {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
@@ -2126,7 +2158,7 @@ public class MainWindowController implements Initializable {
         this.tableRows = tableRows;
     }
 
-    public TableView<?> getOrderTable() {
+    public TableView<JoinRecord> getOrderTable() {
         return orderTable;
     }
 

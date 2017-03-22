@@ -3,20 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Database/Entities/Cntrkings.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/WebWindowController.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/AutoFillSystem.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/SyncAmazonWindow.fxml</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/SyncDeliveryInfoController.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Database/Entities/Ustocntrkings.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/SyncAmazonWindowController.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/CnTrkWindowController.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/utility/Tools.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Database/Operations/TrackOp.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/UsTrkWindowController.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/SyncCntrkingsWindow.fxml</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/WebWindowController.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/SyncZZcntrkController.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/SyncZHcntrkController.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/EmailInfo/GetYoyo.java</file>
+            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/build.xml</file>
             <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/Windows/MainWindowController.java</file>
-            <file>file:/C:/Users/Yi/Documents/NetBeansProjects/autofillsys/src/com/kk/AutoFillSystem/utility/JoinRecord.java</file>
         </group>
     </open-files>
 </project-private>
