@@ -717,7 +717,7 @@ public class MainWindowController implements Initializable {
     //using tablerows to search, tablerow initialized to include all records
     public JoinRecord findRecordWithIntlTrk(String intlTrk) {
         for(JoinRecord record : tableRows) {
-            if (record.getCnTrk()!= null && record.getIntlTrkNum().equals(intlTrk)) {
+            if (record.getIntlTrk()!= null && record.getIntlTrkNum().equals(intlTrk)) {
                 return record;
             }
         }
@@ -2001,6 +2001,7 @@ public class MainWindowController implements Initializable {
             JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
             Ustrkings ustrk = currentRecord.getUsTrk();
             dataCenter.createUsAndIntlRelation(copyStoreIntlTrk, ustrk);
+
             
             if (currentRecord.getIntlTrk() != null) {
                 currentRecord = copyRecordforIntl(currentRecord);
@@ -2009,32 +2010,34 @@ public class MainWindowController implements Initializable {
                 
               
             currentRecord.setIntlTrk(copyStoreIntlTrk);
-            if (copyStoreIntlTrk.getCntrkingsCollection().size() == 1)
-                currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
+            //here, do not care about how many cn trkings, only add the first one to the record
+            //reload table will produce all the related cn trkings
+            //if (copyStoreIntlTrk.getCntrkingsCollection().size() == 1)
+            currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
             
-            if (copyStoreIntlTrk.getCntrkingsCollection().size() > 1) {
-                Cntrkings[] cntrks = (Cntrkings[]) copyStoreIntlTrk.getCntrkingsCollection().toArray();
-                currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
-                for(int i = 1; i < cntrks.length; i++) {
-                    JoinRecord newRecord = new JoinRecord();
-                    newRecord.setOrder(currentRecord.getOrder());
-                    newRecord.setUsTrk(currentRecord.getUsTrk());
-                    newRecord.setIntlTrk(copyStoreIntlTrk);
-                    newRecord.setCnTrk(cntrks[i]);
-                    expandInfo(newRecord);
-                    orderTable.getItems().add(newRecord);
-                }
-            }
-            
-            
-            
+//            if (copyStoreIntlTrk.getCntrkingsCollection().size() > 1) {
+//                Cntrkings[] cntrks = (Cntrkings[]) copyStoreIntlTrk.getCntrkingsCollection().toArray();
+//                currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
+//                for(int i = 1; i < cntrks.length; i++) {
+//                    JoinRecord newRecord = new JoinRecord();
+//                    newRecord.setOrder(currentRecord.getOrder());
+//                    newRecord.setUsTrk(currentRecord.getUsTrk());
+//                    newRecord.setIntlTrk(copyStoreIntlTrk);
+//                    newRecord.setCnTrk(cntrks[i]);
+//                    expandInfo(newRecord);
+//                    orderTable.getItems().add(newRecord);
+//                }
+//            }
+//            
+//            
+//            
             expandInfo(currentRecord);
             
             //force refreshing
             //forcing refreshing table
             orderTable.getColumns().get(0).setVisible(false);
             orderTable.getColumns().get(0).setVisible(true);
-            //set copystore to null
+//            //set copystore to null
             copyStoreIntlTrk = null;
         }
             

@@ -16,10 +16,10 @@ public class PriceEstimation {
     
     private int extraBoxWeight = 350; 
     private double discount = 0.92;
-    private double currencyRatio =  6.8; 
-    private double initalShipFee = 49; 
-    private double extraShipFee = 7; 
-    private double vipDiscount = 0.90; 
+    private double currencyRatio =  7.0; 
+    private double initalShipFee = 29.75; 
+    private double extraShipFee = 5.52; 
+    private double vipDiscount = 1.00; 
     private int count = 5; 
     
     

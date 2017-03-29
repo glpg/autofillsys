@@ -76,7 +76,7 @@ public class SyncZHcntrkController implements Initializable {
         //get all in trasit intl trkings
         String[] trkings = info.split("\n");
         for(String tmp: trkings) {
-            if (tmp.contains("国内转运中")) {
+            if (tmp.contains("国内转运中") || tmp.contains("清关完毕")) {
                 String[] infoparts = tmp.split("\t");
                 String intltrk = infoparts[0].trim();
                 intransit.add(intltrk);

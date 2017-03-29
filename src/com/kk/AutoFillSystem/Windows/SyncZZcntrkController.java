@@ -92,10 +92,17 @@ public class SyncZZcntrkController implements Initializable {
                     Ustocntrkings intl = result.get(0);
                     //if cntrkings already input
                     if (intl.getCntrkingsCollection().size() > 0) {
-                        msg += "\n" + "Status :  Intl tracking - " + cntrk.intltrknum + " already has cn trkings ! \n";
                         
-                        updateMessage(msg);
-                        continue;
+                        for(Cntrkings tmp : intl.getCntrkingsCollection()) {
+                            if (tmp.getTrkingNum().contains(cntrk.cntrknum)) {
+                                msg += "\n" + "Status :  Intl tracking - " + cntrk.intltrknum + " already has cn trkings ! \n";
+
+                                updateMessage(msg);
+                                continue;
+
+                            }
+                        }
+ 
                         
                     }
                     
