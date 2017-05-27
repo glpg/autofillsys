@@ -13,12 +13,7 @@ import static com.kk.AutoFillSystem.utility.Tools.closeWindow;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -27,8 +22,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -295,7 +288,7 @@ public class WebWindowZHController implements Initializable{
             if (mainWindow.addIntlTrk(ustrkNums, intlTrkNum, weight, fee, "ZH")) {
                 showAlert("Success", index + " / " + count + " : ", "ZZ tracking " + intlTrkNum + " is updated successfully !", Alert.AlertType.INFORMATION);
             } else {
-                showAlert("Warning", index + " / " + count + " : ", "ZZ tracking " + intlTrkNum + " already existed !", Alert.AlertType.WARNING);
+                showAlert("Warning", index + " / " + count + " : ", "ZZ tracking " + intlTrkNum + " already existed or could not correlate with us trking !", Alert.AlertType.WARNING);
             }
             
             

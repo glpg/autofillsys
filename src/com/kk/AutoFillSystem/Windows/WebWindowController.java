@@ -322,7 +322,7 @@ public class WebWindowController implements Initializable {
                 showAlert("Success", "Update Finished :" , "ZZ tracking " + intlTrkNum + " is updated successfully !", AlertType.INFORMATION);
             }
             else
-                showAlert("Warning", "Update Warning :" , "ZZ tracking " + intlTrkNum + " already existed !", AlertType.WARNING);
+                showAlert("Warning", "Update Warning :" , "ZZ tracking " + intlTrkNum + " already existed or could not correlate with us trking !", AlertType.WARNING);
             
     
         } 

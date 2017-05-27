@@ -128,6 +128,7 @@
                   <MenuItem fx:id="menuItemStat" mnemonicParsing="false" text="Show Statistics" />
                   <MenuItem fx:id="menuItemQuerySoldQuantity" mnemonicParsing="false" text="Query Inventory Quantity" />
                   <MenuItem fx:id="menuItemCheckCancel" mnemonicParsing="false" text="Check Cancellation" />
+                  <MenuItem fx:id="menuItemShowWarning" mnemonicParsing="false" text="Show Warnings" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

@@ -43,6 +43,8 @@ public class OrderOp {
         List<Orders> orderResults = orderQuery.getResultList();
         //if existed already, skip
         if (orderResults != null && orderResults.size() > 0) {
+            System.out.print("found one entry in db with ordernum : ");
+            System.out.println(orderResults.get(0).getOrderNum());
             addMessage("Order " + orderInfo.orderNum + " existed already, pass!");
             
             return null;

@@ -256,6 +256,7 @@ public class UsTrkWindowController implements Initializable {
         }
             
         else {
+            mainWindow.getNewShipments().add(ustrk.getTrkingNum());
             for(Trklines tl : trklines) {
                 tl.setUstrkingId(ustrk);
                 dataCenter.createTrkline(tl);

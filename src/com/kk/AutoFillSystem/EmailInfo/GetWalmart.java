@@ -44,6 +44,7 @@ public class GetWalmart extends GetStore {
         Order order = new Order();
         //get order number
         Pattern orderNum = Pattern.compile("Order number: ([0-9-]+)");
+        
         Matcher m = orderNum.matcher(text);
         if(m.find()) {
             order.orderNum = m.group(1);
@@ -59,7 +60,9 @@ public class GetWalmart extends GetStore {
         ArrayList<Product> products = new ArrayList();
         for(String item : items) {
             
-            Pattern orderLine = Pattern.compile("([^$]*) ([1-9][0-9]?) \\$[0-9.]+\\s\\$[0-9.]+\\s");
+            Pattern orderLine = Pattern.compile("([^$]*)\\$[0-9.]+\\s([1-9][0-9]?)\\s\\$[0-9.]+");
+            
+            //Pattern orderLine = Pattern.compile("([^$]*) ([1-9][0-9]?) \\$[0-9.]+");
             Matcher m2 = orderLine.matcher(item);
             boolean found = false;
             while(m2.find()) {
@@ -89,24 +92,32 @@ public class GetWalmart extends GetStore {
     //get the text string for items
     public static ArrayList<String> getItems(String text, String endText) {
         ArrayList<String> items = new ArrayList();
-        String str1 = "Qty Price Total ";
+        String str1 = "Item Qty Total ";
+        int startIndex = text.indexOf(str1);
         String str2 = endText;
-        int index = 0;
-        while(index < text.length()) {
-            String searchText = text.substring(index);
-            int startIndex = searchText.indexOf(str1);
-            int stopIndex = searchText.indexOf(str2);
-            
-            if (startIndex != -1 && stopIndex != -1){
-                items.add(searchText.substring(startIndex + str1.length(), stopIndex));
-                index += stopIndex + str2.length();
-            }
-            
-            else break;
-                
-            
-        }
-        return items;    
+        int stopIndex = text.indexOf(str2);
+        String orderlines = text.substring(startIndex + str1.length(), stopIndex);
+//        int index = 0;
+//        while(index < text.length()) {
+//            String searchText = text.substring(index);
+//            int startIndex = searchText.indexOf(str1);
+//            System.out.println(startIndex);
+//            int stopIndex = searchText.indexOf(str2);
+//            System.out.println(stopIndex);
+//            
+//            if (startIndex != -1 && stopIndex != -1){
+//                items.add(searchText.substring(startIndex + str1.length(), stopIndex));
+//                index += stopIndex + str2.length();
+//            }
+//            
+//            else break;
+//  
+//        }
+        String[] prods = orderlines.split("LEGO");
+        for(String prod : prods) {
+           items.add("LEGO"+prod);
+       }
+        return items;
     }
     
     
@@ -144,7 +155,7 @@ public class GetWalmart extends GetStore {
         ArrayList<Product> products = new ArrayList();
         for(String item : items) {
             
-            Pattern orderLine = Pattern.compile("([^$]*) ([1-9][0-9]?) \\$[0-9.]+\\s\\$[0-9.]+\\s");
+            Pattern orderLine = Pattern.compile("([^$]*)\\$[0-9.]+\\s([1-9][0-9]?)\\s\\$[0-9.]+");
             Matcher m2 = orderLine.matcher(item);
             boolean found = false;
             while(m2.find()) {

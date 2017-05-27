@@ -264,6 +264,7 @@ public class SyncWindowController implements Initializable {
                     
                 }
                 catch(Exception ex) {
+                    ex.printStackTrace();
                     msg += "Failed to sync : " + ex.getMessage() + ". \n";
                     updateMessage(msg);
                 }

@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -119,6 +120,9 @@ public class MainWindowController implements Initializable {
     //cp and paste intl trk
     private Ustocntrkings copyStoreIntlTrk;
     
+    //warning log
+    private StringBuilder warningMsgs ;
+    
     //menu
     @FXML
     private MenuItem menuItemNewOrder;
@@ -186,6 +190,8 @@ public class MainWindowController implements Initializable {
     private MenuItem menuItemSyncZZcntrk;
     @FXML
     private MenuItem menuItemSyncZHcntrk;
+    @FXML
+    private MenuItem menuItemShowWarning;
     
     
     
@@ -266,6 +272,7 @@ public class MainWindowController implements Initializable {
         loadData(500);
         
         instance = this;
+        warningMsgs = new StringBuilder("");
     }
     
     
@@ -602,6 +609,8 @@ public class MainWindowController implements Initializable {
         
         menuItemSyncZZcntrk.setOnAction(e->showSyncZZcntrkWindow());
         menuItemSyncZHcntrk.setOnAction(e->showSyncZHcntrkWindow());
+        
+        menuItemShowWarning.setOnAction(e->showWarningWindow());
        
     }
     
@@ -1120,8 +1129,7 @@ public class MainWindowController implements Initializable {
                 }
                 else{
                     showAlert("Failed", "Update Error :" , "HDB tracking " + intlTrk + " already existed !", AlertType.WARNING);
-                }
-                
+                }       
                 
             }
 
@@ -1151,7 +1159,7 @@ public class MainWindowController implements Initializable {
             for (String ustrkNum : ustrks) {
                 
                 //if existed in db, then add the entry in relation table
-                if (dataCenter.getUsTrking(ustrkNum)!= null) {
+                if (dataCenter.getUsTrking(ustrkNum)!= null && dataCenter.getUsTrking(ustrkNum).size() > 0 ) {
                     dataCenter.createUsAndIntlRelation(intlTrk, dataCenter.getUsTrking(ustrkNum).get(0));
                     //if ustrk in table, then update tableview
                     for (JoinRecord record : tableRows) {
@@ -1162,6 +1170,16 @@ public class MainWindowController implements Initializable {
                     }
                     
                 }
+                else {
+                    addMessage("Us Tracking : " + ustrkNum + " could not be found in database to match intl tracking :" + intlTrkNum);
+                    //get current time
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = new Date();
+                    warningMsgs.append(dateFormat.format(date) +"\n");
+                    warningMsgs.append("Us Tracking : " + ustrkNum + " could not be found in database to match Intl tracking :" + intlTrkNum +"\n\n");
+                    return false;
+                }
+
                 
             }
             
@@ -1281,6 +1299,25 @@ public class MainWindowController implements Initializable {
     }
     
     
+    private void showWarningWindow() {
+         try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/ShowWarningWindow.fxml"));
+            
+           
+            AnchorPane logWindow = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(logWindow));
+            stage.setTitle("Warning Log");
+            
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    }
     private void showAddressWindow(ActionEvent e) {
 	
             
@@ -1902,13 +1939,19 @@ public class MainWindowController implements Initializable {
             pasteIntlTrk();
         });
         
+        MenuItem addIntlTrkDb = new MenuItem("Add Intl Tracking from DB");
+        
+        addIntlTrkDb.setOnAction(e -> {
+            addIntlTrkFromDb();
+        });
+        
         SeparatorMenuItem line3 = new SeparatorMenuItem();
         MenuItem confirmD = new MenuItem("Confirm delivery");
         confirmD.setOnAction(e -> {
             confirmDeliveryInTable();
         });
         
-        menu.getItems().addAll(addUsTrk, addIntlTrk, addCnTrk, line, editOrder, editUsTrk, line2, copyIntlTrk, pasteIntlTrk
+        menu.getItems().addAll(addUsTrk, addIntlTrk, addCnTrk, line, editOrder, editUsTrk, line2, copyIntlTrk, pasteIntlTrk, addIntlTrkDb
         , line3, confirmD);
         
         orderTable.setRowFactory(new Callback<TableView<JoinRecord>, TableRow<JoinRecord>>() {  
@@ -1984,7 +2027,31 @@ public class MainWindowController implements Initializable {
         Clipboard.getSystemClipboard().setContent(content);
     }
     
-    
+    private void addIntlTrkFromDb(){
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(AutoFillSystem.class.getResource("Windows/SearchIntlTrkWindow.fxml"));
+            
+            SearchIntlTrkWindowController controller = new SearchIntlTrkWindowController();
+            controller.setMainWindow(instance);
+            
+            loader.setController(controller);
+            AnchorPane window = (AnchorPane) loader.load();
+            
+
+            stage.setScene(new Scene(window));
+            stage.setTitle("Search Intl Trk from Database");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(AutoFillSystem.primaryStage);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
+        
+    }
     
     private void copyIntlTrk() {
         JoinRecord currentRecord = (JoinRecord) orderTable.getSelectionModel().getSelectedItem();
@@ -2012,25 +2079,25 @@ public class MainWindowController implements Initializable {
             currentRecord.setIntlTrk(copyStoreIntlTrk);
             //here, do not care about how many cn trkings, only add the first one to the record
             //reload table will produce all the related cn trkings
-            //if (copyStoreIntlTrk.getCntrkingsCollection().size() == 1)
-            currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
+            if (copyStoreIntlTrk.getCntrkingsCollection().size() == 1)
+                currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
             
-//            if (copyStoreIntlTrk.getCntrkingsCollection().size() > 1) {
-//                Cntrkings[] cntrks = (Cntrkings[]) copyStoreIntlTrk.getCntrkingsCollection().toArray();
-//                currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
-//                for(int i = 1; i < cntrks.length; i++) {
-//                    JoinRecord newRecord = new JoinRecord();
-//                    newRecord.setOrder(currentRecord.getOrder());
-//                    newRecord.setUsTrk(currentRecord.getUsTrk());
-//                    newRecord.setIntlTrk(copyStoreIntlTrk);
-//                    newRecord.setCnTrk(cntrks[i]);
-//                    expandInfo(newRecord);
-//                    orderTable.getItems().add(newRecord);
-//                }
-//            }
-//            
-//            
-//            
+            if (copyStoreIntlTrk.getCntrkingsCollection().size() > 1) {
+                Cntrkings[] cntrks = (Cntrkings[]) copyStoreIntlTrk.getCntrkingsCollection().toArray();
+                currentRecord.setCnTrk((Cntrkings) copyStoreIntlTrk.getCntrkingsCollection().toArray()[0]);
+                for(int i = 1; i < cntrks.length; i++) {
+                    JoinRecord newRecord = new JoinRecord();
+                    newRecord.setOrder(currentRecord.getOrder());
+                    newRecord.setUsTrk(currentRecord.getUsTrk());
+                    newRecord.setIntlTrk(copyStoreIntlTrk);
+                    newRecord.setCnTrk(cntrks[i]);
+                    expandInfo(newRecord);
+                    orderTable.getItems().add(newRecord);
+                }
+            }
+            
+            
+            
             expandInfo(currentRecord);
             
             //force refreshing
@@ -2100,6 +2167,9 @@ public class MainWindowController implements Initializable {
         
     }
     
+    public void clearWarningMsg(){
+        warningMsgs.setLength(0);
+    }
     
     
     
@@ -2199,6 +2269,10 @@ public class MainWindowController implements Initializable {
 
     public Set<String> getNewCnShipments() {
         return newCnShipments;
+    }
+
+    public StringBuilder getWarningMsgs() {
+        return warningMsgs;
     }
     
     

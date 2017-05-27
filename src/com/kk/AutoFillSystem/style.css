@@ -136,6 +136,11 @@
     -fx-graphic: url("Resources/download.png");
 }
 
+#menuItemShowWarning>.label{
+    -fx-graphic: url("Resources/warning.png");
+}
+
+
 .button {
 
     -fx-background-color: 

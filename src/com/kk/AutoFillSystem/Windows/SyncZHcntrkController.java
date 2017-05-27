@@ -6,9 +6,6 @@
 package com.kk.AutoFillSystem.Windows;
 
 import com.kk.AutoFillSystem.DataCenter.DataController;
-import com.kk.AutoFillSystem.Database.Entities.Addresses;
-import com.kk.AutoFillSystem.Database.Entities.Carriers;
-import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
 import com.kk.AutoFillSystem.utility.JoinRecord;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
