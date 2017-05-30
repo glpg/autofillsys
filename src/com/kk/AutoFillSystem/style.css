@@ -141,6 +141,16 @@
 }
 
 
+
+
+
+
+.table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    
+}
+
+
 .button {
 
     -fx-background-color: 

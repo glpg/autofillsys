@@ -1754,12 +1754,12 @@ public class MainWindowController implements Initializable {
                     else {
                         if (item){
                             setStyle("-fx-text-fill: #008000; -fx-font-weight:bold;");
-                            setText("Yes");
+                            setText("Y");
                             
                         }
                         else{
                             setStyle("-fx-text-fill: red; -fx-font-weight:bold;");
-                            setText("No");
+                            setText("N");
                         }
                             
                        
@@ -2011,8 +2011,26 @@ public class MainWindowController implements Initializable {
         //set up filter
         filter = new TableFilter(orderTable);
         
+        //set up column width
+        rowNumber.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.03));
+        store.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.05));
+        orderNum.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.1));
+        orderDate.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.05));
+        orderList.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.1));
+        usCarrier.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.04));
+        usTrkNum.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.1));
+        shipList.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.1));
         
-   
+        warehouse.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.03));
+        intlTrkNum.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.1));
+        weight.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.04));
+        fee.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.04));
+        cnTrkNum.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.1));
+        address.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.05));
+        
+        cnCarrier.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.03));
+        delivered.prefWidthProperty().bind(orderTable.widthProperty().multiply(0.03));
+        
     }
     
     

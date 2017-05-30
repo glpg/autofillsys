@@ -5,9 +5,11 @@ import com.kk.AutoFillSystem.Database.Entities.Addresses;
 import com.kk.AutoFillSystem.Database.Entities.Carriers;
 import com.kk.AutoFillSystem.Database.Entities.Cntrkings;
 import com.kk.AutoFillSystem.Database.Entities.Ustocntrkings;
+import com.kk.AutoFillSystem.utility.LoggingAspect;
 import static com.kk.AutoFillSystem.utility.Tools.showAlert;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -91,6 +93,7 @@ public class SyncZZcntrkController implements Initializable {
                     
                     Ustocntrkings intl = result.get(0);
                     //if cntrkings already input
+                    int option = 0;
                     if (intl.getCntrkingsCollection().size() > 0) {
                         
                         for(Cntrkings tmp : intl.getCntrkingsCollection()) {
@@ -98,15 +101,17 @@ public class SyncZZcntrkController implements Initializable {
                                 msg += "\n" + "Status :  Intl tracking - " + cntrk.intltrknum + " already has cn trkings ! \n";
 
                                 updateMessage(msg);
-                                continue;
+                                option = 1;
+                                break;
 
                             }
                         }
+                        
  
                         
                     }
                     
-                    
+                    if (option == 1) continue;
                     
                     //if cntrkings empty, create cntrkings
                     Cntrkings cnTrk = new Cntrkings();
@@ -211,29 +216,48 @@ public class SyncZZcntrkController implements Initializable {
                         if (cntrking.contains("中通")) {
                             newtrk.carrier = "ZTO";
                             newtrk.cntrknum = cntrking.replace("中通", "").trim();
+                            results.add(newtrk);
+                            continue;
                         }
                         if (cntrking.contains("申通")) {
                             newtrk.carrier = "STO";
                             newtrk.cntrknum = cntrking.replace("申通", "").trim();
+                            results.add(newtrk);
+                            continue;
                         }
                         if (cntrking.contains("圆通")) {
                             newtrk.carrier = "YTO";
                             newtrk.cntrknum = cntrking.replace("圆通", "").trim();
+                            results.add(newtrk);
+                            continue;
                         }
 
                         if (cntrking.contains("德邦")) {
                             newtrk.carrier = "DB";
                             newtrk.cntrknum = cntrking.replace("德邦", "").trim();
+                            results.add(newtrk);
+                            continue;
                         }
                         if (cntrking.contains("顺丰")) {
                             newtrk.carrier = "SF";
                             newtrk.cntrknum = cntrking.replace("顺丰", "").trim();
+                            results.add(newtrk);
+                            continue;
                         }
                         if (cntrking.contains("EMS")) {
                             newtrk.carrier = "EMS";
                             newtrk.cntrknum = cntrking.replace("EMS", "").trim();
+                            results.add(newtrk);
+                            continue;
                         }
-                        results.add(newtrk);
+                        if (cntrking.contains("韵达")) {
+                            newtrk.carrier = "YD";
+                            newtrk.cntrknum = cntrking.replace("韵达", "").trim();
+                            results.add(newtrk);
+                            continue;
+                        }
+                        LoggingAspect.addMessageWithDate("Unknown Cn trking: " + Arrays.toString(cntrkings));
+                        
                         
                     }
                 }
@@ -250,6 +274,7 @@ public class SyncZZcntrkController implements Initializable {
         public String cntrknum;
         public String carrier;
         
+        @Override
         public String toString(){
             String result = "Intl Trknum : " + intltrknum + "\n" + "Cn Trknum : " + carrier + " " + cntrknum;
             return result; 
