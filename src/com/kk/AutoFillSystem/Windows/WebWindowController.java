@@ -318,11 +318,18 @@ public class WebWindowController implements Initializable {
         
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonConfirm) {
-            if (mainWindow.addIntlTrk(ustrkNums, intlTrkNum, weight, fee, "ZZ")) {
+            int outcome = mainWindow.addIntlTrk(ustrkNums, intlTrkNum, weight, fee, "ZZ");
+            if ( outcome == 0) {
                 showAlert("Success", "Update Finished :" , "ZZ tracking " + intlTrkNum + " is updated successfully !", AlertType.INFORMATION);
             }
-            else
-                showAlert("Warning", "Update Warning :" , "ZZ tracking " + intlTrkNum + " already existed or could not correlate with us trking !", AlertType.WARNING);
+            else {
+                if (outcome == 1)
+                    showAlert("Warning", "Update Warning :" , "ZZ tracking " + intlTrkNum + " could not correlate with us trking !", AlertType.WARNING);
+                else
+                    showAlert("Warning", "Update Warning :" , "ZZ tracking " + intlTrkNum + " already existed !", AlertType.WARNING);
+                
+            }
+                
             
     
         } 

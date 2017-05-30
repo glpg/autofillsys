@@ -93,30 +93,39 @@ public class GetWalmart extends GetStore {
     public static ArrayList<String> getItems(String text, String endText) {
         ArrayList<String> items = new ArrayList();
         String str1 = "Item Qty Total ";
-        int startIndex = text.indexOf(str1);
         String str2 = endText;
-        int stopIndex = text.indexOf(str2);
-        String orderlines = text.substring(startIndex + str1.length(), stopIndex);
-//        int index = 0;
-//        while(index < text.length()) {
-//            String searchText = text.substring(index);
-//            int startIndex = searchText.indexOf(str1);
-//            System.out.println(startIndex);
-//            int stopIndex = searchText.indexOf(str2);
-//            System.out.println(stopIndex);
-//            
-//            if (startIndex != -1 && stopIndex != -1){
-//                items.add(searchText.substring(startIndex + str1.length(), stopIndex));
-//                index += stopIndex + str2.length();
-//            }
-//            
-//            else break;
-//  
-//        }
-        String[] prods = orderlines.split("LEGO");
-        for(String prod : prods) {
-           items.add("LEGO"+prod);
-       }
+        
+//        int startIndex = text.indexOf(str1);
+//        int stopIndex = text.indexOf(str2);
+//        String orderlines = text.substring(startIndex + str1.length(), stopIndex);
+//
+//        String[] prods = orderlines.split("LEGO");
+//        for(String prod : prods) {
+//           items.add("LEGO"+prod);
+//       }
+
+        
+        while (true) {
+           
+            int startIndex = text.indexOf(str1);
+            
+            int stopIndex = text.indexOf(str2);
+            System.out.println("start :" + startIndex);
+            System.out.println("stop :" + stopIndex);
+            if (startIndex == -1 || stopIndex == -1) break;
+            String orderlines = text.substring(startIndex + str1.length(), stopIndex);
+            String[] prods = orderlines.split("LEGO");
+            for (String prod : prods) {
+                items.add("LEGO" + prod);
+            }
+            
+            text = text.substring(stopIndex + str2.length());
+
+        }
+        
+        
+        
+        
         return items;
     }
     

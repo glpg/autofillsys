@@ -284,11 +284,14 @@ public class WebWindowZHController implements Initializable{
             
             ArrayList<String> ustrkNums = new ArrayList();
             ustrkNums.add(ustrkNum);
-            
-            if (mainWindow.addIntlTrk(ustrkNums, intlTrkNum, weight, fee, "ZH")) {
+            int outcome = mainWindow.addIntlTrk(ustrkNums, intlTrkNum, weight, fee, "ZH");
+            if (outcome == 0) {
                 showAlert("Success", index + " / " + count + " : ", "ZZ tracking " + intlTrkNum + " is updated successfully !", Alert.AlertType.INFORMATION);
             } else {
-                showAlert("Warning", index + " / " + count + " : ", "ZZ tracking " + intlTrkNum + " already existed or could not correlate with us trking !", Alert.AlertType.WARNING);
+                if (outcome == 1)
+                    showAlert("Warning", index + " / " + count + " : ", "ZZ tracking " + intlTrkNum + " could not correlate with us trking !", Alert.AlertType.WARNING);
+                else
+                    showAlert("Warning", index + " / " + count + " : ", "ZZ tracking " + intlTrkNum + " already existed !", Alert.AlertType.WARNING);
             }
             
             

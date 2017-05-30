@@ -1124,7 +1124,7 @@ public class MainWindowController implements Initializable {
                 String intlTrk = info[1];
                 int weight = (int) (Double.parseDouble(info[2]) * 1000.0);
 
-                if (addIntlTrk(ustrks, intlTrk, weight, shippingfee, "HDB")) {
+                if (addIntlTrk(ustrks, intlTrk, weight, shippingfee, "HDB") == 0) {
                     showAlert("Success", "Update Finished :" , "HDB tracking " + intlTrk + " is updated successfully !", AlertType.INFORMATION);
                 }
                 else{
@@ -1138,7 +1138,7 @@ public class MainWindowController implements Initializable {
     }
     
     
-    public boolean addIntlTrk(List<String> ustrks, String intlTrkNum, int weight, double fee, String warehouseName){
+    public int addIntlTrk(List<String> ustrks, String intlTrkNum, int weight, double fee, String warehouseName){
         if (dataCenter.getIntlTrking(intlTrkNum) == null || dataCenter.getIntlTrking(intlTrkNum).size() == 0) {
             Ustocntrkings intlTrk = new Ustocntrkings();
             intlTrk.setTrkingNum(intlTrkNum);
@@ -1177,19 +1177,19 @@ public class MainWindowController implements Initializable {
                     Date date = new Date();
                     warningMsgs.append(dateFormat.format(date) +"\n");
                     warningMsgs.append("Us Tracking : " + ustrkNum + " could not be found in database to match Intl tracking :" + intlTrkNum +"\n\n");
-                    return false;
+                    return 1;
                 }
 
                 
             }
             
-            return true;
+            return 0;
 
         }
         
         else {
             addMessage("Intl Tracking " + intlTrkNum + " existed already, pass!");
-            return false;
+            return 2;
         }
         
         
