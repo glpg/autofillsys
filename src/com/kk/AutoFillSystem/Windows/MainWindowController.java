@@ -70,6 +70,7 @@ import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -233,13 +234,13 @@ public class MainWindowController implements Initializable {
     @FXML
     private TableColumn<JoinRecord, Date> orderDate;
     @FXML
-    private TableColumn<?, ?> orderList;
+    private TableColumn<JoinRecord, String> orderList;
     @FXML
     private TableColumn<?, ?> usCarrier;
     @FXML
     private TableColumn<JoinRecord, String> usTrkNum;
     @FXML
-    private TableColumn<?, ?> shipList;
+    private TableColumn<JoinRecord, String> shipList;
    
     @FXML
     private TableColumn<?, ?> warehouse;
@@ -657,7 +658,7 @@ public class MainWindowController implements Initializable {
     
     private void loadMore(){
         
-        loadData(500);
+        loadData(1500);
         orderTable.setItems(tableRows);
         
     }
@@ -1139,6 +1140,9 @@ public class MainWindowController implements Initializable {
     
     
     public int addIntlTrk(List<String> ustrks, String intlTrkNum, int weight, double fee, String warehouseName){
+        
+        int sign = 0;
+        
         if (dataCenter.getIntlTrking(intlTrkNum) == null || dataCenter.getIntlTrking(intlTrkNum).size() == 0) {
             Ustocntrkings intlTrk = new Ustocntrkings();
             intlTrk.setTrkingNum(intlTrkNum);
@@ -1177,22 +1181,23 @@ public class MainWindowController implements Initializable {
                     Date date = new Date();
                     warningMsgs.append(dateFormat.format(date) +"\n");
                     warningMsgs.append("Us Tracking : " + ustrkNum + " could not be found in database to match Intl tracking :" + intlTrkNum +"\n\n");
-                    return 1;
+                    sign = 1;
+                    
                 }
 
                 
             }
             
-            return 0;
-
+            
         }
         
         else {
             addMessage("Intl Tracking " + intlTrkNum + " existed already, pass!");
-            return 2;
+            sign = 2;
         }
         
         
+        return sign;
         
         
         
@@ -1720,6 +1725,53 @@ public class MainWindowController implements Initializable {
         
         delivered.setCellValueFactory(new PropertyValueFactory("delivered"));
         
+        
+        orderList.setCellFactory(column -> {
+            return new TableCell<JoinRecord, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || item.isEmpty()){
+                        setText(null);
+                        setTooltip(null);
+                    }
+                        
+                    else {
+                        
+                        
+                        setText(item);
+                        setTooltip(new Tooltip(item));
+                    }
+                   
+
+                }
+            };
+        });
+        
+        shipList.setCellFactory(column -> {
+            return new TableCell<JoinRecord, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || item.isEmpty()){
+                        setText(null);
+                        setTooltip(null);
+                    }
+                        
+                    else {
+                        
+                        
+                        setText(item);
+                        setTooltip(new Tooltip(item));
+                    }
+                   
+
+                }
+            };
+        });
+        
+        
+        
         orderNum.setCellFactory(column -> {
             return new TableCell<JoinRecord, String>() {
                 @Override
@@ -1802,8 +1854,13 @@ public class MainWindowController implements Initializable {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (item == null || item.isEmpty())
+                    if (item == null || item.isEmpty()){
                         setText(null);
+                        
+                    }
+                        
+                        
+                        
                     else {
                         if (newCnShipments.contains(item)){
                             setStyle("-fx-text-fill: purple; -fx-font-weight:bold;");
@@ -1814,6 +1871,7 @@ public class MainWindowController implements Initializable {
                             
                         
                         setText(item);
+                        
                     }
                    
 

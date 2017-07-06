@@ -165,6 +165,11 @@ public class Tools {
             warehouse = "ZZ";
             return warehouse;
         }
+        
+        if (text.toLowerCase().contains("helen shanglinuo")) {
+            warehouse = "ZZ2";
+            return warehouse;
+        }
        
         if (text.toLowerCase().contains("rsjep hdb")) {
             warehouse = "HDB";
